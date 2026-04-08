@@ -1,0 +1,104 @@
+// decide-web/src/components/layout/Footer.tsx
+// Shared footer rendered on all pages in both route groups.
+// Dark navy-700 surface — creates a strong visual anchor at the bottom
+// of every page and contrasts cleanly with the white/off-white body.
+
+import React from 'react'
+import Link from 'next/link'
+
+const FOOTER_LINKS = {
+  Product: [
+    { href: '/assistant', label: 'Find My Phone'       },
+    { href: '/analyze',   label: 'Should I Buy This?'  },
+    { href: '/phones',    label: 'Browse Phones'        },
+    { href: '/brands',    label: 'Browse Brands'        },
+    { href: '/compare',   label: 'Compare Phones'       },
+  ],
+  Support: [
+    { href: '/alerts',       label: 'Price Alerts' },
+    { href: '/how-it-works', label: 'How It Works' },
+    { href: '/about',        label: 'About Decide' },
+  ],
+}
+
+export const Footer = () => {
+  const currentYear = new Date().getFullYear()
+
+  return (
+    <footer className="bg-navy-700 mt-24">
+      <div className="max-w-6xl mx-auto px-4 py-12">
+
+        {/* Top row — brand and link columns */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 pb-10 border-b border-white/[0.08]">
+
+          {/* Brand column */}
+          <div className="col-span-2 md:col-span-2">
+            <Link
+              href="/"
+              className="inline-block font-ui font-black text-xl tracking-tight mb-3"
+            >
+              <span className="text-white">deci</span>
+              {/* teal-400 on dark surface — lighter shade reads well on navy */}
+              <span className="text-teal-400">de</span>
+            </Link>
+
+            <p className="text-sm text-slate-400 leading-relaxed max-w-xs">
+              Nigeria&apos;s smartest phone advisor. Answer five questions.
+              Get the right phone for your budget and lifestyle — with
+              real Nigerian prices and gray market warnings.
+            </p>
+
+            <p className="mt-4 text-xs text-slate-500 leading-relaxed max-w-xs">
+              Prices are scraped from Jumia and Slot every 6 hours.
+              Always verify before buying. Decide is not responsible
+              for price changes after publication.
+            </p>
+          </div>
+
+          {/* Link columns */}
+          {Object.entries(FOOTER_LINKS).map(([group, links]) => (
+            <div key={group}>
+              <p className="text-xs font-bold tracking-wider uppercase text-slate-500 mb-3">
+                {group}
+              </p>
+              <ul className="space-y-2">
+                {links.map(({ href, label }) => (
+                  <li key={href}>
+                    <Link
+                      href={href}
+                      className="text-sm text-slate-400 hover:text-white transition-colors duration-fast"
+                    >
+                      {label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+
+        {/* Bottom row — legal */}
+        <div className="pt-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <p className="text-xs text-slate-500">
+            © {currentYear} Decide. Built for Nigeria.
+          </p>
+          <div className="flex items-center gap-4">
+            <Link
+              href="/privacy"
+              className="text-xs text-slate-500 hover:text-slate-400 transition-colors duration-fast"
+            >
+              Privacy Policy
+            </Link>
+            <Link
+              href="/terms"
+              className="text-xs text-slate-500 hover:text-slate-400 transition-colors duration-fast"
+            >
+              Terms of Use
+            </Link>
+          </div>
+        </div>
+
+      </div>
+    </footer>
+  )
+}

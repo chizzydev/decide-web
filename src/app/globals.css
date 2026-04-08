@@ -1,0 +1,173 @@
+/* decide-web/src/app/globals.css */
+/* Tailwind base imports only.
+   All colour decisions live in tokens.ts → tailwind.config.ts.
+   Custom CSS here covers only what Tailwind utilities cannot:
+   scrollbar styling, range input thumbs, and CSS custom properties
+   for values used in radial gradients and backdrop effects. */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+
+  /* ── Root — white/off-white base, navy text ────────────────
+     Matches tokens: bg=#f8fafc, textPrimary=#0f172a           */
+  html {
+    background-color: #f8fafc;
+    color: #0f172a;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+  }
+
+  /* ── CSS custom properties ─────────────────────────────────
+     Used in radial-gradient() backgrounds and box-shadow glows
+     that Tailwind can't express as utility classes.            */
+  :root {
+    /* Teal scale */
+    --teal-300: #5eead4;
+    --teal-400: #2dd4bf;
+    --teal-500: #14b8a6;
+    --teal-600: #0d9488;
+
+    /* Navy scale */
+    --navy-900: #020617;
+    --navy-800: #0f172a;
+    --navy-700: #1e293b;
+
+    /* Teal glow layers — used in hero and CTA backgrounds */
+    --glow-teal-sm:  rgba(13, 148, 136, 0.06);
+    --glow-teal-md:  rgba(13, 148, 136, 0.12);
+    --glow-teal-lg:  rgba(13, 148, 136, 0.18);
+
+    /* Teal tint surface */
+    --teal-tint: #f0fdfa;
+  }
+
+  /* ── Reset ─────────────────────────────────────────────────  */
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  button {
+    cursor: pointer;
+    background: none;
+    border: none;
+    font: inherit;
+  }
+
+  input,
+  textarea {
+    font: inherit;
+    outline: none;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  /* ── Scrollbar — light, teal accent ────────────────────────
+     Matches the white surface palette.                        */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #f1f5f9;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #0d9488; /* teal-600 on hover — brand moment */
+  }
+
+  /* ── Range input thumb — teal action colour ────────────────
+     webkit (Chrome, Safari, Edge)                            */
+  input[type='range']::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    background-color: #14b8a6;   /* teal-500 — action */
+    cursor: pointer;
+    border: 2px solid #ffffff;
+    box-shadow: 0 2px 6px rgba(20, 184, 166, 0.3);
+    transition: transform 150ms ease, background-color 150ms ease;
+  }
+
+  input[type='range']::-webkit-slider-thumb:hover {
+    background-color: #2dd4bf;   /* teal-400 — hover */
+    transform: scale(1.15);
+  }
+
+  input[type='range']::-webkit-slider-thumb:active {
+    transform: scale(1.05);
+  }
+
+  /* Firefox */
+  input[type='range']::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    background-color: #14b8a6;   /* teal-500 */
+    cursor: pointer;
+    border: 2px solid #ffffff;
+    box-shadow: 0 2px 6px rgba(20, 184, 166, 0.3);
+    transition: transform 150ms ease, background-color 150ms ease;
+  }
+
+  input[type='range']::-moz-range-thumb:hover {
+    background-color: #2dd4bf;   /* teal-400 */
+    transform: scale(1.15);
+  }
+
+  /* ── Focus ring — teal, consistent across all interactive ──
+     Applied globally so keyboard nav always shows teal ring. */
+  :focus-visible {
+    outline: 2px solid #14b8a6;  /* teal-500 */
+    outline-offset: 2px;
+  }
+
+}
+
+/* ── Utility: teal glow backgrounds ───────────────────────────
+   Used in hero, CTA, and featured card sections.
+   Cannot be expressed as standard Tailwind utilities.        */
+@layer utilities {
+
+  .bg-glow-hero {
+    background:
+      radial-gradient(ellipse 70% 50% at 80% 0%,   var(--glow-teal-sm) 0%, transparent 65%),
+      radial-gradient(ellipse 40% 30% at 10% 100%,  var(--glow-teal-sm) 0%, transparent 65%);
+  }
+
+  .bg-glow-cta {
+    background:
+      radial-gradient(circle 280px at 85% 50%, var(--glow-teal-md) 0%, transparent 70%),
+      radial-gradient(circle 180px at 20% 80%, var(--glow-teal-sm) 0%, transparent 70%);
+  }
+
+  .bg-glow-card {
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, var(--glow-teal-sm) 0%, transparent 70%);
+  }
+
+  /* Navy section grid lines — used in dark CTA banners */
+  .bg-navy-grid {
+    background-image:
+      linear-gradient(rgba(30, 41, 59, 0.6) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(30, 41, 59, 0.6) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+}
