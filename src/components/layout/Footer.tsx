@@ -21,6 +21,12 @@ const FOOTER_LINKS = {
   ],
 }
 
+const SOCIAL_LINKS = [
+  { label: 'X', href: process.env.NEXT_PUBLIC_SOCIAL_X_URL },
+  { label: 'WhatsApp', href: process.env.NEXT_PUBLIC_SOCIAL_WHATSAPP_URL },
+  { label: 'Facebook', href: process.env.NEXT_PUBLIC_SOCIAL_FACEBOOK_URL },
+].filter((link): link is { label: string; href: string } => Boolean(link.href))
+
 export const Footer = () => {
   const currentYear = new Date().getFullYear()
 
@@ -53,6 +59,22 @@ export const Footer = () => {
               Always verify before buying. Decide is not responsible
               for price changes after publication.
             </p>
+
+            {SOCIAL_LINKS.length > 0 && (
+              <div className="mt-5 flex flex-wrap gap-2" aria-label="Decide social links">
+                {SOCIAL_LINKS.map(({ label, href }) => (
+                  <a
+                    key={label}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex min-h-9 items-center rounded-md border border-white/10 px-3 text-xs font-bold text-slate-300 transition-colors duration-fast hover:border-teal-400/50 hover:text-white"
+                  >
+                    {label}
+                  </a>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Link columns */}

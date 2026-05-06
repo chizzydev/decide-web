@@ -1,7 +1,9 @@
 import type { Metadata } from 'next'
 
 export const SITE_NAME = 'Decide'
-export const SITE_URL = 'https://decide.com.ng'
+export const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://decide.com.ng')
 const DEFAULT_OG_IMAGE = '/images/og-image.png'
 
 interface BuildPageMetadataOptions {

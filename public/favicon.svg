@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Decide">
+  <rect width="128" height="128" rx="28" fill="#0f172a"/>
+  <path d="M72 26h18v76H72v-8c-5 7-13 10-23 10-19 0-33-15-33-36s14-36 33-36c10 0 18 4 23 10V26Z" fill="#14b8a6"/>
+  <circle cx="51" cy="68" r="18" fill="#f8fafc"/>
+  <circle cx="51" cy="68" r="8" fill="#0f172a"/>
+  <circle cx="95" cy="33" r="10" fill="#f8fafc"/>
+</svg>
