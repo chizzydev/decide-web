@@ -10,30 +10,31 @@ import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Badge, Tooltip } from '@/components/ui'
+import { PriceChangeBadge } from '@/components/market/PriceChangeBadge'
 import { StarRating } from '@/components/phone/StarRating'
 import { SaveButton } from '@/components/phone/SaveButton'
 import { BrandLogo, PriceDisplay, AvailabilityBadge } from '@/components/shared'
+import type { RelatedCompareAction } from '@/lib/relatedCompare'
+import { mapToComparePhone } from '@/lib/compareContext'
 import { useCompareStore } from '@/store/compareStore'
 import { formatGb, formatMah, formatMp, formatHz } from '@/lib/formatters'
-import type { ComparePhone, PhoneCard as PhoneCardType } from '@/types'
+import type {
+  CatalogDiscoverySignal,
+  PhoneCard as PhoneCardType,
+} from '@/types'
 
 interface PhoneCardProps {
   phone: PhoneCardType
+  signal?: CatalogDiscoverySignal
+  compareAction?: RelatedCompareAction<PhoneCardType> | null
   featured?: boolean
   className?: string
 }
 
-const mapPhoneCardToComparePhone = (phone: PhoneCardType): ComparePhone => ({
-  id: phone.id,
-  slug: phone.slug,
-  name: phone.name,
-  image_url: phone.image_url,
-  brand_name: phone.brand_name,
-  os_type: phone.os_type,
-})
-
 export const PhoneCard = ({
   phone,
+  signal,
+  compareAction,
   featured = false,
   className = '',
 }: PhoneCardProps) => {
@@ -41,6 +42,8 @@ export const PhoneCard = ({
   const removePhone = useCompareStore((s) => s.removePhone)
   const isInTray = useCompareStore((s) => s.isInTray(phone.slug))
   const isTrayFull = useCompareStore((s) => s.isTrayFull())
+  const hasTrustedPrice = (phone.prices ?? []).length > 0
+  const hasJijiContext = (phone.marketplace_signal_count ?? 0) > 0
 
   const handleCompareToggle = (e: React.MouseEvent): void => {
     e.preventDefault()
@@ -49,7 +52,7 @@ export const PhoneCard = ({
     if (isInTray) {
       removePhone(phone.slug)
     } else {
-      addPhone(mapPhoneCardToComparePhone(phone))
+      addPhone(mapToComparePhone(phone))
     }
   }
 
@@ -111,11 +114,6 @@ export const PhoneCard = ({
           )}
 
           {/* Save button */}
-          <div className="absolute bottom-2 right-2">
-            <SaveButton phoneId={phone.id} phoneName={phone.name} />
-          </div>
-
-          {/* Save button */}
           <div className="absolute bottom-3 right-3" onClick={(e) => e.preventDefault()}>
             <SaveButton phoneId={phone.id} phoneName={phone.name} />
           </div>
@@ -129,6 +127,7 @@ export const PhoneCard = ({
               <BrandLogo
                 brandSlug={phone.brand_name.toLowerCase().split(' ')[0]}
                 brandName={phone.brand_name}
+                logoUrl={phone.brand_logo_url}
                 size="xs"
               />
               <span className="text-xs text-slate-400 font-medium uppercase tracking-wide">
@@ -178,6 +177,37 @@ export const PhoneCard = ({
             </div>
           )}
 
+          {signal && (
+            <div className="space-y-2 rounded-xl border border-borderHigh bg-gradient-to-br from-tealTint via-surface to-surface px-3 py-3">
+              <div className="flex flex-wrap items-center gap-2">
+                {signal.price_drop ? (
+                  <PriceChangeBadge
+                    amount_ngn={signal.price_drop.amount_ngn}
+                    percent={signal.price_drop.percent}
+                    compact
+                  />
+                ) : null}
+                <SignalPill
+                  label={signal.verdict.label}
+                  tone={signal.verdict.tone}
+                />
+              </div>
+              <p className="text-xs leading-relaxed text-text-secondary">
+                {signal.price_drop ? (
+                  <>
+                    Recently cheaper on{' '}
+                    <span className="font-semibold text-text-primary">
+                      {signal.price_drop.store === 'jumia' ? 'Jumia' : 'Slot'}
+                    </span>
+                    . {signal.verdict.summary}
+                  </>
+                ) : (
+                  signal.verdict.summary
+                )}
+              </p>
+            </div>
+          )}
+
           {/* Rating */}
           {Number(phone.review_count) > 0 && (
             <div className="flex items-center gap-1.5">
@@ -191,11 +221,53 @@ export const PhoneCard = ({
 
           {/* Price and availability */}
           <div className="pt-2 border-t border-border flex items-center justify-between gap-2">
-            <PriceDisplay prices={phone.prices} compact />
+            <PriceDisplay prices={phone.prices} compact compactStoreSummary />
             <AvailabilityBadge risk={phone.gray_market_risk} compact />
           </div>
+
+          {!hasTrustedPrice && hasJijiContext ? (
+            <p className="text-xs leading-relaxed text-amber-700">
+              No trusted retail price yet. Open the details page to check Jiji used-market prices and context.
+            </p>
+          ) : null}
         </div>
       </Link>
+
+      {signal || compareAction ? (
+        <div className="flex flex-wrap items-center gap-3 px-4 pb-3 text-xs">
+          {signal ? (
+            <Link
+              href={signal.verdict.href}
+              className="font-bold text-accent transition-colors duration-fast hover:text-accent-hover"
+            >
+              {signal.verdict.link_label}
+            </Link>
+          ) : null}
+          {compareAction ? (
+            <Link
+              href={compareAction.href}
+              className="max-w-full truncate font-semibold text-text-secondary transition-colors duration-fast hover:text-text-primary"
+              title={
+                compareAction.compare_context
+                  ? `Compare with ${compareAction.counterpart.name}: ${compareAction.compare_context}`
+                  : compareAction.reason
+                    ? `Compare with ${compareAction.counterpart.name}: ${compareAction.reason}`
+                    : `Compare with ${compareAction.counterpart.name}`
+              }
+            >
+              Compare with {compareAction.counterpart.name}
+            </Link>
+          ) : null}
+          {signal?.price_drop ? (
+            <Link
+              href={signal.price_drop.href}
+              className="font-semibold text-text-secondary transition-colors duration-fast hover:text-text-primary"
+            >
+              Live drop context
+            </Link>
+          ) : null}
+        </div>
+      ) : null}
 
       {/* Compare toggle */}
       <div className="px-4 pb-4">
@@ -252,6 +324,31 @@ const SpecPill = ({ icon, value }: SpecPillProps) => (
     {value}
   </span>
 )
+
+interface SignalPillProps {
+  label: string
+  tone: 'positive' | 'neutral' | 'warning'
+}
+
+const SignalPill = ({ label, tone }: SignalPillProps) => {
+  const toneClass =
+    tone === 'positive'
+      ? 'border-accent/15 bg-white text-accent'
+      : tone === 'warning'
+        ? 'border-warning/20 bg-warning-subtle text-warning'
+        : 'border-border bg-surfaceHigh text-text-primary'
+
+  return (
+    <span
+      className={[
+        'inline-flex items-center rounded-full border px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.14em]',
+        toneClass,
+      ].join(' ')}
+    >
+      {label}
+    </span>
+  )
+}
 
 // ── PhonePlaceholder ──────────────────────────────────────────────────────────
 

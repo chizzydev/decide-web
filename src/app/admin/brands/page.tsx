@@ -87,6 +87,9 @@ export default function AdminBrandsPage() {
         <p className="text-sm text-text-secondary mt-1">
           {loading ? '...' : `${brands.length} brands · ${brands.filter(b => b.is_active).length} active`}
         </p>
+        <p className="text-xs text-text-muted mt-2 max-w-2xl leading-relaxed">
+          Inactive brands are now treated as real catalog suppressions for public discovery. They drop out of brand lists, browse and recommendation reads, deals radar, tracked price sync targets, and active watchlist or alert reads without deleting the underlying data.
+        </p>
       </div>
 
       {/* Add brand form */}

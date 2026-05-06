@@ -12,6 +12,7 @@
 import React, { useMemo, useState } from 'react'
 import { useAssistant } from '@/hooks/useAssistant'
 import { Button, Divider } from '@/components/ui'
+import type { Brand } from '@/types'
 import { AgentPanel } from './AgentPanel'
 import { StepIndicator } from './StepIndicator'
 import { StepOs } from './StepOs'
@@ -23,7 +24,11 @@ import { ResultsPanel } from './ResultsPanel'
 
 type AssistantMode = 'guided' | 'agent'
 
-export const AssistantShell = () => {
+interface AssistantShellProps {
+  androidBrands: Brand[]
+}
+
+export const AssistantShell = ({ androidBrands }: AssistantShellProps) => {
   const [mode, setMode] = useState<AssistantMode>('guided')
 
   const {
@@ -129,7 +134,7 @@ export const AssistantShell = () => {
               {/* Step content */}
               <div className="flex-1">
                 {currentStep === 'os' && <StepOs />}
-                {currentStep === 'brand' && <StepBrand />}
+                {currentStep === 'brand' && <StepBrand brands={androidBrands} />}
                 {currentStep === 'budget' && <StepBudget />}
                 {currentStep === 'usage' && <StepUsage />}
                 {currentStep === 'priorities' && <StepPriorities />}

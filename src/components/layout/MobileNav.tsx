@@ -11,6 +11,17 @@ import { usePathname } from 'next/navigation'
 
 // ── Icons ──────────────────────────────────────────────────────────────────────
 
+const HomeIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path
+      d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6h-4v6H5a1 1 0 0 1-1-1v-9.5Z"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinejoin="round"
+    />
+  </svg>
+)
+
 const AdvisorIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z" fill="currentColor"/>
@@ -25,14 +36,6 @@ const BrowseIcon = () => (
   </svg>
 )
 
-const AnalyzeIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-    <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.5"/>
-    <path d="M16.5 16.5L21 21" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-    <path d="M8 11h6M11 8v6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-  </svg>
-)
-
 const CompareIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
     <rect x="2" y="4" width="9" height="16" rx="2" stroke="currentColor" strokeWidth="1.5"/>
@@ -43,9 +46,9 @@ const CompareIcon = () => (
 )
 
 const MOBILE_NAV_LINKS = [
+  { href: '/',          label: 'Home',     icon: <HomeIcon /> },
   { href: '/assistant', label: 'Advisor',  icon: <AdvisorIcon /> },
   { href: '/phones',    label: 'Browse',   icon: <BrowseIcon  /> },
-  { href: '/analyze',   label: 'Analyze',  icon: <AnalyzeIcon /> },
   { href: '/compare',   label: 'Compare',  icon: <CompareIcon /> },
 ]
 
@@ -59,7 +62,7 @@ export const MobileNav = () => {
     >
       <div className="flex items-stretch h-16">
         {MOBILE_NAV_LINKS.map(({ href, label, icon }) => {
-          const isActive = pathname.startsWith(href)
+          const isActive = href === '/' ? pathname === '/' : pathname.startsWith(href)
           return (
             <Link
               key={href}

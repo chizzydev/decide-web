@@ -7,6 +7,7 @@
 
 import React, { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { useSession, signOut } from 'next-auth/react'
 
 const NAV_LINKS = [
@@ -19,6 +20,8 @@ export const MarketingNavbar = () => {
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const { data: session }               = useSession()
   const userMenuRef                     = useRef<HTMLDivElement>(null)
+  const pathname                         = usePathname()
+  const isAssistantRoute                 = pathname.startsWith('/assistant')
 
   useEffect(() => {
     const handleScroll = (): void => { setScrolled(window.scrollY > 40) }
@@ -39,6 +42,17 @@ export const MarketingNavbar = () => {
       clearTimeout(timer)
       document.removeEventListener('click', handleClick)
     }
+  }, [userMenuOpen])
+
+  useEffect(() => {
+    if (!userMenuOpen) return
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setUserMenuOpen(false)
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
   }, [userMenuOpen])
 
   const initials = session?.user?.name
@@ -99,36 +113,49 @@ export const MarketingNavbar = () => {
               </button>
 
               {userMenuOpen && (
-                <div className="absolute right-0 top-full mt-1 w-52 bg-surface border border-border rounded-md shadow-md z-dropdown overflow-hidden">
-                  <div className="px-4 py-3 border-b border-border">
-                    <p className="text-xs font-semibold text-text-primary truncate">
-                      {session.user.name ?? 'Account'}
-                    </p>
-                    <p className="text-xs text-slate-400 truncate">{session.user.email}</p>
+                <>
+                  <div className="absolute right-0 top-full z-dropdown mt-2 hidden w-[min(16rem,calc(100vw-2rem))] overflow-hidden rounded-xl border border-border bg-surface shadow-lg sm:block">
+                    <AccountMenuContent
+                      session={session}
+                      onClose={() => setUserMenuOpen(false)}
+                      onSignOut={() => signOut({ callbackUrl: '/' })}
+                    />
                   </div>
-                  <Link href="/account" className="flex items-center gap-2 px-4 py-2.5 text-sm text-text-secondary hover:bg-tealTint transition-colors duration-fast">
-                    My Account
-                  </Link>
-                  <Link href="/saved" className="flex items-center gap-2 px-4 py-2.5 text-sm text-text-secondary hover:bg-tealTint transition-colors duration-fast">
-                    Saved Phones
-                  </Link>
-                  <Link href="/alerts" className="flex items-center gap-2 px-4 py-2.5 text-sm text-text-secondary hover:bg-tealTint transition-colors duration-fast">
-                    My Alerts
-                  </Link>
-                  {session.user.role === 'admin' && (
-                    <Link href="/admin" className="flex items-center gap-2 px-4 py-2.5 text-sm text-accent font-semibold hover:bg-tealTint transition-colors duration-fast">
-                      Admin Dashboard
-                    </Link>
-                  )}
-                  <div className="border-t border-border">
-                    <button
-                      onClick={() => signOut({ callbackUrl: '/' })}
-                      className="w-full text-left px-4 py-2.5 text-sm text-slate-500 hover:bg-surfaceHigh hover:text-text-primary transition-colors duration-fast"
-                    >
-                      Sign out
-                    </button>
+                  <button
+                    type="button"
+                    className="fixed inset-0 z-modal bg-black/30 sm:hidden"
+                    aria-label="Close account menu"
+                    onClick={() => setUserMenuOpen(false)}
+                  />
+                  <div
+                    className="fixed inset-x-3 bottom-20 z-modal max-h-[calc(100vh-7rem)] overflow-y-auto rounded-[28px] border border-border bg-surface shadow-2xl sm:hidden"
+                    role="dialog"
+                    aria-modal="true"
+                    aria-label="Account menu"
+                  >
+                    <div className="flex items-center justify-between border-b border-border px-5 py-4">
+                      <div className="min-w-0">
+                        <p className="text-sm font-bold text-text-primary truncate">
+                          {session.user.name ?? 'Account'}
+                        </p>
+                        <p className="text-xs text-text-muted truncate">{session.user.email}</p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setUserMenuOpen(false)}
+                        className="ml-3 rounded-full border border-border px-3 py-1 text-xs font-bold text-text-secondary"
+                      >
+                        Close
+                      </button>
+                    </div>
+                    <AccountMenuContent
+                      session={session}
+                      onClose={() => setUserMenuOpen(false)}
+                      onSignOut={() => signOut({ callbackUrl: '/' })}
+                      hideIdentity
+                    />
                   </div>
-                </div>
+                </>
               )}
             </div>
           ) : (
@@ -152,12 +179,22 @@ export const MarketingNavbar = () => {
           )}
 
           {/* Primary CTA */}
-          <Link
-            href="/assistant"
-            className="inline-flex items-center h-9 px-5 rounded-sm bg-accent text-black text-sm font-bold tracking-wide hover:bg-accent-hover active:scale-[0.98] transition-all duration-fast"
-          >
-            Find My Phone
-          </Link>
+          {isAssistantRoute ? (
+            <span
+              className="inline-flex h-9 cursor-default items-center rounded-sm bg-surfaceHigh px-5 text-sm font-bold tracking-wide text-text-muted"
+              aria-current="page"
+              aria-disabled="true"
+            >
+              Find My Phone
+            </span>
+          ) : (
+            <Link
+              href="/assistant"
+              className="inline-flex h-9 items-center rounded-sm bg-accent px-5 text-sm font-bold tracking-wide text-black transition-all duration-fast hover:bg-accent-hover active:scale-[0.98]"
+            >
+              Find My Phone
+            </Link>
+          )}
         </div>
       </nav>
     </header>
@@ -170,4 +207,65 @@ const ChevronIcon = () => (
   <svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true">
     <path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
+)
+
+const AccountMenuContent = ({
+  session,
+  onClose,
+  onSignOut,
+  hideIdentity = false,
+}: {
+  session: any
+  onClose: () => void
+  onSignOut: () => void
+  hideIdentity?: boolean
+}) => (
+  <div className="overflow-hidden bg-surface">
+    {!hideIdentity && (
+      <div className="border-b border-border px-4 py-3">
+        <p className="text-xs font-semibold text-text-primary truncate">
+          {session.user.name ?? 'Account'}
+        </p>
+        <p className="text-xs text-text-muted truncate">{session.user.email}</p>
+      </div>
+    )}
+    <AccountLink href="/account" onClose={onClose}>My Account</AccountLink>
+    <AccountLink href="/saved" onClose={onClose}>Watchlist</AccountLink>
+    <AccountLink href="/alerts" onClose={onClose}>My Alerts</AccountLink>
+    {session.user.role === 'admin' && (
+      <AccountLink href="/admin" onClose={onClose} accent>Admin Dashboard</AccountLink>
+    )}
+    <div className="border-t border-border">
+      <button
+        type="button"
+        onClick={onSignOut}
+        className="w-full px-5 py-4 text-left text-sm font-semibold text-slate-500 transition-colors duration-fast hover:bg-surfaceHigh hover:text-text-primary sm:px-4 sm:py-2.5"
+      >
+        Sign out
+      </button>
+    </div>
+  </div>
+)
+
+const AccountLink = ({
+  href,
+  children,
+  onClose,
+  accent = false,
+}: {
+  href: string
+  children: React.ReactNode
+  onClose: () => void
+  accent?: boolean
+}) => (
+  <Link
+    href={href}
+    onClick={onClose}
+    className={[
+      'flex items-center gap-2 px-5 py-4 text-sm font-semibold transition-colors duration-fast hover:bg-tealTint sm:px-4 sm:py-2.5',
+      accent ? 'text-accent' : 'text-text-secondary',
+    ].join(' ')}
+  >
+    {children}
+  </Link>
 )

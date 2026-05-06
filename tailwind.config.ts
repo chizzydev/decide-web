@@ -4,7 +4,7 @@
 // No hardcoded values in className strings anywhere in the codebase.
 
 import type { Config } from 'tailwindcss'
-import { tokens } from './src/styles/tokens'
+import { tokens } from './src/styles/tokens.ts'
 
 const config: Config = {
   content: [

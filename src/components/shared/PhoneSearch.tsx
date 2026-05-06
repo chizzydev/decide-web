@@ -228,13 +228,13 @@ export const PhoneSearch = ({
 
       {/* Results dropdown */}
       {showDropdown && (
-        <div className="absolute top-full left-0 right-0 mt-1 z-dropdown">
+        <div className="absolute left-0 right-0 top-full z-dropdown mt-1 max-h-[min(24rem,calc(100vh-8rem))] overflow-y-auto rounded-md">
           <ul
             ref={listRef}
             id="phone-search-results"
             role="listbox"
             aria-label="Phone search results"
-            className="bg-surface border border-border rounded-md shadow-lg overflow-hidden divide-y divide-border"
+            className="overflow-hidden rounded-md border border-border bg-surface shadow-lg divide-y divide-border"
           >
             {loading && results.length === 0 ? (
               <li className="px-4 py-3 flex items-center gap-2 text-sm text-text-muted">

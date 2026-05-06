@@ -2,7 +2,7 @@
 
 // decide-web/src/app/admin/reviews/page.tsx
 
-import React, { useEffect, useState, useCallback } from 'react'
+import React, { Suspense, useEffect, useState, useCallback } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { StarRating } from '@/components/phone/StarRating'
@@ -27,6 +27,14 @@ interface AdminReview {
 type Filter = 'all' | 'flagged' | 'pending' | 'rejected'
 
 export default function AdminReviewsPage() {
+  return (
+    <Suspense fallback={<AdminReviewsPageFallback />}>
+      <AdminReviewsPageContent />
+    </Suspense>
+  )
+}
+
+function AdminReviewsPageContent() {
   const searchParams             = useSearchParams()
   const [reviews,  setReviews]  = useState<AdminReview[]>([])
   const [loading,  setLoading]  = useState(true)
@@ -166,6 +174,28 @@ export default function AdminReviewsPage() {
     </div>
   )
 }
+
+const AdminReviewsPageFallback = () => (
+  <div className="space-y-6">
+    <div>
+      <h1 className="text-2xl font-black text-text-primary tracking-tight">
+        Reviews
+      </h1>
+      <p className="mt-1 text-sm text-text-secondary">
+        Loading moderation queue...
+      </p>
+    </div>
+
+    <div className="space-y-3">
+      {Array.from({ length: 3 }).map((_, index) => (
+        <div
+          key={index}
+          className="h-28 animate-pulse rounded-md border border-border bg-surface p-4"
+        />
+      ))}
+    </div>
+  </div>
+)
 
 const ActionBtn = ({
   onClick, label, color,

@@ -9,8 +9,7 @@
 import React from 'react'
 import { useAssistant } from '@/hooks/useAssistant'
 import { BrandLogo } from '@/components/shared'
-import { ANDROID_BRANDS } from '@/lib/constants'
-import type { BrandPreference } from '@/types'
+import type { Brand, BrandPreference } from '@/types'
 
 // "No preference" is a valid selection — it tells the scoring engine
 // not to apply any brand filter when fetching recommendations.
@@ -24,7 +23,11 @@ const NO_PREFERENCE: {
   description: 'Show me the best phones regardless of brand',
 }
 
-export const StepBrand = () => {
+interface StepBrandProps {
+  brands: Brand[]
+}
+
+export const StepBrand = ({ brands }: StepBrandProps) => {
   const { selectBrand, brand_preference } = useAssistant()
 
   return (
@@ -57,17 +60,26 @@ export const StepBrand = () => {
         />
 
         {/* Brand grid — 2 columns on mobile, 4 on wider screens */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {ANDROID_BRANDS.map((brand) => (
-            <BrandCard
-              key={brand.slug}
-              slug={brand.slug}
-              label={brand.label}
-              selected={brand_preference === brand.slug}
-              onSelect={() => selectBrand(brand.slug as BrandPreference)}
-            />
-          ))}
-        </div>
+        {brands.length > 0 ? (
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            {brands.map((brand) => (
+              <BrandCard
+                key={brand.slug}
+                slug={brand.slug}
+                label={brand.name}
+                logoUrl={brand.logo_url}
+                selected={brand_preference === brand.slug}
+                onSelect={() => selectBrand(brand.slug as BrandPreference)}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="rounded-md border border-border bg-surface px-4 py-3 text-sm text-text-secondary">
+            Brand options are still loading from the live catalog. You can keep going with{' '}
+            <span className="font-semibold text-text-primary">No Preference</span> and we will
+            still rank across the full Android pool.
+          </div>
+        )}
       </div>
 
       {/* Helper note */}
@@ -133,6 +145,7 @@ const NoPreferenceCard = ({ selected, onSelect }: NoPreferenceCardProps) => {
 interface BrandCardProps {
   slug:     string
   label:    string
+  logoUrl?: string | null
   selected: boolean
   onSelect: () => void
 }
@@ -140,6 +153,7 @@ interface BrandCardProps {
 const BrandCard = ({
   slug,
   label,
+  logoUrl,
   selected,
   onSelect,
 }: BrandCardProps) => {
@@ -171,6 +185,7 @@ const BrandCard = ({
         <BrandLogo
           brandSlug={slug}
           brandName={label}
+          logoUrl={logoUrl}
           size="md"
         />
       </div>

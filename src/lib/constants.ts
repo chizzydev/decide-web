@@ -167,6 +167,7 @@ export const GRAY_MARKET_COLORS: Record<string, string> = {
 export const STORE_LABELS: Record<string, string> = {
   jumia: 'Jumia',
   slot:  'Slot',
+  jiji: 'Jiji',
 }
 
 // ── Assistant step order ───────────────────────────────────────

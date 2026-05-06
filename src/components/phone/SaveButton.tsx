@@ -2,63 +2,79 @@
 
 // decide-web/src/components/phone/SaveButton.tsx
 
-import React, { useState, useEffect, useRef } from 'react'
-import { useSession } from 'next-auth/react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useSavedPhones } from '@/components/providers/SavedPhonesProvider'
 import { requestWithBackendAuth } from '@/lib/backendAuth'
 
 interface SaveButtonProps {
-  phoneId:    number
-  phoneName:  string
+  phoneId: number
+  phoneName: string
   className?: string
+  variant?: 'icon' | 'inline'
+  label?: string
+  savedLabel?: string
 }
 
-export const SaveButton = ({ phoneId, phoneName, className = '' }: SaveButtonProps) => {
-  const { data: session }     = useSession()
-  const router                = useRouter()
-  const [saved,   setSaved]   = useState(false)
+export const SaveButton = ({
+  phoneId,
+  phoneName,
+  className = '',
+  variant = 'icon',
+  label = 'Save to watchlist',
+  savedLabel = 'Saved to watchlist',
+}: SaveButtonProps) => {
+  const router = useRouter()
+  const { isAuthenticated, isLoading: savedPhonesLoading, isSaved, markSaved, markUnsaved } =
+    useSavedPhones()
   const [loading, setLoading] = useState(false)
-  const [nudge,   setNudge]   = useState(false)
-  const nudgeRef              = useRef<HTMLDivElement>(null)
+  const [flyout, setFlyout] = useState<'guest' | 'saved' | null>(null)
+  const nudgeRef = useRef<HTMLDivElement>(null)
+  const saved = isSaved(phoneId)
 
-  // Fetch initial saved state for logged-in users
   useEffect(() => {
-    if (!session?.user?.id) return
-    requestWithBackendAuth<Array<{ phone_id: number }>>('/saved/me')
-      .then((data) => {
-        setSaved(data.some((s) => s.phone_id === phoneId))
-      })
-      .catch(() => {})
-  }, [session?.user?.id, phoneId])
+    if (!flyout) return
 
-  // Close nudge on outside click
-  useEffect(() => {
-    if (!nudge) return
     const handleClick = (e: MouseEvent) => {
       if (nudgeRef.current && !nudgeRef.current.contains(e.target as Node)) {
-        setNudge(false)
+        setFlyout(null)
       }
     }
-    const timer = setTimeout(() => document.addEventListener('click', handleClick), 0)
-    return () => { clearTimeout(timer); document.removeEventListener('click', handleClick) }
-  }, [nudge])
+
+    const timer = setTimeout(
+      () => document.addEventListener('click', handleClick),
+      0
+    )
+
+    return () => {
+      clearTimeout(timer)
+      document.removeEventListener('click', handleClick)
+    }
+  }, [flyout])
 
   const handleClick = async (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
 
-    // Guest — redirect to login directly (no nested link issue)
-    if (!session?.user?.id) {
-      if (nudge) {
+    if (!isAuthenticated) {
+      if (flyout === 'guest') {
         router.push('/login')
       } else {
-        setNudge(true)
+        setFlyout('guest')
       }
+
       return
     }
 
     const prev = saved
-    setSaved(!saved)
+    const nextSaved = !saved
+
+    if (nextSaved) {
+      markSaved(phoneId)
+    } else {
+      markUnsaved(phoneId)
+    }
+
     setLoading(true)
 
     try {
@@ -66,56 +82,118 @@ export const SaveButton = ({ phoneId, phoneName, className = '' }: SaveButtonPro
         await requestWithBackendAuth<null>(`/saved/me/${phoneId}`, {
           method: 'DELETE',
         })
+        setFlyout(null)
       } else {
         await requestWithBackendAuth<null>('/saved/me', {
           method: 'POST',
           body: JSON.stringify({ phone_id: phoneId }),
         })
+        setFlyout('saved')
       }
     } catch {
-      setSaved(prev)
+      if (prev) {
+        markSaved(phoneId)
+      } else {
+        markUnsaved(phoneId)
+      }
+      setFlyout(null)
     } finally {
       setLoading(false)
     }
   }
 
+  const isInline = variant === 'inline'
+  const buttonLabel = loading
+    ? 'Updating...'
+    : saved
+      ? savedLabel
+      : label
+
   return (
     <div className="relative" ref={nudgeRef}>
       <button
+        type="button"
         onClick={handleClick}
-        disabled={loading}
+        disabled={loading || savedPhonesLoading}
         aria-label={saved ? `Remove ${phoneName} from saved` : `Save ${phoneName}`}
         className={[
-          'flex items-center justify-center w-8 h-8 rounded-full bg-white/80 backdrop-blur-sm shadow-sm',
+          isInline
+            ? 'inline-flex h-10 items-center justify-center gap-2 rounded-md border px-4 text-sm font-bold'
+            : 'flex h-8 w-8 items-center justify-center rounded-full bg-white/80 shadow-sm backdrop-blur-sm',
           'transition-all duration-fast',
           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-1',
-          saved  ? 'text-red-500 hover:text-red-600' : 'text-slate-400 hover:text-red-400',
-          loading ? 'opacity-50 cursor-not-allowed' : '',
+          isInline
+            ? saved
+              ? 'border-accent/20 bg-tealTint text-accent hover:bg-tealTint'
+              : 'border-borderHigh bg-white text-text-primary hover:border-accent/30 hover:text-accent'
+            : saved
+              ? 'text-red-500 hover:text-red-600'
+              : 'text-slate-400 hover:text-red-400',
+          loading || savedPhonesLoading ? 'cursor-not-allowed opacity-50' : '',
           className,
         ].join(' ')}
       >
         <HeartIcon filled={saved} />
+        {isInline ? <span>{buttonLabel}</span> : null}
       </button>
 
-      {/* Guest nudge — no nested links, uses router.push instead */}
-      {nudge && !session && (
-        <div className="absolute right-0 top-10 z-50 w-52 bg-surface border border-border rounded-md shadow-lg p-3 space-y-2">
+      {flyout === 'guest' && !isAuthenticated && (
+        <div className="absolute right-0 top-10 z-50 w-52 space-y-2 rounded-md border border-border bg-surface p-3 shadow-lg">
           <p className="text-xs font-semibold text-text-primary">Sign in to save phones</p>
-          <p className="text-xs text-text-secondary leading-relaxed">
+          <p className="text-xs leading-relaxed text-text-secondary">
             Tap again to go to sign in, or create a free account.
           </p>
           <div className="flex gap-2 pt-1">
             <button
-              onClick={(e) => { e.preventDefault(); e.stopPropagation(); router.push('/login') }}
-              className="flex-1 text-center text-xs font-bold py-1.5 rounded-sm bg-accent text-white hover:bg-accent-hover transition-colors duration-fast"
+              onClick={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                router.push('/login')
+              }}
+              className="flex-1 rounded-sm bg-accent py-1.5 text-center text-xs font-bold text-white transition-colors duration-fast hover:bg-accent-hover"
             >
               Sign in
             </button>
             <button
-              onClick={(e) => { e.preventDefault(); e.stopPropagation(); router.push('/register') }}
-              className="flex-1 text-center text-xs font-semibold py-1.5 rounded-sm border border-border text-text-secondary hover:text-text-primary transition-colors duration-fast"
+              onClick={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                router.push('/register')
+              }}
+              className="flex-1 rounded-sm border border-border py-1.5 text-center text-xs font-semibold text-text-secondary transition-colors duration-fast hover:text-text-primary"
             >
               Register
+            </button>
+          </div>
+        </div>
+      )}
+
+      {flyout === 'saved' && isAuthenticated && (
+        <div className="absolute right-0 top-10 z-50 w-56 space-y-2 rounded-md border border-border bg-surface p-3 shadow-lg">
+          <p className="text-xs font-semibold text-text-primary">Saved to watchlist</p>
+          <p className="text-xs leading-relaxed text-text-secondary">
+            Decide can now track this phone for you. Open your watchlist to set alerts or compare finalists.
+          </p>
+          <div className="flex gap-2 pt-1">
+            <button
+              onClick={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                router.push('/saved')
+              }}
+              className="flex-1 rounded-sm bg-accent py-1.5 text-center text-xs font-bold text-white transition-colors duration-fast hover:bg-accent-hover"
+            >
+              Open watchlist
+            </button>
+            <button
+              onClick={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                setFlyout(null)
+              }}
+              className="flex-1 rounded-sm border border-border py-1.5 text-center text-xs font-semibold text-text-secondary transition-colors duration-fast hover:text-text-primary"
+            >
+              Keep browsing
             </button>
           </div>
         </div>

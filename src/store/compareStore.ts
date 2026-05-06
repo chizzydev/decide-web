@@ -28,8 +28,22 @@ export const useCompareStore = create<CompareState>((set, get) => ({
   addPhone: (phone) => {
     const { phones, isTrayFull, isInTray } = get()
 
-    // Do nothing if the phone is already in the tray
-    if (isInTray(phone.slug)) return
+    if (isInTray(phone.slug)) {
+      const updated: [ComparePhone | null, ComparePhone | null] = phones.map((entry) => {
+        if (!entry || entry.slug !== phone.slug) {
+          return entry
+        }
+
+        const shouldUpgradeVariant =
+          (!!phone.variant_id && phone.variant_id !== entry.variant_id) ||
+          (!!phone.variant_label && phone.variant_label !== entry.variant_label)
+
+        return shouldUpgradeVariant ? { ...entry, ...phone } : entry
+      }) as [ComparePhone | null, ComparePhone | null]
+
+      set({ phones: updated, isVisible: true })
+      return
+    }
 
     // Do nothing if both slots are filled
     if (isTrayFull()) return

@@ -16,6 +16,24 @@ export type ApiEnvelope<T> = {
   data: T
 }
 
+type ApiErrorEnvelope = {
+  message?: string
+}
+
+type BackendAuthErrorCode = 'missing_session' | 'unauthorized'
+
+export class BackendAuthError extends Error {
+  code: BackendAuthErrorCode
+  status?: number
+
+  constructor(message: string, code: BackendAuthErrorCode, status?: number) {
+    super(message)
+    this.name = 'BackendAuthError'
+    this.code = code
+    this.status = status
+  }
+}
+
 const buildBackendHeaders = (options: RequestInit, accessToken: string) => ({
   'Content-Type': 'application/json',
   ...(options.headers ?? {}),
@@ -27,7 +45,10 @@ async function requireBackendAccessToken() {
   const accessToken = session?.backendAccessToken
 
   if (!accessToken) {
-    throw new Error('Your secure Decide session is missing. Please sign in again.')
+    throw new BackendAuthError(
+      'Your secure Decide session is missing. Please sign in again.',
+      'missing_session'
+    )
   }
 
   return accessToken
@@ -44,7 +65,30 @@ export async function requestJsonWithBackendAuth<T>(
     headers: buildBackendHeaders(options, accessToken),
   })
 
-  return (await response.json()) as T
+  let json: unknown = null
+
+  try {
+    json = await response.json()
+  } catch {
+    throw new Error('Received an invalid response from Decide.')
+  }
+
+  if (response.status === 401 || response.status === 403) {
+    let message = 'Your secure Decide session ended. Please sign in again.'
+
+    if (
+      typeof json === 'object' &&
+      json !== null &&
+      'message' in json &&
+      typeof (json as ApiErrorEnvelope).message === 'string'
+    ) {
+      message = (json as ApiErrorEnvelope).message ?? message
+    }
+
+    throw new BackendAuthError(message, 'unauthorized', response.status)
+  }
+
+  return json as T
 }
 
 export async function requestWithBackendAuth<T>(

@@ -16,9 +16,16 @@
   html {
     background-color: #f8fafc;
     color: #0f172a;
+    max-width: 100%;
+    overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     scroll-behavior: smooth;
+  }
+
+  body {
+    max-width: 100%;
+    overflow-x: hidden;
   }
 
   /* ── CSS custom properties ─────────────────────────────────

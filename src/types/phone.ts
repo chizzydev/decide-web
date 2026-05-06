@@ -6,6 +6,12 @@ export type OsType = 'android' | 'ios'
 export type StoreType = 'jumia' | 'slot'
 export type GrayMarketRisk = 'low' | 'medium' | 'high'
 export type LocalSupportQuality = 'good' | 'fair' | 'poor'
+export type MarketplaceDealQuality =
+  | 'strong_lead'
+  | 'fair_lead'
+  | 'context_only'
+  | 'risky'
+export type MarketplaceRiskLevel = 'low' | 'medium' | 'high'
 
 export interface Brand {
   id: number
@@ -22,6 +28,55 @@ export interface CurrentPrice {
   url: string | null
   in_stock: boolean
   scraped_at: string // ISO string from JSON — not Date object
+  variant_id?: number | null
+  variant_label?: string | null
+  variant_ram_gb?: number | null
+  variant_storage_gb?: number | null
+}
+
+export interface PhoneVariant {
+  id: number
+  phone_id: number
+  label: string
+  ram_gb: number | null
+  storage_gb: number | null
+  is_default: boolean
+  is_active: boolean
+  prices: CurrentPrice[]
+}
+
+export interface MarketplaceOffer {
+  id: number
+  phone_id: number
+  variant_id: number | null
+  source: 'jiji'
+  listing_title: string
+  price_ngn: number
+  url: string
+  location: string | null
+  condition_label: string | null
+  seller_type: string | null
+  confidence_score: number
+  trust_label: 'marketplace' | string
+  is_active: boolean
+  scraped_at: string
+  previous_price_ngn: number | null
+  previous_scraped_at: string | null
+  deal_quality: MarketplaceDealQuality
+  risk_level: MarketplaceRiskLevel
+  reason_labels: string[]
+  safe_buying_steps: string[]
+  buyer_note: string
+}
+
+export interface PhoneMarketplaceOffersResponse {
+  phone_id: number
+  phone_name: string
+  source: 'jiji'
+  count: number
+  offers: MarketplaceOffer[]
+  note: string
+  safety_note: string
 }
 
 // Lean compare-tray shape.
@@ -34,6 +89,8 @@ export interface ComparePhone {
   image_url: string | null
   brand_name: string
   os_type: OsType
+  variant_id?: number | null
+  variant_label?: string | null
 }
 
 // Shape returned by GET /phones and GET /phones/:slug list views
@@ -55,6 +112,9 @@ export interface PhoneCard {
   main_camera_mp: number | null
   has_5g: boolean
   has_nfc: boolean
+  local_support_quality: LocalSupportQuality | null
+  android_updates_years: number | null
+  security_updates_years: number | null
   score_battery: number
   score_camera: number
   score_performance: number
@@ -65,6 +125,7 @@ export interface PhoneCard {
   released_year: number | null
   tags: string[]
   prices: CurrentPrice[]
+  marketplace_signal_count?: number
   average_rating: number
   review_count: number
 }
@@ -94,6 +155,7 @@ export interface PhoneDetail extends PhoneCard {
   gray_market_note: string | null
   local_support_quality: LocalSupportQuality | null
   local_support_note: string | null
+  variants?: PhoneVariant[]
 }
 
 // Query params accepted by the phone list endpoint

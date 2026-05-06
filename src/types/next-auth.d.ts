@@ -36,6 +36,7 @@ declare module 'next-auth/jwt' {
     backendRefreshToken?: string
     backendAccessTokenExpiresAt?: number
     backendRefreshTokenExpiresAt?: number
+    backendRefreshRetryAt?: number
     backendAuthError?: string
     googleIdToken?: string
   }

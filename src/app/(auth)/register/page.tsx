@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { Suspense, useState } from 'react'
 import Link from 'next/link'
 import { signIn } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -8,6 +8,21 @@ import { useRouter, useSearchParams } from 'next/navigation'
 const API_URL = process.env.NEXT_PUBLIC_API_URL
 
 export default function RegisterPage() {
+  return (
+    <Suspense
+      fallback={
+        <AuthShellFallback
+          title="Create your account"
+          subtitle="Set price alerts, write reviews, and save phones"
+        />
+      }
+    >
+      <RegisterPageContent />
+    </Suspense>
+  )
+}
+
+function RegisterPageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const callbackUrl = searchParams.get('callbackUrl') || '/'
@@ -63,7 +78,8 @@ export default function RegisterPage() {
     }
   }
 
-  const handleGoogle = () => signIn('google', { callbackUrl })
+  const handleGoogle = () =>
+    signIn('google', { callbackUrl }, { prompt: 'select_account' })
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-bg px-4 py-12">
@@ -174,6 +190,34 @@ export default function RegisterPage() {
     </div>
   )
 }
+
+interface AuthShellFallbackProps {
+  title: string
+  subtitle: string
+}
+
+const AuthShellFallback = ({ title, subtitle }: AuthShellFallbackProps) => (
+  <div className="min-h-screen flex items-center justify-center bg-bg px-4 py-12">
+    <div className="w-full max-w-md space-y-8">
+      <div className="text-center space-y-2">
+        <Link href="/" className="inline-block font-ui font-black text-2xl tracking-tight">
+          <span className="text-text-primary">deci</span>
+          <span className="text-accent-brand">de</span>
+        </Link>
+        <h1 className="text-2xl font-black text-text-primary tracking-tight">
+          {title}
+        </h1>
+        <p className="text-sm text-text-secondary">{subtitle}</p>
+      </div>
+
+      <div className="rounded-lg border border-border bg-surface p-8">
+        <p className="text-center text-sm text-text-secondary">
+          Loading...
+        </p>
+      </div>
+    </div>
+  </div>
+)
 
 const GoogleIcon = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">

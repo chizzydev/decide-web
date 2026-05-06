@@ -6,18 +6,73 @@
 'use client'
 
 import React, { useMemo, useState } from 'react'
+import Link from 'next/link'
 import { Button, Divider } from '@/components/ui'
 import { useAgent } from '@/hooks/useAgent'
 import { matchToColour } from '@/lib/scoring'
 import type {
+  AgentPresentationAction,
   AgentAmbiguousCandidate,
   AgentPresentation,
+  AgentPresentationComparisonRow,
   AgentResponseData,
 } from '@/types/api'
 
 const formatPrice = (amount: number | null | undefined): string => {
   if (amount == null) return 'Price unavailable'
   return `₦${amount.toLocaleString('en-NG')}`
+}
+
+const getPayloadString = (
+  payload: AgentPresentationAction['payload'] | undefined,
+  key: string
+): string | undefined => {
+  const value = payload?.[key]
+  return typeof value === 'string' && value.length > 0 ? value : undefined
+}
+
+const buildCompareHref = (
+  slugA: string | undefined,
+  slugB: string | undefined
+): string => {
+  if (slugA && slugB) return `/compare/${slugA}/vs/${slugB}`
+  if (slugA) return `/compare?slug_a=${encodeURIComponent(slugA)}`
+  return '/compare'
+}
+
+const getActionHref = (action: AgentPresentationAction): string => {
+  const slug = getPayloadString(action.payload, 'slug')
+  const slugA = getPayloadString(action.payload, 'slug_a') ?? slug
+  const slugB = getPayloadString(action.payload, 'slug_b')
+
+  switch (action.type) {
+    case 'view_phone':
+      return slug ? `/phones/${slug}` : '/phones'
+    case 'check_price':
+      return slug ? `/phones/${slug}#prices` : '/phones'
+    case 'compare_phone':
+      return buildCompareHref(slugA, slugB)
+    case 'analyze_phone':
+      return slug ? `/analyze?phone=${encodeURIComponent(slug)}` : '/analyze'
+    case 'view_alternatives':
+    default:
+      return '/phones'
+  }
+}
+
+const getWinnerLabel = (
+  row: AgentPresentationComparisonRow,
+  presentation: AgentPresentation
+): string => {
+  if (row.winner === 'a') {
+    return presentation.comparison_subjects?.phone_a.name ?? 'Phone A'
+  }
+
+  if (row.winner === 'b') {
+    return presentation.comparison_subjects?.phone_b.name ?? 'Phone B'
+  }
+
+  return row.winner === 'tie' ? 'Tie' : 'No clear winner'
 }
 
 const getMatchTone = (matchPercentage: number): string => {
@@ -37,6 +92,32 @@ const isAmbiguousData = (
   data: AgentResponseData | null | undefined
 ): data is Extract<AgentResponseData, { mode: 'ambiguous' }> => {
   return Boolean(data && data.mode === 'ambiguous')
+}
+
+const buildCandidateFollowUp = (
+  data: Extract<AgentResponseData, { mode: 'ambiguous' }>,
+  candidate: AgentAmbiguousCandidate
+): string => {
+  if (data.source_mode === 'analyze') {
+    return `analyze ${candidate.name}`
+  }
+
+  if (data.source_mode === 'price') {
+    return `price of ${candidate.name}`
+  }
+
+  if (data.source_mode === 'compare') {
+    const otherPhone =
+      data.target === 'phone_a' ? data.phone_b : data.phone_a
+
+    if (otherPhone) {
+      return data.target === 'phone_a'
+        ? `compare ${candidate.name} vs ${otherPhone}`
+        : `compare ${data.phone_a} vs ${candidate.name}`
+    }
+  }
+
+  return candidate.name
 }
 
 const AgentMatchBadge = ({
@@ -141,6 +222,87 @@ const AgentAlternativeCard = ({
   )
 }
 
+const AgentComparisonSubjects = ({
+  presentation,
+}: {
+  presentation: AgentPresentation
+}) => {
+  const subjects = presentation.comparison_subjects
+  if (!subjects) return null
+
+  const items = [
+    { label: 'Phone A', subject: subjects.phone_a },
+    { label: 'Phone B', subject: subjects.phone_b },
+  ]
+
+  return (
+    <div className="grid gap-3 sm:grid-cols-2">
+      {items.map(({ label, subject }) => (
+        <div
+          key={subject.slug}
+          className="rounded-2xl border border-border bg-bg px-4 py-3"
+        >
+          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-text-muted">
+            {label}
+          </p>
+          <p className="mt-1 font-ui text-base font-semibold text-text-primary">
+            {subject.name}
+          </p>
+          <p className="mt-1 text-xs font-medium text-accent">
+            {subject.variant_label ?? 'Core tracked configuration'}
+          </p>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+const AgentMobileComparisonRows = ({
+  presentation,
+}: {
+  presentation: AgentPresentation
+}) => {
+  const rows = presentation.comparison_rows ?? []
+  if (rows.length === 0) return null
+
+  return (
+    <div className="space-y-3 sm:hidden">
+      {rows.map((row) => (
+        <div
+          key={row.label}
+          className="rounded-xl border border-border bg-bg px-4 py-3"
+        >
+          <div className="flex items-start justify-between gap-3">
+            <p className="font-medium text-text-primary">{row.label}</p>
+            <span className="shrink-0 rounded-full bg-accent/10 px-2.5 py-1 text-[11px] font-semibold text-accent">
+              {getWinnerLabel(row, presentation)}
+            </span>
+          </div>
+
+          <div className="mt-3 grid gap-2 text-sm">
+            <div className="rounded-lg bg-card px-3 py-2">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-text-muted">
+                {presentation.comparison_subjects?.phone_a.name ?? 'Phone A'}
+              </p>
+              <p className="mt-1 text-text-secondary">
+                {String(row.phone_a_value ?? 'Not available')}
+              </p>
+            </div>
+            <div className="rounded-lg bg-card px-3 py-2">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-text-muted">
+                {presentation.comparison_subjects?.phone_b.name ?? 'Phone B'}
+              </p>
+              <p className="mt-1 text-text-secondary">
+                {String(row.phone_b_value ?? 'Not available')}
+              </p>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
 const AgentPresentationView = ({
   presentation,
   text,
@@ -151,7 +313,7 @@ const AgentPresentationView = ({
   return (
     <div className="space-y-4">
       <div className="rounded-2xl border border-border bg-card p-5">
-        <div className="flex items-start justify-between gap-4">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <p className="text-xs font-medium uppercase tracking-wide text-text-muted">
               {presentation.mode}
@@ -177,6 +339,10 @@ const AgentPresentationView = ({
           )}
         </div>
       </div>
+
+      {presentation.mode === 'compare' && (
+        <AgentComparisonSubjects presentation={presentation} />
+      )}
 
       <AgentPhoneCard
         title="Primary result"
@@ -236,17 +402,24 @@ const AgentPresentationView = ({
       )}
 
       {presentation.comparison_rows && presentation.comparison_rows.length > 0 && (
-        <div className="rounded-2xl border border-border bg-card p-4 overflow-x-auto">
+        <div className="rounded-2xl border border-border bg-card p-4">
           <h3 className="font-ui text-sm font-semibold text-text-primary mb-3">
             Comparison details
           </h3>
 
+          <AgentMobileComparisonRows presentation={presentation} />
+
+          <div className="hidden overflow-x-auto sm:block">
           <table className="w-full min-w-[640px] text-sm">
             <thead>
               <tr className="text-left text-text-muted border-b border-border">
                 <th className="py-2 pr-4">Metric</th>
-                <th className="py-2 pr-4">Phone A</th>
-                <th className="py-2 pr-4">Phone B</th>
+                <th className="py-2 pr-4">
+                  {presentation.comparison_subjects?.phone_a.name ?? 'Phone A'}
+                </th>
+                <th className="py-2 pr-4">
+                  {presentation.comparison_subjects?.phone_b.name ?? 'Phone B'}
+                </th>
                 <th className="py-2 pr-4">Winner</th>
               </tr>
             </thead>
@@ -255,10 +428,10 @@ const AgentPresentationView = ({
                 <tr key={row.label} className="border-b border-border last:border-0">
                   <td className="py-3 pr-4 text-text-primary">{row.label}</td>
                   <td className="py-3 pr-4 text-text-secondary">
-                    {String(row.phone_a_value)}
+                    {String(row.phone_a_value ?? 'Not available')}
                   </td>
                   <td className="py-3 pr-4 text-text-secondary">
-                    {String(row.phone_b_value)}
+                    {String(row.phone_b_value ?? 'Not available')}
                   </td>
                   <td className="py-3 pr-4 text-text-secondary">
                     {row.winner === 'a'
@@ -273,6 +446,7 @@ const AgentPresentationView = ({
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       )}
 
@@ -281,7 +455,18 @@ const AgentPresentationView = ({
           <h3 className="font-ui text-sm font-semibold text-text-primary mb-3">
             Suggested next actions
           </h3>
-          <ul className="space-y-2 text-sm text-text-secondary">
+          <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+            {presentation.actions.map((action) => (
+              <Link
+                key={`${action.type}-${action.label}`}
+                href={getActionHref(action)}
+                className="inline-flex min-h-10 items-center justify-center rounded-full border border-border bg-bg px-4 py-2 text-sm font-semibold text-text-primary transition-colors hover:border-accent hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+              >
+                {action.label}
+              </Link>
+            ))}
+          </div>
+          <ul className="hidden space-y-2 text-sm text-text-secondary">
             {presentation.actions.map((action) => (
               <li key={`${action.type}-${action.label}`}>• {action.label}</li>
             ))}
@@ -354,8 +539,12 @@ export const AgentPanel = () => {
   const handleChooseCandidate = async (
     candidate: AgentAmbiguousCandidate
   ): Promise<void> => {
-    setMessage(candidate.name)
-    await runAgent(candidate.name)
+    const nextMessage = isAmbiguousData(responseData)
+      ? buildCandidateFollowUp(responseData, candidate)
+      : candidate.name
+
+    setMessage(nextMessage)
+    await runAgent(nextMessage)
   }
 
   return (

@@ -27,8 +27,12 @@ export interface FetchState<T> {
 // POST body for creating a price alert
 export interface CreateAlertBody {
   phone_id: number
+  variant_id?: number
   target_price: number
-  store?: 'jumia' | 'slot'
+  store?: 'jumia' | 'slot' | 'jiji'
+  nearby_deals_enabled?: boolean
+  marketplace_alerts_enabled?: boolean
+  max_above_target_percent?: number
 }
 
 // Shape returned by authenticated alert endpoints
@@ -36,18 +40,42 @@ export interface PriceAlert {
   id: number
   phone_id: number
   phone_name: string
+  phone_slug: string
+  variant_id: number | null
+  variant_label: string | null
+  variant_ram_gb: number | null
+  variant_storage_gb: number | null
   email: string
   target_price: number
-  store: 'jumia' | 'slot' | null
+  store: 'jumia' | 'slot' | 'jiji' | null
+  nearby_deals_enabled: boolean
+  marketplace_alerts_enabled: boolean
+  max_above_target_percent: number
   is_active: boolean
   triggered_at: string | null
   created_at: string
+  current_price_ngn: number | null
+  current_price_fresh_at: string | null
+}
+
+export interface AlertEntitlement {
+  plan: 'free' | 'premium'
+  label: string
+  max_active_alerts: number
+  max_creations_per_24h: number
+  min_seconds_between_creations: number
+  marketplace_alerts_enabled: boolean
+  smart_nearby_alerts_enabled: boolean
+  max_smart_notifications_per_alert_per_week: number
+  default_max_above_target_percent: number
 }
 
 // POST body for POST /compare
 export interface CompareBody {
   slug_a: string
   slug_b: string
+  left_variant_id?: number
+  right_variant_id?: number
   priorities?: {
     battery: number
     camera: number
@@ -65,12 +93,43 @@ export interface CompareRow {
   is_priority_row: boolean
 }
 
+export interface CompareSummary {
+  headline: string
+  subheadline: string
+  strengths_a: string[]
+  strengths_b: string[]
+}
+
+export interface CompareOwnershipLayer {
+  longevity_signal: import('./editorial').LongevitySignal
+  repair_support_signal: import('./editorial').RepairSupportSignal
+  resale_value_signal: import('./editorial').ResaleValueSignal
+}
+
+export interface CompareFocusedVariant {
+  id: number | null
+  label: string | null
+  ram_gb: number | null
+  storage_gb: number | null
+  is_default: boolean
+  prices: import('./phone').CurrentPrice[]
+}
+
 // Full response from POST /compare
 export interface CompareResult {
   phone_a: import('./phone').PhoneDetail
   phone_b: import('./phone').PhoneDetail
   rows: CompareRow[]
   overall_winner: string | null
+  summary: CompareSummary
+  ownership: {
+    phone_a: CompareOwnershipLayer
+    phone_b: CompareOwnershipLayer
+  }
+  focused_variants: {
+    phone_a: CompareFocusedVariant
+    phone_b: CompareFocusedVariant
+  }
 }
 
 // ── Agent / AI Assistant ──────────────────────────────────────
@@ -125,6 +184,12 @@ export interface AgentPresentationComparisonRow {
   is_priority_row: boolean
 }
 
+export interface AgentPresentationComparisonSubject {
+  name: string
+  slug: string
+  variant_label: string | null
+}
+
 export interface AgentPresentation {
   mode: 'recommend' | 'analyze' | 'compare' | 'lookup'
   title: string
@@ -136,6 +201,10 @@ export interface AgentPresentation {
   tradeoffs: string[]
   primary_phone?: AgentPresentationPhoneItem
   alternatives: AgentPresentationPhoneItem[]
+  comparison_subjects?: {
+    phone_a: AgentPresentationComparisonSubject
+    phone_b: AgentPresentationComparisonSubject
+  }
   comparison_rows?: AgentPresentationComparisonRow[]
   actions: AgentPresentationAction[]
 }
@@ -157,7 +226,10 @@ export interface AgentSuccessData {
 export interface AgentAmbiguousData {
   mode: 'ambiguous'
   query: string
+  source_mode?: 'lookup' | 'analyze' | 'price' | 'compare'
   target?: 'phone_a' | 'phone_b'
+  phone_a?: string
+  phone_b?: string
   candidates: AgentAmbiguousCandidate[]
 }
 

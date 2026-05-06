@@ -16,12 +16,14 @@ const NAV_LINKS = [
   { href: '/analyze', label: 'Analyze' },
   { href: '/compare', label: 'Compare' },
   { href: '/alerts',  label: 'Alerts'  },
-  { href: '/saved',   label: 'Saved'   },
+  { href: '/saved',   label: 'Watchlist' },
 ]
 
 export const Navbar = () => {
   const pathname          = usePathname()
   const { data: session } = useSession()
+  const hideSearchOnPhonesBrowse = pathname === '/phones'
+  const isAssistantRoute = pathname.startsWith('/assistant')
 
   const [scrolled,      setScrolled]      = useState(false)
   const [searchQuery,   setSearchQuery]   = useState('')
@@ -87,6 +89,17 @@ export const Navbar = () => {
     }
   }, [userMenuOpen])
 
+  useEffect(() => {
+    if (!userMenuOpen) return
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setUserMenuOpen(false)
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [userMenuOpen])
+
   const clearSearch = (): void => {
     setSearchQuery('')
     setSearchResults([])
@@ -138,56 +151,60 @@ export const Navbar = () => {
         </div>
 
         {/* Search */}
-        <div className="flex-1 relative max-w-sm ml-auto">
-          <Input
-            placeholder="Search phones..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            fullWidth
-            leadingIcon={<SearchIcon />}
-            trailing={
-              searchQuery ? (
-                <button
-                  onClick={clearSearch}
-                  className="text-slate-400 hover:text-text-primary transition-colors duration-fast"
-                  aria-label="Clear search"
-                >
-                  <ClearIcon />
-                </button>
-              ) : null
-            }
-            aria-label="Search phones"
-            aria-expanded={searchOpen}
-            aria-controls="search-dropdown"
-            aria-autocomplete="list"
-          />
-          {searchOpen && (
-            <div
-              id="search-dropdown"
-              role="listbox"
-              className="absolute top-full left-0 right-0 mt-1 bg-surface border border-border rounded-md shadow-md z-dropdown overflow-hidden"
-            >
-              {searchLoading ? (
-                <div className="px-4 py-3 text-sm text-slate-400">Searching...</div>
-              ) : (
-                searchResults.map((phone) => (
-                  <Link
-                    key={phone.slug}
-                    href={`/phones/${phone.slug}`}
-                    role="option"
-                    aria-selected="false"
-                    className="flex items-center gap-3 px-4 py-2.5 hover:bg-tealTint transition-colors duration-fast border-b border-border last:border-0"
+        {hideSearchOnPhonesBrowse ? (
+          <div className="flex-1" />
+        ) : (
+          <div className="flex-1 relative max-w-sm ml-auto">
+            <Input
+              placeholder="Search phones..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              fullWidth
+              leadingIcon={<SearchIcon />}
+              trailing={
+                searchQuery ? (
+                  <button
+                    onClick={clearSearch}
+                    className="text-slate-400 hover:text-text-primary transition-colors duration-fast"
+                    aria-label="Clear search"
                   >
-                    <div className="min-w-0">
-                      <p className="text-sm font-semibold text-text-primary truncate">{phone.name}</p>
-                      <p className="text-xs text-slate-400">{phone.brand_name}</p>
-                    </div>
-                  </Link>
-                ))
-              )}
-            </div>
-          )}
-        </div>
+                    <ClearIcon />
+                  </button>
+                ) : null
+              }
+              aria-label="Search phones"
+              aria-expanded={searchOpen}
+              aria-controls="search-dropdown"
+              aria-autocomplete="list"
+            />
+            {searchOpen && (
+              <div
+                id="search-dropdown"
+                role="listbox"
+                className="absolute left-0 right-0 top-full z-dropdown mt-1 max-h-[min(24rem,calc(100vh-8rem))] overflow-y-auto rounded-md border border-border bg-surface shadow-md"
+              >
+                {searchLoading ? (
+                  <div className="px-4 py-3 text-sm text-slate-400">Searching...</div>
+                ) : (
+                  searchResults.map((phone) => (
+                    <Link
+                      key={phone.slug}
+                      href={`/phones/${phone.slug}`}
+                      role="option"
+                      aria-selected="false"
+                      className="flex items-center gap-3 px-4 py-2.5 hover:bg-tealTint transition-colors duration-fast border-b border-border last:border-0"
+                    >
+                      <div className="min-w-0">
+                        <p className="text-sm font-semibold text-text-primary truncate">{phone.name}</p>
+                        <p className="text-xs text-slate-400">{phone.brand_name}</p>
+                      </div>
+                    </Link>
+                  ))
+                )}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* ── Desktop auth (sm and above) ── */}
         <div className="hidden sm:flex items-center gap-2 shrink-0">
@@ -206,7 +223,15 @@ export const Navbar = () => {
                 </span>
                 <ChevronIcon />
               </button>
-              {userMenuOpen && <UserDropdown session={session} onSignOut={() => signOut({ callbackUrl: '/' })} />}
+              {userMenuOpen && (
+                <div className="absolute right-0 top-full z-dropdown mt-2 w-[min(16rem,calc(100vw-2rem))]">
+                  <UserDropdown
+                    session={session}
+                    onClose={() => setUserMenuOpen(false)}
+                    onSignOut={() => signOut({ callbackUrl: '/' })}
+                  />
+                </div>
+              )}
             </div>
           ) : (
             <>
@@ -227,7 +252,7 @@ export const Navbar = () => {
         </div>
 
         {/* ── Mobile auth icon (visible only below sm) ── */}
-        <div className="sm:hidden shrink-0" ref={userMenuRef}>
+        <div className="relative sm:hidden shrink-0" ref={userMenuRef}>
           {session ? (
             <>
               <button
@@ -238,9 +263,43 @@ export const Navbar = () => {
                 {initials}
               </button>
               {userMenuOpen && (
-                <div className="absolute right-4 top-14 w-52 bg-surface border border-border rounded-md shadow-md z-dropdown overflow-hidden">
-                  <UserDropdown session={session} onSignOut={() => signOut({ callbackUrl: '/' })} />
-                </div>
+                <>
+                  <button
+                    type="button"
+                    className="fixed inset-0 z-modal bg-black/30"
+                    aria-label="Close account menu"
+                    onClick={() => setUserMenuOpen(false)}
+                  />
+                  <div
+                    className="fixed inset-x-3 bottom-20 z-modal max-h-[calc(100vh-7rem)] overflow-y-auto rounded-[28px] border border-border bg-surface shadow-2xl"
+                    role="dialog"
+                    aria-modal="true"
+                    aria-label="Account menu"
+                  >
+                    <div className="flex items-center justify-between border-b border-border px-5 py-4">
+                      <div className="min-w-0">
+                        <p className="text-sm font-bold text-text-primary truncate">
+                          {session.user.name ?? 'Account'}
+                        </p>
+                        <p className="text-xs text-text-muted truncate">{session.user.email}</p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setUserMenuOpen(false)}
+                        className="ml-3 rounded-full border border-border px-3 py-1 text-xs font-bold text-text-secondary"
+                      >
+                        Close
+                      </button>
+                    </div>
+                    <UserDropdown
+                      session={session}
+                      onClose={() => setUserMenuOpen(false)}
+                      onSignOut={() => signOut({ callbackUrl: '/' })}
+                      compact
+                      hideIdentity
+                    />
+                  </div>
+                </>
               )}
             </>
           ) : (
@@ -254,12 +313,22 @@ export const Navbar = () => {
         </div>
 
         {/* Get Advice CTA — desktop only */}
-        <Link
-          href="/assistant"
-          className="hidden lg:inline-flex items-center gap-1.5 h-9 px-5 rounded-md shrink-0 bg-accent text-white text-sm font-bold shadow-accent hover:bg-accent-hover transition-colors duration-fast"
-        >
-          Get Advice
-        </Link>
+        {isAssistantRoute ? (
+          <span
+            className="hidden h-9 shrink-0 cursor-default items-center gap-1.5 rounded-md bg-surfaceHigh px-5 text-sm font-bold text-text-muted lg:inline-flex"
+            aria-current="page"
+            aria-disabled="true"
+          >
+            Get Advice
+          </span>
+        ) : (
+          <Link
+            href="/assistant"
+            className="hidden h-9 shrink-0 items-center gap-1.5 rounded-md bg-accent px-5 text-sm font-bold text-white shadow-accent transition-colors duration-fast hover:bg-accent-hover lg:inline-flex"
+          >
+            Get Advice
+          </Link>
+        )}
 
       </nav>
     </header>
@@ -270,36 +339,49 @@ export const Navbar = () => {
 
 const UserDropdown = ({
   session,
+  onClose,
   onSignOut,
+  compact = false,
+  hideIdentity = false,
 }: {
   session: any
+  onClose?: () => void
   onSignOut: () => void
+  compact?: boolean
+  hideIdentity?: boolean
 }) => (
-  <div className="w-52 bg-surface border border-border rounded-md shadow-md overflow-hidden">
-    <div className="px-4 py-3 border-b border-border">
-      <p className="text-xs font-semibold text-text-primary truncate">
-        {session.user.name ?? 'Account'}
-      </p>
-      <p className="text-xs text-slate-400 truncate">{session.user.email}</p>
-    </div>
-    <Link href="/account" className="flex items-center gap-2 px-4 py-2.5 text-sm text-text-secondary hover:bg-tealTint transition-colors duration-fast">
+  <div
+    className={[
+      'overflow-hidden bg-surface',
+      compact ? 'w-full rounded-xl border-0 shadow-none' : 'w-full rounded-xl border border-border shadow-lg',
+    ].join(' ')}
+  >
+    {!hideIdentity && (
+      <div className="border-b border-border px-4 py-3">
+        <p className="text-xs font-semibold text-text-primary truncate">
+          {session.user.name ?? 'Account'}
+        </p>
+        <p className="text-xs text-slate-400 truncate">{session.user.email}</p>
+      </div>
+    )}
+    <Link href="/account" onClick={onClose} className="flex items-center gap-2 px-5 py-4 text-sm font-semibold text-text-secondary transition-colors duration-fast hover:bg-tealTint sm:px-4 sm:py-3">
       My Account
     </Link>
-    <Link href="/saved" className="flex items-center gap-2 px-4 py-2.5 text-sm text-text-secondary hover:bg-tealTint transition-colors duration-fast">
-      Saved Phones
+    <Link href="/saved" onClick={onClose} className="flex items-center gap-2 px-5 py-4 text-sm font-semibold text-text-secondary transition-colors duration-fast hover:bg-tealTint sm:px-4 sm:py-3">
+      Watchlist
     </Link>
-    <Link href="/alerts" className="flex items-center gap-2 px-4 py-2.5 text-sm text-text-secondary hover:bg-tealTint transition-colors duration-fast">
+    <Link href="/alerts" onClick={onClose} className="flex items-center gap-2 px-5 py-4 text-sm font-semibold text-text-secondary transition-colors duration-fast hover:bg-tealTint sm:px-4 sm:py-3">
       My Alerts
     </Link>
     {session.user.role === 'admin' && (
-      <Link href="/admin" className="flex items-center gap-2 px-4 py-2.5 text-sm text-accent font-semibold hover:bg-tealTint transition-colors duration-fast">
+      <Link href="/admin" onClick={onClose} className="flex items-center gap-2 px-5 py-4 text-sm font-semibold text-accent transition-colors duration-fast hover:bg-tealTint sm:px-4 sm:py-3">
         Admin Dashboard
       </Link>
     )}
     <div className="border-t border-border">
       <button
         onClick={onSignOut}
-        className="w-full text-left px-4 py-2.5 text-sm text-slate-500 hover:bg-surfaceHigh hover:text-text-primary transition-colors duration-fast"
+        className="w-full px-5 py-4 text-left text-sm font-semibold text-slate-500 transition-colors duration-fast hover:bg-surfaceHigh hover:text-text-primary sm:px-4 sm:py-3"
       >
         Sign out
       </button>

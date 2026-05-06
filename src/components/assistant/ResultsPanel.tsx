@@ -19,25 +19,12 @@ import { useAssistant } from '@/hooks/useAssistant'
 import { Button, Badge, Spinner, Divider } from '@/components/ui'
 import { PriceDisplay } from '@/components/shared'
 import { ScoreBarGroup } from '@/components/phone'
+import { mapToComparePhone } from '@/lib/compareContext'
 import { useCompareStore } from '@/store/compareStore'
 import { formatMatchLabel, formatNaira } from '@/lib/formatters'
 import { matchToColour, sortByScore } from '@/lib/scoring'
 import { MustCheckToggle } from '@/components/phone/MustCheckToggle'
-import type {
-  ComparePhone,
-  PriorityWeights,
-  RecommendationResult,
-  ScoredPhone,
-} from '@/types'
-
-const mapScoredPhoneToComparePhone = (phone: ScoredPhone): ComparePhone => ({
-  id: phone.phone_id,
-  slug: phone.slug,
-  name: phone.name,
-  image_url: phone.image_url,
-  brand_name: phone.brand_name,
-  os_type: phone.os_type,
-})
+import type { PriorityWeights, RecommendationResult, ScoredPhone } from '@/types'
 
 const getPrimaryDisplayPrice = (phone: ScoredPhone): number | null => {
   return phone.lowest_price_ngn ?? null
@@ -531,7 +518,17 @@ const ResultCard = ({ phone, rank, priorities, result }: ResultCardProps) => {
     if (isInTray) {
       removePhone(phone.slug)
     } else {
-      addPhone(mapScoredPhoneToComparePhone(phone))
+      addPhone(
+        mapToComparePhone({
+          id: phone.phone_id,
+          slug: phone.slug,
+          name: phone.name,
+          image_url: phone.image_url,
+          brand_name: phone.brand_name,
+          os_type: phone.os_type,
+          prices: phone.prices,
+        })
+      )
     }
   }
 

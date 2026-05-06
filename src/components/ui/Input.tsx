@@ -28,8 +28,8 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
     },
     ref
   ) => {
-    // Generate a stable ID for label association if none is provided
-    const inputId = id ?? `input-${props.name ?? Math.random().toString(36).slice(2)}`
+    const generatedId = React.useId()
+    const inputId = id ?? props.name ?? generatedId
 
     const hasError = !!error
 

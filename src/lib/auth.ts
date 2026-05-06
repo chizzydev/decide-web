@@ -28,6 +28,8 @@ type BackendAuthResponse = {
   refresh_token_expires_at: string
 }
 
+const REFRESH_RETRY_BACKOFF_MS = 5_000
+
 const readBackendSession = async (
   path: '/api/v1/mobile-auth/login' | '/api/v1/mobile-auth/google' | '/api/v1/mobile-auth/refresh',
   body: Record<string, unknown>
@@ -141,6 +143,7 @@ export const authOptions: NextAuthOptions = {
           : undefined
         token.googleIdToken = user.googleIdToken
         token.backendAuthError = undefined
+        token.backendRefreshRetryAt = undefined
       }
 
       if (trigger === 'update' && updateData) {
@@ -167,6 +170,14 @@ export const authOptions: NextAuthOptions = {
         token.backendAccessTokenExpiresAt = undefined
         token.backendRefreshTokenExpiresAt = undefined
         token.backendAuthError = 'RefreshTokenExpired'
+        token.backendRefreshRetryAt = undefined
+        return token
+      }
+
+      if (
+        token.backendRefreshRetryAt &&
+        Date.now() < token.backendRefreshRetryAt
+      ) {
         return token
       }
 
@@ -175,11 +186,8 @@ export const authOptions: NextAuthOptions = {
       })
 
       if (!refreshed) {
-        token.backendAccessToken = undefined
-        token.backendRefreshToken = undefined
-        token.backendAccessTokenExpiresAt = undefined
-        token.backendRefreshTokenExpiresAt = undefined
         token.backendAuthError = 'RefreshAccessTokenError'
+        token.backendRefreshRetryAt = Date.now() + REFRESH_RETRY_BACKOFF_MS
         return token
       }
 
@@ -193,6 +201,7 @@ export const authOptions: NextAuthOptions = {
       token.backendAccessTokenExpiresAt = Date.parse(refreshed.access_token_expires_at)
       token.backendRefreshTokenExpiresAt = Date.parse(refreshed.refresh_token_expires_at)
       token.backendAuthError = undefined
+      token.backendRefreshRetryAt = undefined
 
       return token
     },

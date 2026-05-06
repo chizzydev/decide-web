@@ -1,34 +1,23 @@
 // decide-web/src/components/phone/MustCheckToggle.tsx
 //
-// "Must Check Before You Buy" — collapsed by default.
-// Renders iPhone-specific or Android-specific buyer intelligence based on
-// the phone's os_type and brand.
-//
-// Used on:
-//   - Every recommendation result card (ResultsPanel)
-//   - Every phone detail page (phones/[slug]/page.tsx)
-//
-// No API calls — all content is static, written directly here.
-// Content is the distilled, honest truth about the Nigerian used phone market.
+// Shared used-phone inspection guide. This component appears on phone detail,
+// used guide, analyzer, and recommendation result surfaces.
 
 'use client'
 
 import React, { useState } from 'react'
 
-// ── Types ──────────────────────────────────────────────────────────────────────
-
 interface MustCheckToggleProps {
-  os_type:    'ios' | 'android'
-  brand_name: string  // e.g. "Apple", "Samsung", "Tecno"
-  // Phone-specific context — only used to conditionally show model-specific warnings
-  phone_name?: string // e.g. "iPhone 14 Pro Max"
+  os_type: 'ios' | 'android'
+  brand_name: string
+  phone_name?: string
 }
 
-// ── Sub-components ─────────────────────────────────────────────────────────────
+type SafetyTone = 'safe' | 'caution' | 'danger'
 
 const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
   <div className="space-y-2">
-    <h4 className="text-xs font-bold text-text-primary uppercase tracking-wide">
+    <h4 className="text-xs font-bold uppercase tracking-wide text-text-primary">
       {title}
     </h4>
     {children}
@@ -44,9 +33,19 @@ const CheckItem = ({
   text: string
   warning?: boolean
 }) => (
-  <div className={`flex items-start gap-2 text-xs ${warning ? 'text-amber-700' : 'text-text-secondary'}`}>
-    <span className={`flex-shrink-0 font-bold mt-0.5 ${warning ? 'text-amber-500' : 'text-text-muted'}`}>
-      {step ? `${step}.` : '•'}
+  <div
+    className={[
+      'flex items-start gap-2 text-xs',
+      warning ? 'text-amber-700' : 'text-text-secondary',
+    ].join(' ')}
+  >
+    <span
+      className={[
+        'mt-0.5 shrink-0 font-bold',
+        warning ? 'text-amber-500' : 'text-text-muted',
+      ].join(' ')}
+    >
+      {step ? `${step}.` : '-'}
     </span>
     <span className="leading-snug">{text}</span>
   </div>
@@ -59,27 +58,32 @@ const TermRow = ({
 }: {
   term: string
   verdict: string
-  safe: 'safe' | 'caution' | 'danger'
+  safe: SafetyTone
 }) => {
-  const colour = {
-    safe:    'bg-emerald-50 text-emerald-700 border-emerald-200',
-    caution: 'bg-amber-50  text-amber-700  border-amber-200',
-    danger:  'bg-red-50    text-red-700    border-red-200',
-  }[safe]
+  const colour: Record<SafetyTone, string> = {
+    safe: 'border-emerald-200 bg-emerald-50 text-emerald-700',
+    caution: 'border-amber-200 bg-amber-50 text-amber-700',
+    danger: 'border-red-200 bg-red-50 text-red-700',
+  }
 
-  const dot = {
-    safe:    'bg-emerald-500',
+  const dot: Record<SafetyTone, string> = {
+    safe: 'bg-emerald-500',
     caution: 'bg-amber-500',
-    danger:  'bg-red-500',
-  }[safe]
+    danger: 'bg-red-500',
+  }
 
   return (
-    <div className="flex items-start gap-2 py-1.5 border-b border-surface last:border-0">
-      <div className={`flex-shrink-0 mt-1 w-2 h-2 rounded-full ${dot}`} />
-      <div className="flex-1 min-w-0">
+    <div className="flex items-start gap-2 border-b border-surface py-1.5 last:border-0">
+      <div className={['mt-1 h-2 w-2 shrink-0 rounded-full', dot[safe]].join(' ')} />
+      <div className="min-w-0 flex-1">
         <span className="text-xs font-semibold text-text-primary">{term}</span>
-        <span className="text-xs text-text-muted"> — </span>
-        <span className={`inline-block text-xs px-1.5 py-0.5 rounded border font-medium ${colour}`}>
+        <span className="text-xs text-text-muted"> - </span>
+        <span
+          className={[
+            'inline-block rounded border px-1.5 py-0.5 text-xs font-medium',
+            colour[safe],
+          ].join(' ')}
+        >
           {verdict}
         </span>
       </div>
@@ -87,239 +91,346 @@ const TermRow = ({
   )
 }
 
-// ── iPhone content ─────────────────────────────────────────────────────────────
-
-const IphoneContent = ({ phone_name }: { phone_name?: string }) => {
-  // Detect iPhone 12+ for MagSafe check and iPhone 14+ for physical SIM warning
-  const modelNumber = phone_name ? parseInt(phone_name.replace(/\D+/g, '').slice(0, 2)) : 0
-  const isMagSafeEra  = modelNumber >= 12
-  const isEsimEra     = modelNumber >= 14
-  const isBrandNewEra = modelNumber >= 16
-
-  return (
-    <div className="space-y-4">
-
-      {/* Terms decoder */}
-      <Section title="What sellers say — what it means">
-        <div className="rounded-lg border border-surface overflow-hidden">
-          <TermRow term="Brand new non-active"          verdict="Safe — best option"                                        safe="safe"    />
-          <TermRow term="Brand new active"              verdict="Safe — slightly lower resale value"                        safe="safe"    />
-          <TermRow term="UK used"                       verdict="Risky — verify thoroughly"                                 safe="caution" />
-          <TermRow term="US used"                       verdict="Risky — check eSIM situation first"                       safe="caution" />
-          <TermRow term="LLA / LL/A (US variant)"       verdict={isEsimEra ? "eSIM only — physical SIM = converted, walk away" : "Check eSIM situation"}  safe={isEsimEra ? "danger" : "caution"} />
-          <TermRow term="HK/A (Hong Kong)"              verdict="Dual physical SIM — generally safe"                       safe="safe"    />
-          <TermRow term="CH/A (China)"                  verdict="Dual SIM, no eSIM, cheaper but lower resale"              safe="caution" />
-          <TermRow term="ZA/A (South Africa)"           verdict="Dual SIM, designed for Africa — good for Nigeria"         safe="safe"    />
-          <TermRow term="TRA/A (Middle East)"           verdict="Check carrier lock before buying"                         safe="caution" />
-          <TermRow term="Refurbished"                   verdict="Not necessarily bad — must be disclosed honestly"         safe="caution" />
-          <TermRow term="Converted"                     verdict="Walk away"                                                 safe="danger"  />
-          <TermRow term="Locked"                        verdict="Walk away unless carrier is confirmed"                    safe="danger"  />
-        </div>
-      </Section>
-
-      {/* Model-specific red flags */}
-      {(isEsimEra || isMagSafeEra || isBrandNewEra) && (
-        <Section title="Red flags for this model">
-          {isEsimEra && (
-            <CheckItem
-              warning
-              text={`iPhone 14 and newer have no physical SIM tray in the US model. If you see a SIM tray on a LL/A variant — it has been physically converted. Walk away.`}
-            />
-          )}
-          {isMagSafeEra && (
-            <CheckItem
-              warning
-              text="Test MagSafe before paying. Hold a magnet near the back — if it doesn't stick cleanly, the battery or back glass has been tampered with."
-            />
-          )}
-          {isBrandNewEra && (
-            <CheckItem
-              warning
-              text="iPhone 16 and 17 are the only models where genuine brand new stock exists in Nigeria. Any seller claiming 'brand new' for older models is lying."
-            />
-          )}
-        </Section>
-      )}
-
-      {/* 5 steps */}
-      <Section title="5 steps before paying">
-        <div className="space-y-2">
-          <CheckItem step={1} text="Dial *#06# — write down the IMEI. Match it to the box and the sticker inside the SIM tray." />
-          <CheckItem step={2} text="Go to checkcoverage.apple.com — enter the serial number from Settings → General → About. Check activation date and warranty status." />
-          <CheckItem step={3} text="Settings → General → About — check model number. LL/A ending + physical SIM slot = converted. Walk away." />
-          {isMagSafeEra && (
-            <CheckItem step={4} text="Test MagSafe — hold a small magnet near the back. No stick = tampered battery or back glass. Walk away." />
-          )}
-          <CheckItem step={isMagSafeEra ? 5 : 4} text="Ask seller to factory reset in front of you and get to the 'Hello' activation screen. If it asks for an Apple ID — the phone is still linked. Do not buy." />
-        </div>
-      </Section>
-
-      {/* Power tools */}
-      <Section title="Power tools (if you're serious)">
-        <CheckItem text="imeipro.info — paste the IMEI to check stolen status and full history." />
-        <CheckItem text="3uTools (Windows app) — connects via USB, shows full hardware report including replaced screen, battery, and back glass. Almost unknown in Nigeria but extremely powerful. Free." />
-        <CheckItem text="checkcoverage.apple.com — Apple's own tool. The most reliable source of warranty and activation status." />
-      </Section>
-
-    </div>
-  )
+const getModelNumber = (phoneName?: string): number => {
+  if (!phoneName) return 0
+  const match = phoneName.match(/\b(\d{2})\b/)
+  return match ? Number(match[1]) : 0
 }
 
-// ── Samsung content ────────────────────────────────────────────────────────────
+const brandKey = (value: string): string => value.toLowerCase().trim()
 
-const SamsungContent = ({ phone_name }: { phone_name?: string }) => {
-  // Detect old S-series that's out of production
-  const nameUpper = phone_name?.toUpperCase() ?? ''
-  const isOldS = /S(10|20|21|22)\b/.test(nameUpper)
+const IphoneContent = ({ phone_name }: { phone_name?: string }) => {
+  const modelNumber = getModelNumber(phone_name)
+  const isMagSafeEra = modelNumber >= 12
+  const isUsEsimEra = modelNumber >= 14
+  const isOlderIphone = modelNumber > 0 && modelNumber <= 13
 
   return (
     <div className="space-y-4">
+      <Section title="What sellers say - what it means">
+        <div className="overflow-hidden rounded-lg border border-surface">
+          <TermRow
+            term="Brand new, not activated"
+            verdict="Best case, but verify serial and activation yourself"
+            safe="safe"
+          />
+          <TermRow
+            term="Brand new, activated"
+            verdict="Can be fine, but warranty clock may already be running"
+            safe="caution"
+          />
+          <TermRow
+            term="UK used / US used"
+            verdict="Condition matters more than the country label"
+            safe="caution"
+          />
+          <TermRow
+            term="LL/A or US model"
+            verdict={isUsEsimEra ? 'US iPhone 14+ is eSIM-only; SIM tray is a red flag' : 'Check lock status and SIM behavior'}
+            safe={isUsEsimEra ? 'danger' : 'caution'}
+          />
+          <TermRow
+            term="ZP/A or Hong Kong stock"
+            verdict="Often dual physical SIM; still verify IMEI and condition"
+            safe="safe"
+          />
+          <TermRow
+            term="CH/A or China stock"
+            verdict="Usually dual SIM and no eSIM; resale can be lower"
+            safe="caution"
+          />
+          <TermRow
+            term="ZA/A or Africa stock"
+            verdict="Usually easier for Nigerian SIM use"
+            safe="safe"
+          />
+          <TermRow
+            term="Refurbished"
+            verdict="Only acceptable if the seller says exactly what changed"
+            safe="caution"
+          />
+          <TermRow
+            term="Converted / panel changed / Face ID not working"
+            verdict="Walk away unless you truly know what you are buying"
+            safe="danger"
+          />
+          <TermRow
+            term="Locked / bypassed / owner will remove iCloud later"
+            verdict="Do not pay"
+            safe="danger"
+          />
+        </div>
+      </Section>
 
-      <Section title="Samsung-specific checks">
+      <Section title="Before you pay">
         <div className="space-y-2">
           <CheckItem
             step={1}
-            text="Dial *#0#* — the Samsung diagnostic screen opens immediately. Nothing happens = fake phone."
+            text="Open Settings > General > About. Match model number, serial, IMEI, storage, and SIM status with what the seller advertised."
           />
           <CheckItem
             step={2}
-            text="Settings → About Phone → Software Information → Knox Warranty Void. If it says '1' — the bootloader has been tampered with. Walk away."
+            text="Check coverage.apple.com with the serial number. Treat older 'brand new' claims as old stock unless activation and warranty details make sense."
           />
           <CheckItem
             step={3}
-            text="Open Samsung Members app — it auto-detects if the device is genuine Samsung hardware. If it doesn't recognise the device, it isn't real."
+            text="Check Battery Health. Below 80% is not automatic rejection, but the price should clearly reflect a battery replacement soon."
           />
           <CheckItem
             step={4}
-            text="Check IMEI — dial *#06#, match IMEI1 to the box, then verify on imei.info for stolen status and country of purchase."
+            text="Test Face ID, True Tone, cameras, flash, speakers, microphone, earpiece, charging port, Wi-Fi, Bluetooth, hotspot, and both volume buttons."
           />
           <CheckItem
             step={5}
-            warning
-            text="Knox Guard warning — if the IMEI check shows Knox Guard active, the device can be remotely locked by the original buyer (usually a corporate buyer or carrier). Do not buy."
+            text="Ask for a full erase in front of you and reach the Hello screen. If Activation Lock appears, do not buy."
           />
         </div>
       </Section>
 
-      {isOldS && (
-        <Section title="Red flag for this model">
-          <CheckItem
-            warning
-            text={`The ${phone_name ?? 'S-series model'} is no longer in production. Any seller calling it 'brand new' is lying. Only buy used with proper verification.`}
-          />
+      {(isUsEsimEra || isMagSafeEra || isOlderIphone) && (
+        <Section title="Model-specific checks">
+          {isUsEsimEra ? (
+            <CheckItem
+              warning
+              text="For US iPhone 14 and newer models, there should be no physical SIM tray. A tray on an LL/A unit usually means the body was modified."
+            />
+          ) : null}
+          {isMagSafeEra ? (
+            <CheckItem
+              warning
+              text="Test MagSafe with a real MagSafe charger or accessory. Weak alignment can point to back-glass or internal repair issues."
+            />
+          ) : null}
+          {isOlderIphone ? (
+            <CheckItem
+              warning
+              text="For iPhone 11, 12, or 13, condition is the deal. A clean unit is fine; a cheap one with weak battery, broken Face ID, or display history is not a bargain."
+            />
+          ) : null}
         </Section>
       )}
 
-      <Section title="Gray market reality for Samsung in Nigeria">
-        <CheckItem text="Most Samsung A-series sold in Nigeria are South African or Asian stock. This is generally fine — the hardware is identical. The gray market risk mainly affects warranty claims." />
-        <CheckItem text="Samsung Nigeria has service centres in Lagos (Victoria Island and Ikeja) and Abuja. For any Samsung, confirm you're within reach of a service centre before buying." />
+      <Section title="Useful tools">
+        <CheckItem text="Apple Coverage is the official warranty and activation check." />
+        <CheckItem text="3uTools can reveal battery cycles and some replaced parts, but use it as a helpful signal, not the only proof." />
+        <CheckItem text="IMEI/history sites can help, but they are third-party tools. Still insist on physical checks before paying." />
       </Section>
-
     </div>
   )
 }
 
-// ── Generic Android content (all other brands) ────────────────────────────────
+const SamsungContent = ({ phone_name }: { phone_name?: string }) => {
+  const nameUpper = phone_name?.toUpperCase() ?? ''
+  const isOlderS = /S(10|20|21|22)\b/.test(nameUpper)
 
-const AndroidContent = ({ brand_name }: { brand_name: string }) => (
+  return (
+    <div className="space-y-4">
+      <Section title="Samsung checks">
+        <div className="space-y-2">
+          <CheckItem
+            step={1}
+            text="Run Samsung Members diagnostics for screen, touch, camera, speaker, microphone, sensors, charging, and battery."
+          />
+          <CheckItem
+            step={2}
+            text="Dial *#0#* if available. Some carrier or region builds may block it, so use Samsung Members as the backup check."
+          />
+          <CheckItem
+            step={3}
+            text="Check Settings > About phone > Software information. Knox Warranty Void 0x1 means the security fuse has been tripped."
+          />
+          <CheckItem
+            step={4}
+            text="Inspect the display on white, grey, and black screens for green lines, burn-in, dead pixels, and touch dead zones."
+          />
+          <CheckItem
+            step={5}
+            text="Check IMEI, region, and network behavior with your SIM. Do not rely on the box alone."
+            warning
+          />
+        </div>
+      </Section>
+
+      {isOlderS ? (
+        <Section title="Older S-series warning">
+          <CheckItem
+            warning
+            text={`${phone_name ?? 'This S-series model'} should be treated as used or old stock. Be suspicious of a casual 'brand new' claim unless warranty and activation proof are clean.`}
+          />
+        </Section>
+      ) : null}
+
+      <Section title="Samsung Nigeria reality">
+        <CheckItem text="Samsung parts and technicians are easier to find than most Android brands, but warranty depends on region, seller, and invoice." />
+        <CheckItem text="For A-series and older flagships, display quality is the big money risk. Price a possible screen repair before you pay." />
+      </Section>
+    </div>
+  )
+}
+
+const TranssionContent = ({ brand_name }: { brand_name: string }) => (
   <div className="space-y-4">
-
-    <Section title="Before you pay">
-      <div className="space-y-2">
-        <CheckItem step={1} text="Dial *#06# — write down the IMEI, match it to the box." />
-        <CheckItem step={2} text="Check IMEI on imei.info — verify it's not reported stolen and check the country of purchase." />
-        <CheckItem step={3} text="Ask the seller to boot the phone from completely powered off in front of you. Reluctance = red flag." />
-        <CheckItem step={4} text="Test every port and button — charging port, volume buttons, power button, headphone jack if present." />
-        <CheckItem step={5} warning text="If the price is too good to be true, it almost certainly is. In the Nigerian market, a ₦10k discount is normal. A ₦30k+ discount on an identical listing elsewhere means something is wrong." />
-      </div>
+    <AndroidCoreChecks />
+    <Section title={`${brand_name}-specific`}>
+      <CheckItem text="Tecno, Infinix, and Itel usually have better local repair reach through the Transsion/Carlcare ecosystem." />
+      <CheckItem text="Check charging speed, speaker loudness, touch response, camera focus, and battery drain. These matter more than benchmark talk in this price range." />
+      <CheckItem text="For Phantom, GT, Note, and higher-end models, confirm exact variant, RAM/storage, and region before comparing prices." warning />
     </Section>
-
-    {/* Brand-specific notes for brands with known issues */}
-    {brand_name.toLowerCase() === 'tecno' && (
-      <Section title="Tecno-specific">
-        <CheckItem text="Tecno has official service centres across Nigeria (Lagos, Abuja, PH, Kano). Parts are widely available. Good after-sales for budget phones." />
-        <CheckItem text="Phantom series has gray market stock. Camon and Spark are mostly officially distributed — lower risk." />
-      </Section>
-    )}
-
-    {brand_name.toLowerCase() === 'infinix' && (
-      <Section title="Infinix-specific">
-        <CheckItem text="Infinix and Tecno are both Transsion brands — same service centre network. Parts readily available across Nigeria." />
-        <CheckItem text="Zero and GT series are more likely to be gray market than Smart and Hot series." />
-      </Section>
-    )}
-
-    {brand_name.toLowerCase() === 'xiaomi' || brand_name.toLowerCase() === 'redmi' ? (
-      <Section title="Xiaomi / Redmi-specific">
-        <CheckItem warning text="Xiaomi has no official presence in Nigeria. All stock is gray market. Parts availability is fair in Lagos, poor outside major cities." />
-        <CheckItem text="Global ROM vs China ROM matters — China ROM has less Google integration. Ask the seller which ROM is installed, or check Settings → About Phone → MIUI version." />
-        <CheckItem text="Mi Flash Unlock — if the bootloader is unlocked (check in Settings → About → MIUI), custom ROM may be installed. Verify with the seller." />
-      </Section>
-    ) : null}
-
-    {(brand_name.toLowerCase() === 'oneplus') && (
-      <Section title="OnePlus-specific">
-        <CheckItem warning text="OnePlus has no official service centres in Nigeria. Gray market only. Repairs require sending to Lagos specialists or third-party shops." />
-        <CheckItem text="OxygenOS global version is fine. Avoid ColorOS variants (typically India-specific builds). Check Settings → About → Android Version." />
-      </Section>
-    )}
-
-    {(brand_name.toLowerCase() === 'google' || brand_name.toLowerCase() === 'pixel') && (
-      <Section title="Google Pixel-specific">
-        <CheckItem warning text="Google Pixel has no official presence or service in Nigeria. All units are gray market. Factor this into your decision — if anything goes wrong, you're on your own." />
-        <CheckItem text="US Pixel 8+ models are eSIM-only in the US (similar to iPhone 14+ situation). Verify the model variant before buying." />
-        <CheckItem text="Pixels receive guaranteed Android updates direct from Google. Despite the service gap, this is one of the most software-secure Android phones you can buy." />
-      </Section>
-    )}
-
   </div>
 )
 
-// ── Main component ─────────────────────────────────────────────────────────────
+const XiaomiContent = () => (
+  <div className="space-y-4">
+    <AndroidCoreChecks />
+    <Section title="Redmi / Xiaomi / Poco checks">
+      <CheckItem
+        warning
+        text="Confirm Global ROM or the exact region ROM. China ROM can affect Google services, notifications, and resale."
+      />
+      <CheckItem text="Check Play Protect certification in the Play Store settings. If it is not certified, ask why before paying." />
+      <CheckItem text="Check bootloader status in developer settings if available. An unlocked bootloader can mean custom software history." />
+      <CheckItem text="For Poco and performance models, test heat, charging, cameras, fingerprint, and screen refresh rate before paying." />
+    </Section>
+  </div>
+)
 
-export const MustCheckToggle = ({ os_type, brand_name, phone_name }: MustCheckToggleProps) => {
-  const [open, setOpen] = useState(false)
+const PixelContent = () => (
+  <div className="space-y-4">
+    <AndroidCoreChecks />
+    <Section title="Google Pixel checks">
+      <CheckItem
+        warning
+        text="Pixels are usually grey-market buys in Nigeria. Software is excellent, but local repair support is the weak point."
+      />
+      <CheckItem text="Test your SIM, mobile data, hotspot, calls, and 4G/5G behavior before paying. Do not assume every imported unit behaves the same." />
+      <CheckItem text="Check screen, camera focus, fingerprint/Face Unlock where available, charging, and overheating during camera/video use." />
+      <CheckItem text="Buy Pixels from sellers who can handle after-sale issues, because parts and specialist repair are not as straightforward as Samsung or Transsion." />
+    </Section>
+  </div>
+)
 
-  const isApple   = os_type === 'ios' || brand_name.toLowerCase() === 'apple'
-  const isSamsung = brand_name.toLowerCase() === 'samsung'
+const OnePlusContent = () => (
+  <div className="space-y-4">
+    <AndroidCoreChecks />
+    <Section title="OnePlus checks">
+      <CheckItem warning text="OnePlus is mostly an enthusiast/grey-market buy in Nigeria. Repairs depend heavily on specialist shops." />
+      <CheckItem text="Confirm OxygenOS/global software, SIM behavior, fast charging, fingerprint, camera focus, and screen condition." />
+      <CheckItem text="Avoid units with unclear software conversions or missing fast-charge accessories unless the price reflects it." />
+    </Section>
+  </div>
+)
+
+const BbkContent = ({ brand_name }: { brand_name: string }) => (
+  <div className="space-y-4">
+    <AndroidCoreChecks />
+    <Section title={`${brand_name}-specific`}>
+      <CheckItem text="For Oppo, Vivo, and Realme, confirm warranty path with the seller because after-sales support varies by model and source." />
+      <CheckItem text="Test camera focus, charging speed, fingerprint, face unlock, speaker, and network behavior. These are common daily-use pain points." />
+      <CheckItem warning text="If the price is close to a newer Samsung, Redmi, Tecno, or Infinix with easier parts, compare repair risk before paying." />
+    </Section>
+  </div>
+)
+
+const AndroidCoreChecks = () => (
+  <Section title="Before you pay">
+    <div className="space-y-2">
+      <CheckItem step={1} text="Dial *#06#, write down the IMEI, and match it with the box or receipt if available." />
+      <CheckItem step={2} text="Factory reset protection matters. After reset, the phone must not ask for the previous owner's Google account." />
+      <CheckItem step={3} text="Insert your SIM and test calls, data, hotspot, network mode, and both SIM slots where available." />
+      <CheckItem step={4} text="Test screen brightness, touch, fingerprint, face unlock, cameras, flash, speaker, microphone, earpiece, vibration, and buttons." />
+      <CheckItem step={5} text="Plug it in and confirm fast charging starts. Check the port for looseness, heat, and cable sensitivity." />
+      <CheckItem step={6} warning text="A very large discount is not free money. Ask what you are accepting: weak battery, repaired screen, network issue, or no after-sale support." />
+    </div>
+  </Section>
+)
+
+const AndroidContent = ({ brand_name }: { brand_name: string }) => {
+  const key = brandKey(brand_name)
+
+  if (key === 'tecno' || key === 'infinix' || key === 'itel') {
+    return <TranssionContent brand_name={brand_name} />
+  }
+
+  if (key === 'xiaomi' || key === 'redmi' || key === 'poco') {
+    return <XiaomiContent />
+  }
+
+  if (key === 'google' || key === 'pixel') {
+    return <PixelContent />
+  }
+
+  if (key === 'oneplus') {
+    return <OnePlusContent />
+  }
+
+  if (key === 'oppo' || key === 'vivo' || key === 'realme') {
+    return <BbkContent brand_name={brand_name} />
+  }
 
   return (
-    <div className="rounded-xl border border-accent-200 bg-accent-50 overflow-hidden">
+    <div className="space-y-4">
+      <AndroidCoreChecks />
+      <Section title="Android buying reality">
+        <CheckItem text="Prioritize clean condition, parts availability, warranty path, and a seller you can reach after payment." />
+        <CheckItem text="If a newer model from a better-supported brand is close in price, compare that before choosing the cheaper used unit." />
+      </Section>
+    </div>
+  )
+}
 
-      {/* Toggle button */}
+export const MustCheckToggle = ({
+  os_type,
+  brand_name,
+  phone_name,
+}: MustCheckToggleProps) => {
+  const [open, setOpen] = useState(false)
+
+  const key = brandKey(brand_name)
+  const isApple = os_type === 'ios' || key === 'apple'
+  const isSamsung = key === 'samsung'
+
+  return (
+    <div className="overflow-hidden rounded-xl border border-accent-200 bg-accent-50">
       <button
         type="button"
         onClick={() => setOpen((prev) => !prev)}
-        className="w-full flex items-center justify-between px-4 py-3 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-400 hover:bg-accent-100 transition-colors"
+        className="flex w-full items-center justify-between px-4 py-3 text-left transition-colors hover:bg-accent-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-400"
         aria-expanded={open}
       >
         <span className="flex items-center gap-2">
-          <span className="text-base" aria-hidden="true">⚠️</span>
-          <span className="text-xs font-bold text-accent-800 tracking-wide uppercase">
+          <span className="text-base" aria-hidden="true">
+            !
+          </span>
+          <span className="text-xs font-bold uppercase tracking-wide text-accent-800">
             Must Check Before You Buy
           </span>
         </span>
         <span
-          className={`text-accent-500 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
+          className={[
+            'text-accent-500 transition-transform duration-200',
+            open ? 'rotate-180' : '',
+          ].join(' ')}
           aria-hidden="true"
         >
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            <path
+              d="M4 6l4 4 4-4"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
           </svg>
         </span>
       </button>
 
-      {/* Expandable content */}
-      {open && (
-        <div className="px-4 pb-4 pt-1 border-t border-accent-200">
-          {isApple   && <IphoneContent  phone_name={phone_name} />}
-          {isSamsung && <SamsungContent phone_name={phone_name} />}
-          {!isApple && !isSamsung && (
-            <AndroidContent brand_name={brand_name} />
-          )}
+      {open ? (
+        <div className="space-y-4 border-t border-accent-200 px-4 pb-4 pt-3">
+          {isApple ? <IphoneContent phone_name={phone_name} /> : null}
+          {isSamsung ? <SamsungContent phone_name={phone_name} /> : null}
+          {!isApple && !isSamsung ? <AndroidContent brand_name={brand_name} /> : null}
         </div>
-      )}
-
+      ) : null}
     </div>
   )
 }

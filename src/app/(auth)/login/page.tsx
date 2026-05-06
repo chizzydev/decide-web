@@ -2,15 +2,24 @@
 
 // decide-web/src/app/(auth)/login/page.tsx
 
-import React, { useState } from 'react'
+import React, { Suspense, useState } from 'react'
 import Link from 'next/link'
 import { signIn } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 export default function LoginPage() {
+  return (
+    <Suspense fallback={<AuthShellFallback title="Welcome back" subtitle="Sign in to your account to continue" />}>
+      <LoginPageContent />
+    </Suspense>
+  )
+}
+
+function LoginPageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const callbackUrl = searchParams.get('callbackUrl') || '/'
+  const sessionExpired = searchParams.get('reason') === 'session-expired'
 
   const [email,    setEmail]    = useState('')
   const [password, setPassword] = useState('')
@@ -40,7 +49,8 @@ export default function LoginPage() {
     router.refresh()
   }
 
-  const handleGoogle = () => signIn('google', { callbackUrl })
+  const handleGoogle = () =>
+    signIn('google', { callbackUrl }, { prompt: 'select_account' })
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-bg px-4 py-12">
@@ -62,6 +72,11 @@ export default function LoginPage() {
 
         {/* Card */}
         <div className="bg-surface border border-border rounded-lg p-8 space-y-6">
+          {sessionExpired ? (
+            <p className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+              Your Decide session expired. Sign in again to continue.
+            </p>
+          ) : null}
 
           {/* Google */}
           <button
@@ -145,6 +160,34 @@ export default function LoginPage() {
     </div>
   )
 }
+
+interface AuthShellFallbackProps {
+  title: string
+  subtitle: string
+}
+
+const AuthShellFallback = ({ title, subtitle }: AuthShellFallbackProps) => (
+  <div className="min-h-screen flex items-center justify-center bg-bg px-4 py-12">
+    <div className="w-full max-w-md space-y-8">
+      <div className="text-center space-y-2">
+        <Link href="/" className="inline-block font-ui font-black text-2xl tracking-tight">
+          <span className="text-text-primary">deci</span>
+          <span className="text-accent-brand">de</span>
+        </Link>
+        <h1 className="text-2xl font-black text-text-primary tracking-tight">
+          {title}
+        </h1>
+        <p className="text-sm text-text-secondary">{subtitle}</p>
+      </div>
+
+      <div className="rounded-lg border border-border bg-surface p-8">
+        <p className="text-center text-sm text-text-secondary">
+          Loading...
+        </p>
+      </div>
+    </div>
+  </div>
+)
 
 const GoogleIcon = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">

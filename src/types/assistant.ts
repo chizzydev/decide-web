@@ -3,17 +3,23 @@
 
 import type { OsType, StoreType, GrayMarketRisk } from './phone'
 
-export type BrandPreference =
-  | 'samsung'
-  | 'tecno'
-  | 'infinix'
-  | 'xiaomi'
-  | 'google'
-  | 'oneplus'
-  | 'itel'
-  | 'realme'
-  | 'apple'
-  | 'any'
+export const SUPPORTED_BRAND_PREFERENCES = [
+  'samsung',
+  'tecno',
+  'infinix',
+  'xiaomi',
+  'vivo',
+  'google',
+  'oneplus',
+  'oppo',
+  'itel',
+  'realme',
+  'nokia',
+  'apple',
+  'any',
+] as const
+
+export type BrandPreference = string
 
 export type UsageType =
   | 'social'
@@ -32,7 +38,7 @@ export type RecommendationConstraintMode =
   | 'normal'
   | 'forced_brand_low_budget'
 
-export type RecommendationType = 'best_fit' | 'best_available'
+export type RecommendationType = 'best_fit' | 'soft_fit' | 'best_available'
 
 // The five budget tiers shown on the slider
 export interface BudgetTier {
@@ -53,8 +59,10 @@ export interface PriorityWeights {
 export interface UserPreferences {
   os_type: OsType
   brand_preference: BrandPreference
+  requested_brand_name?: string
   budget_max: number
   budget_min?: number
+  min_ram_gb?: number
   usage_type: UsageType
   priorities: PriorityWeights
   ranking_mode?: RankingMode
@@ -85,6 +93,10 @@ export interface ScoredPhone {
     url: string | null
     in_stock: boolean
     scraped_at: string
+    variant_id?: number | null
+    variant_label?: string | null
+    variant_ram_gb?: number | null
+    variant_storage_gb?: number | null
   }>
   tags: string[]
   gray_market_risk: GrayMarketRisk
@@ -109,6 +121,11 @@ export interface BudgetGapContext {
   cheapest_price_ngn: number
 }
 
+export interface BrandCatalogGapContext {
+  requested_brand: string
+  available_brands: string[]
+}
+
 export interface RecommendationMeta {
   constraint_mode: RecommendationConstraintMode
   confidence: RecommendationConfidence
@@ -120,5 +137,6 @@ export interface RecommendationResult {
   recommendations: ScoredPhone[]
   preferences: UserPreferences
   budget_gap?: BudgetGapContext
+  brand_catalog_gap?: BrandCatalogGapContext
   recommendation_meta: RecommendationMeta
 }

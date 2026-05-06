@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { useCompareStore } from '@/store/compareStore'
 import { Button } from '@/components/ui'
+import { buildVariantAwareCompareHref } from '@/lib/compareContext'
 
 export const CompareTray = () => {
   const router = useRouter()
@@ -26,7 +27,14 @@ export const CompareTray = () => {
     const [phoneA, phoneB] = phones
     if (!phoneA || !phoneB) return
 
-    router.push(`/compare?slug_a=${phoneA.slug}&slug_b=${phoneB.slug}`)
+    router.push(
+      buildVariantAwareCompareHref({
+        leftSlug: phoneA.slug,
+        rightSlug: phoneB.slug,
+        leftVariantId: phoneA.variant_id,
+        rightVariantId: phoneB.variant_id,
+      })
+    )
   }
 
   if (!isVisible) return null
@@ -54,7 +62,7 @@ export const CompareTray = () => {
                 key={index}
                 className={[
                   'flex items-center gap-2 flex-1 min-w-0',
-                  'h-10 px-3 rounded-sm border',
+                  'min-h-10 px-3 py-1 rounded-sm border',
                   phone
                     ? 'bg-surfaceHigh border-borderHigh'
                     : 'border-dashed border-border',
@@ -77,7 +85,12 @@ export const CompareTray = () => {
 
                     {/* Phone name */}
                     <span className="text-sm font-medium text-text-primary truncate flex-1 min-w-0">
-                      {phone.name}
+                      <span className="block truncate">{phone.name}</span>
+                      {phone.variant_label ? (
+                        <span className="block truncate text-[11px] font-semibold uppercase tracking-[0.12em] text-accent">
+                          {phone.variant_label}
+                        </span>
+                      ) : null}
                     </span>
 
                     {/* Remove button */}

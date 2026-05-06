@@ -26,7 +26,7 @@ export const Footer = () => {
 
   return (
     <footer className="bg-navy-700 mt-24">
-      <div className="max-w-6xl mx-auto px-4 py-12">
+      <div className="max-w-6xl mx-auto px-4 pt-12 pb-28 md:pb-12">
 
         {/* Top row — brand and link columns */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 pb-10 border-b border-white/[0.08]">
@@ -78,9 +78,9 @@ export const Footer = () => {
         </div>
 
         {/* Bottom row — legal */}
-        <div className="pt-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <div className="pt-6 flex flex-row flex-wrap items-center justify-between gap-x-6 gap-y-3">
           <p className="text-xs text-slate-500">
-            © {currentYear} Decide. Built for Nigeria.
+            © {currentYear} Decide. Built for Nigerians.
           </p>
           <div className="flex items-center gap-4">
             <Link

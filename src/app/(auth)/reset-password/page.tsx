@@ -2,13 +2,28 @@
 
 // decide-web/src/app/(auth)/reset-password/page.tsx
 
-import React, { useState, useEffect } from 'react'
+import React, { Suspense, useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL
 
 export default function ResetPasswordPage() {
+  return (
+    <Suspense
+      fallback={
+        <AuthShellFallback
+          title="Set a new password"
+          subtitle="Choose a strong password for your account"
+        />
+      }
+    >
+      <ResetPasswordPageContent />
+    </Suspense>
+  )
+}
+
+function ResetPasswordPageContent() {
   const router       = useRouter()
   const searchParams = useSearchParams()
   const token        = searchParams.get('token')
@@ -158,3 +173,31 @@ export default function ResetPasswordPage() {
     </div>
   )
 }
+
+interface AuthShellFallbackProps {
+  title: string
+  subtitle: string
+}
+
+const AuthShellFallback = ({ title, subtitle }: AuthShellFallbackProps) => (
+  <div className="min-h-screen flex items-center justify-center bg-bg px-4 py-12">
+    <div className="w-full max-w-md space-y-8">
+      <div className="text-center space-y-2">
+        <Link href="/" className="inline-block font-ui font-black text-2xl tracking-tight">
+          <span className="text-text-primary">deci</span>
+          <span className="text-accent-brand">de</span>
+        </Link>
+        <h1 className="text-2xl font-black text-text-primary tracking-tight">
+          {title}
+        </h1>
+        <p className="text-sm text-text-secondary">{subtitle}</p>
+      </div>
+
+      <div className="rounded-lg border border-border bg-surface p-8">
+        <p className="text-center text-sm text-text-secondary">
+          Loading...
+        </p>
+      </div>
+    </div>
+  </div>
+)

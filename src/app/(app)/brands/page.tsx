@@ -6,6 +6,7 @@ import type { Metadata } from 'next'
 import type { Brand } from '@/types'
 import Link from 'next/link'
 import { brandsApi } from '@/lib/api'
+import { filterUserFacingBrands, sortAndroidBrandsForUi } from '@/lib/brandCatalog'
 import { BrandLogo } from '@/components/shared'
 
 export const metadata: Metadata = {
@@ -19,12 +20,14 @@ export default async function BrandsPage() {
   let error: string | null = null
 
   try {
-    brands = await brandsApi.getAll()
+    brands = filterUserFacingBrands(await brandsApi.getAll())
   } catch {
     error = 'Could not load brands. Please try again.'
   }
 
-  const androidBrands = brands.filter((b) => b.os_type === 'android')
+  const androidBrands = sortAndroidBrandsForUi(
+    brands.filter((b) => b.os_type === 'android')
+  )
   const iosBrands     = brands.filter((b) => b.os_type === 'ios')
 
   return (
@@ -89,7 +92,7 @@ interface BrandCardProps {
 
 const BrandCard = ({ brand }: BrandCardProps) => (
   <Link
-    href={`/phones?brand=${brand.slug}`}
+    href={`/brands/${brand.slug}`}
     className={[
       'group flex flex-col items-center gap-3',
       'p-5 bg-surface border border-border rounded-md',

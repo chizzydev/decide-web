@@ -1,18 +1,20 @@
-// decide-web/next.config.ts
 import type { NextConfig } from 'next'
+import { withSentryConfig } from '@sentry/nextjs'
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  turbopack: {
+    root: process.cwd(),
+  },
 
   images: {
-    // ✅ ALLOW LOCAL IMAGES (THIS FIXES YOUR ERROR)
+    formats: ['image/avif', 'image/webp'],
+    minimumCacheTTL: 60 * 60 * 24 * 30,
     localPatterns: [
       {
-        pathname: '/images/**', // allows /images/phones/... with query params
+        pathname: '/images/**',
       },
     ],
-
-    // ✅ REMOTE IMAGES (UNCHANGED)
     remotePatterns: [
       {
         protocol: 'https',
@@ -32,9 +34,28 @@ const nextConfig: NextConfig = {
     ],
   },
 
+  async headers() {
+    return [
+      {
+        source: '/images/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=604800, stale-while-revalidate=2592000',
+          },
+        ],
+      },
+    ]
+  },
+
   env: {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL ?? '',
   },
 }
 
-export default nextConfig
+export default withSentryConfig(nextConfig, {
+  org: process.env.SENTRY_ORG,
+  project: process.env.SENTRY_PROJECT,
+  silent: !process.env.CI,
+  widenClientFileUpload: true,
+})

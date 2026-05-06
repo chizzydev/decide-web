@@ -7,7 +7,8 @@ import React from 'react'
 import { PhoneCard } from './PhoneCard'
 import { PhoneGridSkeleton } from '@/components/ui'
 import { SectionHeader } from '@/components/shared'
-import type { PhoneCard as PhoneCardType } from '@/types'
+import { getPrimaryPhoneCardCompareAction } from '@/lib/relatedCompare'
+import type { CatalogDiscoverySignal, PhoneCard as PhoneCardType } from '@/types'
 
 interface PhoneGridProps {
   phones:     PhoneCardType[]
@@ -22,6 +23,7 @@ interface PhoneGridProps {
   skeletonCount?: number
   // Empty state message override
   emptyMessage?:  string
+  signalsBySlug?: Record<string, CatalogDiscoverySignal | undefined>
   className?:     string
 }
 
@@ -34,8 +36,17 @@ export const PhoneGrid = ({
   action,
   skeletonCount = 6,
   emptyMessage  = 'No phones found.',
+  signalsBySlug = {},
   className     = '',
 }: PhoneGridProps) => {
+  const compareActionsBySlug = phones.reduce<Record<string, ReturnType<typeof getPrimaryPhoneCardCompareAction>>>(
+    (acc, phone) => {
+      acc[phone.slug] = getPrimaryPhoneCardCompareAction(phone, phones)
+      return acc
+    },
+    {}
+  )
+
   return (
     <section
       className={['space-y-6', className].filter(Boolean).join(' ')}
@@ -95,6 +106,8 @@ export const PhoneGrid = ({
             <PhoneCard
               key={phone.slug}
               phone={phone}
+              signal={signalsBySlug[phone.slug]}
+              compareAction={compareActionsBySlug[phone.slug] ?? undefined}
               featured={phone.is_featured}
             />
           ))}
