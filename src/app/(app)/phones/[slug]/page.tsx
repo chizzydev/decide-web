@@ -11,6 +11,7 @@ import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import { editorialApi, marketApi, phonesApi } from '@/lib/api'
+import { formatRelativeTime } from '@/lib/formatters'
 import { absoluteUrl, buildPageMetadata } from '@/lib/seo'
 import { Badge, Divider } from '@/components/ui'
 import { PriceDisplay } from '@/components/shared'
@@ -674,6 +675,9 @@ export default async function PhonePage({ params, searchParams }: PhonePageProps
                             {[offer.location, offer.condition_label]
                               .filter(Boolean)
                               .join(' - ') || 'Marketplace listing'}
+                          </p>
+                          <p className="text-[11px] font-semibold text-amber-700">
+                            Synced {formatRelativeTime(offer.scraped_at)}
                           </p>
                           <p className="text-xs leading-relaxed text-amber-900">
                             {offer.buyer_note ??
