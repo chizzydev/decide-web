@@ -142,6 +142,6 @@ export const buildCompareSnapshotSvg = (snapshot: CompareSnapshotData) => {
   <rect x="70" y="458" width="1060" height="108" rx="28" fill="#081320"/>
   <text x="98" y="497" class="eyebrow" fill="#7FE4D3">Head-to-head verdict</text>
   ${renderTextLines(headlineLines, 98, 535, 34, 'headline')}
-  <text x="1104" y="540" text-anchor="end" class="foot">decide.com.ng</text>
+  <text x="1104" y="540" text-anchor="end" class="foot">www.decide.com.ng</text>
 </svg>`
 }

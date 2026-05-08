@@ -7,6 +7,7 @@
 
 import React from 'react'
 import { MarketingNavbar } from '@/components/layout/MarketingNavbar'
+import { CompareTray }     from '@/components/layout/CompareTray'
 import { MobileNav }       from '@/components/layout/MobileNav'
 import { Footer }          from '@/components/layout/Footer'
 
@@ -23,6 +24,7 @@ export default function MarketingLayout({ children }: MarketingLayoutProps) {
         {children}
       </main>
       <Footer />
+      <CompareTray />
       <MobileNav />
     </div>
   )

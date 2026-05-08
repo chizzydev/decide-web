@@ -21,26 +21,26 @@ export const SectionHeader = ({
   return (
     <div
       className={[
-        'flex items-start justify-between gap-4',
+        'flex min-w-0 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4',
         className,
       ]
         .filter(Boolean)
         .join(' ')}
     >
-      <div>
-        <h2 className="text-2xl font-bold text-text-primary tracking-tight">
+      <div className="min-w-0">
+        <h2 className="break-words text-2xl font-bold tracking-tight text-text-primary">
           {title}
         </h2>
 
         {subtitle && (
-          <p className="mt-1 text-sm text-text-secondary">
+          <p className="mt-1 max-w-3xl text-sm leading-relaxed text-text-secondary">
             {subtitle}
           </p>
         )}
       </div>
 
       {action && (
-        <div className="shrink-0 mt-1">
+        <div className="mt-1 w-full sm:w-auto sm:shrink-0">
           {action}
         </div>
       )}

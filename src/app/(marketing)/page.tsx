@@ -173,8 +173,8 @@ export default async function HomePage() {
           aria-hidden="true"
         />
 
-        <div className="relative mx-auto grid max-w-6xl gap-10 px-4 pb-20 pt-28 lg:min-h-[78vh] lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
-          <div className="space-y-7">
+        <div className="relative mx-auto grid max-w-6xl gap-10 px-4 pb-20 pt-28 sm:px-6 lg:min-h-[78vh] lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+          <div className="min-w-0 space-y-7">
             <div className="space-y-4">
               <p className="text-xs font-bold uppercase tracking-[0.24em] text-accent">
                 Live phone buying intelligence
@@ -196,25 +196,25 @@ export default async function HomePage() {
             <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
               <Link
                 href="/assistant"
-                className="inline-flex h-12 items-center justify-center rounded-md bg-accent px-8 text-base font-bold tracking-wide text-navy-800 transition-all duration-fast hover:bg-accent-hover active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
+                className="inline-flex h-12 w-full items-center justify-center rounded-md bg-accent px-8 text-base font-bold tracking-wide text-navy-800 transition-all duration-fast hover:bg-accent-hover active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg sm:w-auto"
               >
                 Find my phone
               </Link>
               <Link
                 href="/deals/today"
-                className="inline-flex h-12 items-center justify-center rounded-md border border-borderHigh bg-white/85 px-8 text-base font-semibold text-text-primary transition-all duration-fast hover:border-accent/40 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
+                className="inline-flex h-12 w-full items-center justify-center rounded-md border border-borderHigh bg-white/85 px-8 text-base font-semibold text-text-primary transition-all duration-fast hover:border-accent/40 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg sm:w-auto"
               >
                 Open deals today
               </Link>
               <Link
                 href="/phones"
-                className="inline-flex h-12 items-center justify-center rounded-md border border-border px-8 text-base font-medium text-text-secondary transition-all duration-fast hover:border-borderHigh hover:text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
+                className="inline-flex h-12 w-full items-center justify-center rounded-md border border-border px-8 text-base font-medium text-text-secondary transition-all duration-fast hover:border-borderHigh hover:text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg sm:w-auto"
               >
                 Browse phones
               </Link>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
               <HeroStat label="Live drops" value={radar ? String(deals.length) : 'Waiting'} />
               <HeroStat
                 label="Combined cuts"
@@ -228,6 +228,16 @@ export default async function HomePage() {
                     : marketplaceStatus === 'empty'
                       ? 'Watching'
                       : 'Connect API'
+                }
+              />
+              <HeroStat
+                label="Freshest scan"
+                value={
+                  freshestLead
+                    ? formatRelativeTime(freshestLead.scraped_at)
+                    : radar?.generated_at
+                      ? formatRelativeTime(radar.generated_at)
+                      : 'Watching'
                 }
               />
             </div>

@@ -41,7 +41,7 @@ export const CompareTray = () => {
 
   return (
     <div
-      className="fixed bottom-0 left-0 right-0 z-sticky border-t border-border bg-surface shadow-lg"
+      className="fixed bottom-16 left-0 right-0 z-sticky border-t border-border bg-surface shadow-lg md:bottom-0"
       role="region"
       aria-label="Phone comparison tray"
       aria-live="polite"
