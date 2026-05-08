@@ -26,6 +26,8 @@ export const metadata: Metadata = {
 export const revalidate = 21600
 
 const BUDGET_WATCH_CAP_NGN = 250_000
+const ANDROID_APK_PATH = '/downloads/decide-android-v1.0.0.apk'
+const ANDROID_APK_SIZE = '76 MB'
 
 const pickFreshestDeal = (deals: PriceDropRadarItem[]) =>
   [...deals].sort(
@@ -194,6 +196,16 @@ export default async function HomePage() {
             </div>
 
             <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+              <a
+                href={ANDROID_APK_PATH}
+                download
+                className="group inline-flex h-14 w-full items-center justify-center gap-3 rounded-md bg-text-primary px-7 text-base font-black tracking-wide text-white shadow-xl shadow-slate-900/15 transition-all duration-fast hover:-translate-y-0.5 hover:bg-slate-950 hover:shadow-2xl hover:shadow-slate-900/20 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg sm:w-auto"
+              >
+                <span className="flex h-8 w-8 items-center justify-center rounded-md bg-accent text-slate-950 transition-transform duration-fast group-hover:scale-105">
+                  <AndroidIcon />
+                </span>
+                Download Android app
+              </a>
               <Link
                 href="/assistant"
                 className="inline-flex h-12 w-full items-center justify-center rounded-md bg-accent px-8 text-base font-bold tracking-wide text-navy-800 transition-all duration-fast hover:bg-accent-hover active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg sm:w-auto"
@@ -212,6 +224,38 @@ export default async function HomePage() {
               >
                 Browse phones
               </Link>
+            </div>
+
+            <div className="overflow-hidden rounded-lg border border-accent/20 bg-white shadow-xl shadow-slate-900/5">
+              <div className="grid gap-0 md:grid-cols-[1fr_auto]">
+                <div className="flex min-w-0 gap-4 p-4 sm:p-5">
+                  <img
+                    src="/icon-192.png"
+                    alt=""
+                    className="h-16 w-16 shrink-0 rounded-[18px] shadow-lg shadow-slate-900/15"
+                  />
+                  <div className="min-w-0 space-y-1.5">
+                    <p className="text-xs font-black uppercase tracking-[0.18em] text-accent">
+                      Android app now available
+                    </p>
+                    <h2 className="text-xl font-black tracking-tight text-text-primary">
+                      Get Decide on your phone before Play Store launch
+                    </h2>
+                    <p className="max-w-2xl text-sm leading-relaxed text-text-secondary">
+                      This is the official Decide APK, signed from our Android build. Android may
+                      show an extra install warning because it is downloaded from the website while
+                      the Play Store listing is still in review.
+                    </p>
+                  </div>
+                </div>
+                <div className="border-t border-border bg-surfaceHigh px-4 py-4 md:border-l md:border-t-0 md:px-5">
+                  <div className="grid grid-cols-3 gap-3 text-center md:w-64">
+                    <DownloadTrustStat label="Version" value="1.0.0" />
+                    <DownloadTrustStat label="Size" value={ANDROID_APK_SIZE} />
+                    <DownloadTrustStat label="Source" value="Official" />
+                  </div>
+                </div>
+              </div>
             </div>
 
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -733,6 +777,35 @@ const HeroStat = ({ label, value }: HeroStatProps) => (
     <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-text-muted">{label}</p>
     <p className="mt-1 text-sm font-bold text-text-primary">{value}</p>
   </div>
+)
+
+interface DownloadTrustStatProps {
+  label: string
+  value: string
+}
+
+const DownloadTrustStat = ({ label, value }: DownloadTrustStatProps) => (
+  <div className="min-w-0">
+    <p className="truncate text-sm font-black text-text-primary">{value}</p>
+    <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.12em] text-text-muted">{label}</p>
+  </div>
+)
+
+const AndroidIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path
+      d="M7.2 8.6h9.6a3.2 3.2 0 0 1 3.2 3.2v4.8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-4.8a3.2 3.2 0 0 1 3.2-3.2Z"
+      fill="currentColor"
+    />
+    <path
+      d="M8.2 5 6.8 2.8M15.8 5l1.4-2.2M8.3 8.8A4.5 4.5 0 0 1 12 6.8a4.5 4.5 0 0 1 3.7 2"
+      stroke="currentColor"
+      strokeWidth="1.7"
+      strokeLinecap="round"
+    />
+    <circle cx="9.3" cy="12.3" r="0.8" fill="#111827" />
+    <circle cx="14.7" cy="12.3" r="0.8" fill="#111827" />
+  </svg>
 )
 
 interface HeroMarketPulseProps {

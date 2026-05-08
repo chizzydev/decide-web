@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next'
+import { Suspense } from 'react'
 import { Geist } from 'next/font/google'
-import { Analytics } from '@vercel/analytics/react'
+import { AnalyticsProvider } from '@/components/providers/AnalyticsProvider'
 import { SavedPhonesProvider } from '@/components/providers/SavedPhonesProvider'
 import { SessionProvider } from '@/components/providers/SessionProvider'
 import { SITE_URL } from '@/lib/seo'
@@ -128,7 +129,9 @@ export default function RootLayout({ children }: RootLayoutProps) {
         <SessionProvider>
           <SavedPhonesProvider>{children}</SavedPhonesProvider>
         </SessionProvider>
-        <Analytics />
+        <Suspense fallback={null}>
+          <AnalyticsProvider />
+        </Suspense>
       </body>
     </html>
   )

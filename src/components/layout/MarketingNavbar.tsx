@@ -15,6 +15,8 @@ const NAV_LINKS = [
   { href: '/how-it-works', label: 'How It Works'  },
 ]
 
+const ANDROID_APK_PATH = '/downloads/decide-android-v1.0.0.apk'
+
 export const MarketingNavbar = () => {
   const [scrolled,     setScrolled]     = useState(false)
   const [userMenuOpen, setUserMenuOpen] = useState(false)
@@ -94,6 +96,23 @@ export const MarketingNavbar = () => {
 
         {/* Right side actions */}
         <div className="flex items-center gap-3">
+          <a
+            href={ANDROID_APK_PATH}
+            download
+            className="hidden h-9 items-center gap-2 rounded-sm border border-accent/25 bg-tealTint px-4 text-sm font-black tracking-wide text-accent transition-all duration-fast hover:border-accent/40 hover:bg-accent-subtle active:scale-[0.98] sm:inline-flex"
+          >
+            <DownloadIcon />
+            Android app
+          </a>
+
+          <a
+            href={ANDROID_APK_PATH}
+            download
+            className="inline-flex h-9 w-9 items-center justify-center rounded-sm border border-accent/25 bg-tealTint text-accent transition-all duration-fast hover:border-accent/40 hover:bg-accent-subtle active:scale-[0.98] sm:hidden"
+            aria-label="Download Android app"
+          >
+            <DownloadIcon />
+          </a>
 
           {session ? (
             // ── Logged in ──────────────────────────────────────────────
@@ -206,6 +225,24 @@ export const MarketingNavbar = () => {
 const ChevronIcon = () => (
   <svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true">
     <path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+)
+
+const DownloadIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path
+      d="M12 3v11m0 0 4-4m-4 4-4-4"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M5 17.5V19a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-1.5"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+    />
   </svg>
 )
 

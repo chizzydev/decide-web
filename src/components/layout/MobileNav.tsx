@@ -45,11 +45,30 @@ const CompareIcon = () => (
   </svg>
 )
 
+const DownloadIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path
+      d="M12 3v10.5m0 0 3.5-3.5M12 13.5 8.5 10"
+      stroke="currentColor"
+      strokeWidth="1.7"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M5 16.5V19a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2.5"
+      stroke="currentColor"
+      strokeWidth="1.7"
+      strokeLinecap="round"
+    />
+  </svg>
+)
+
 const MOBILE_NAV_LINKS = [
   { href: '/',          label: 'Home',     icon: <HomeIcon /> },
   { href: '/assistant', label: 'Advisor',  icon: <AdvisorIcon /> },
   { href: '/phones',    label: 'Browse',   icon: <BrowseIcon  /> },
   { href: '/compare',   label: 'Compare',  icon: <CompareIcon /> },
+  { href: '/downloads/decide-android-v1.0.0.apk', label: 'App', icon: <DownloadIcon />, download: true },
 ]
 
 export const MobileNav = () => {
@@ -61,15 +80,18 @@ export const MobileNav = () => {
       aria-label="Mobile navigation"
     >
       <div className="flex items-stretch h-16">
-        {MOBILE_NAV_LINKS.map(({ href, label, icon }) => {
-          const isActive = href === '/' ? pathname === '/' : pathname.startsWith(href)
+        {MOBILE_NAV_LINKS.map(({ href, label, icon, download }) => {
+          const isActive = download ? false : href === '/' ? pathname === '/' : pathname.startsWith(href)
           return (
             <Link
               key={href}
               href={href}
+              download={download ? true : undefined}
               className={[
                 'flex-1 flex flex-col items-center justify-center gap-1 text-center transition-colors duration-fast',
-                isActive
+                download
+                  ? 'bg-text-primary text-white hover:bg-slate-950'
+                  : isActive
                   ? 'text-accent'
                   : 'text-text-muted hover:text-text-secondary',
               ].join(' ')}

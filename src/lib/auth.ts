@@ -41,7 +41,16 @@ const readBackendSession = async (
       body: JSON.stringify(body),
     })
 
-    const json = await res.json()
+    const text = await res.text()
+    if (!text) return null
+
+    let json: { success?: boolean; data?: unknown }
+    try {
+      json = JSON.parse(text)
+    } catch {
+      return null
+    }
+
     if (!json.success || !json.data) return null
 
     return json.data as BackendAuthResponse
