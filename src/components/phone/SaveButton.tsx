@@ -32,6 +32,15 @@ export const SaveButton = ({
   const nudgeRef = useRef<HTMLDivElement>(null)
   const saved = isSaved(phoneId)
 
+  const getAuthHref = (path: '/login' | '/register') => {
+    const callbackUrl =
+      typeof window === 'undefined'
+        ? '/'
+        : `${window.location.pathname}${window.location.search}`
+
+    return `${path}?callbackUrl=${encodeURIComponent(callbackUrl)}`
+  }
+
   useEffect(() => {
     if (!flyout) return
 
@@ -58,7 +67,7 @@ export const SaveButton = ({
 
     if (!isAuthenticated) {
       if (flyout === 'guest') {
-        router.push('/login')
+        router.push(getAuthHref('/login'))
       } else {
         setFlyout('guest')
       }
@@ -141,14 +150,14 @@ export const SaveButton = ({
         <div className="absolute right-0 top-10 z-50 w-52 space-y-2 rounded-md border border-border bg-surface p-3 shadow-lg">
           <p className="text-xs font-semibold text-text-primary">Sign in to save phones</p>
           <p className="text-xs leading-relaxed text-text-secondary">
-            Tap again to go to sign in, or create a free account.
+            Save this phone to a free Decide account so your watchlist and alerts follow you.
           </p>
           <div className="flex gap-2 pt-1">
             <button
               onClick={(e) => {
                 e.preventDefault()
                 e.stopPropagation()
-                router.push('/login')
+                router.push(getAuthHref('/login'))
               }}
               className="flex-1 rounded-sm bg-accent py-1.5 text-center text-xs font-bold text-white transition-colors duration-fast hover:bg-accent-hover"
             >
@@ -158,7 +167,7 @@ export const SaveButton = ({
               onClick={(e) => {
                 e.preventDefault()
                 e.stopPropagation()
-                router.push('/register')
+                router.push(getAuthHref('/register'))
               }}
               className="flex-1 rounded-sm border border-border py-1.5 text-center text-xs font-semibold text-text-secondary transition-colors duration-fast hover:text-text-primary"
             >

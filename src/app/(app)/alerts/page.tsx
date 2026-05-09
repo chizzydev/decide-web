@@ -4,6 +4,7 @@ import React, { Suspense, useCallback, useEffect, useMemo, useState } from 'reac
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { useSession } from 'next-auth/react'
+import { AuthRequiredState } from '@/components/auth/AuthRequiredState'
 import { AlertPlanStatus } from '@/components/alerts/AlertPlanStatus'
 import { MarketplaceLeadFeed } from '@/components/market/MarketplaceLeadFeed'
 import { WatchCompareCard } from '@/components/market/WatchCompareCard'
@@ -361,6 +362,17 @@ function AlertsPageContent() {
     setError(null)
     setAlerts((previous) => [alert, ...previous])
     setWatchlist((previous) => applyCreatedAlertToWatchlist(previous, alert))
+  }
+
+  if (status === 'unauthenticated') {
+    return (
+      <AuthRequiredState
+        eyebrow="Price alerts"
+        title="Sign in to manage your alerts"
+        description="Alerts are account-owned so Decide can protect inboxes, stop abuse, and keep your price history attached to the right buyer."
+        callbackUrl="/alerts"
+      />
+    )
   }
 
   return (

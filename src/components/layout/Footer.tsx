@@ -6,6 +6,8 @@
 import React from 'react'
 import Link from 'next/link'
 
+const CONTACT_EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? 'support@decide.com.ng'
+
 const FOOTER_LINKS = {
   Product: [
     { href: '/assistant', label: 'Find My Phone'       },
@@ -59,6 +61,13 @@ export const Footer = () => {
               Always verify before buying. Decide is not responsible
               for price changes after publication.
             </p>
+
+            <a
+              href={`mailto:${CONTACT_EMAIL}`}
+              className="mt-4 inline-flex text-sm font-semibold text-teal-300 transition-colors duration-fast hover:text-white"
+            >
+              {CONTACT_EMAIL}
+            </a>
 
             {SOCIAL_LINKS.length > 0 && (
               <div className="mt-5 flex flex-wrap gap-2" aria-label="Decide social links">

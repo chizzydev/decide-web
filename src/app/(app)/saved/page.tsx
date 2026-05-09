@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useSession } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
+import { AuthRequiredState } from '@/components/auth/AuthRequiredState'
 import { AlertPlanStatus } from '@/components/alerts/AlertPlanStatus'
 import { MarketplaceLeadFeed } from '@/components/market/MarketplaceLeadFeed'
 import { WatchCompareCard } from '@/components/market/WatchCompareCard'
@@ -171,7 +171,6 @@ const buildWatchNote = (item: WatchlistItem): string => {
 
 export default function SavedPage() {
   const { data: session, status } = useSession()
-  const router = useRouter()
 
   const [watchlist, setWatchlist] = useState<WatchlistResponse | null>(null)
   const [marketplaceLeads, setMarketplaceLeads] =
@@ -182,12 +181,7 @@ export default function SavedPage() {
   const [removingPhoneId, setRemovingPhoneId] = useState<number | null>(null)
 
   useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.push('/login')
-      return
-    }
-
-    if (!session?.user?.id) {
+    if (status !== 'authenticated' || !session?.user?.id) {
       return
     }
 
@@ -215,7 +209,7 @@ export default function SavedPage() {
         )
       })
       .finally(() => setLoading(false))
-  }, [router, session?.user?.id, status])
+  }, [session?.user?.id, status])
 
   const handleUnsave = async (phoneId: number) => {
     if (!watchlist) {
@@ -251,6 +245,17 @@ export default function SavedPage() {
   const handleAlertCreated = (alert: PriceAlert) => {
     setError(null)
     setWatchlist((previous) => applyCreatedAlertToWatchlist(previous, alert))
+  }
+
+  if (status === 'unauthenticated') {
+    return (
+      <AuthRequiredState
+        eyebrow="Watchlist"
+        title="Sign in to open your watchlist"
+        description="Saved phones, finalist comparisons, and watchlist alert coverage belong to your Decide account so they stay tied to you when you return."
+        callbackUrl="/saved"
+      />
+    )
   }
 
   if (status === 'loading' || loading) {

@@ -12,9 +12,10 @@
 
 'use client'
 
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { useSession } from 'next-auth/react'
 import { useAssistant } from '@/hooks/useAssistant'
 import { Button, Badge, Spinner, Divider } from '@/components/ui'
 import { PriceDisplay } from '@/components/shared'
@@ -25,6 +26,8 @@ import { formatMatchLabel, formatNaira } from '@/lib/formatters'
 import { matchToColour, sortByScore } from '@/lib/scoring'
 import { MustCheckToggle } from '@/components/phone/MustCheckToggle'
 import type { PriorityWeights, RecommendationResult, ScoredPhone } from '@/types'
+
+const RESULT_HISTORY_KEY_PREFIX = 'decide_result_history'
 
 const getPrimaryDisplayPrice = (phone: ScoredPhone): number | null => {
   return phone.lowest_price_ngn ?? null
@@ -96,6 +99,7 @@ const buildResultsHeading = (
 }
 
 export const ResultsPanel = () => {
+  const { data: session, status } = useSession()
   const {
     result,
     loading,
@@ -268,6 +272,12 @@ export const ResultsPanel = () => {
         )}
       </div>
 
+      <ResultHistoryGate
+        result={result}
+        userId={session?.user?.id ?? null}
+        authLoading={status === 'loading'}
+      />
+
       <div className="space-y-4">
         {top3.map((phone, index) => (
           <ResultCard
@@ -302,6 +312,145 @@ export const ResultsPanel = () => {
         </div>
       </div>
     </div>
+  )
+}
+
+interface ResultHistoryGateProps {
+  result: RecommendationResult
+  userId: string | null
+  authLoading: boolean
+}
+
+interface StoredRecommendationResult {
+  id: string
+  saved_at: string
+  budget_max: number
+  usage_type: string
+  os_type: string
+  top_matches: Array<{
+    phone_id: number
+    name: string
+    slug: string
+    match_percentage: number
+    lowest_price_ngn: number | null
+  }>
+}
+
+const buildStoredRecommendation = (
+  result: RecommendationResult
+): StoredRecommendationResult => ({
+  id: `${Date.now()}`,
+  saved_at: new Date().toISOString(),
+  budget_max: result.preferences.budget_max,
+  usage_type: result.preferences.usage_type,
+  os_type: result.preferences.os_type,
+  top_matches: result.recommendations.slice(0, 3).map((phone) => ({
+    phone_id: phone.phone_id,
+    name: phone.name,
+    slug: phone.slug,
+    match_percentage: phone.match_percentage,
+    lowest_price_ngn: phone.lowest_price_ngn,
+  })),
+})
+
+const ResultHistoryGate = ({
+  result,
+  userId,
+  authLoading,
+}: ResultHistoryGateProps) => {
+  const [saved, setSaved] = useState(false)
+
+  useEffect(() => {
+    setSaved(false)
+  }, [result])
+
+  const handleSave = () => {
+    if (!userId || typeof window === 'undefined') {
+      return
+    }
+
+    const key = `${RESULT_HISTORY_KEY_PREFIX}:${userId}`
+    let existing: StoredRecommendationResult[] = []
+
+    try {
+      const current = window.localStorage.getItem(key)
+      existing = current ? (JSON.parse(current) as StoredRecommendationResult[]) : []
+    } catch {
+      existing = []
+    }
+
+    const next = [buildStoredRecommendation(result), ...existing].slice(0, 12)
+
+    window.localStorage.setItem(key, JSON.stringify(next))
+    setSaved(true)
+  }
+
+  if (authLoading) {
+    return null
+  }
+
+  if (!userId) {
+    return (
+      <section className="rounded-2xl border border-accent/20 bg-tealTint px-4 py-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="space-y-1">
+            <p className="text-sm font-black text-text-primary">
+              Keep this recommendation history
+            </p>
+            <p className="text-xs leading-relaxed text-text-secondary">
+              Sign in before leaving so Decide can tie your result history,
+              watchlist, and alerts to one account.
+            </p>
+          </div>
+          <div className="flex shrink-0 gap-2">
+            <Link
+              href={`/login?callbackUrl=${encodeURIComponent('/assistant')}`}
+              className="inline-flex h-9 items-center rounded-md bg-accent px-4 text-xs font-black text-white transition-colors duration-fast hover:bg-accent-hover"
+            >
+              Sign in
+            </Link>
+            <Link
+              href={`/register?callbackUrl=${encodeURIComponent('/assistant')}`}
+              className="inline-flex h-9 items-center rounded-md border border-borderHigh bg-white px-4 text-xs font-bold text-text-primary transition-colors duration-fast hover:border-accent/40 hover:text-accent"
+            >
+              Create account
+            </Link>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  return (
+    <section className="rounded-2xl border border-border bg-surfaceHigh px-4 py-4">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="space-y-1">
+          <p className="text-sm font-black text-text-primary">
+            Save this result to your history
+          </p>
+          <p className="text-xs leading-relaxed text-text-secondary">
+            Keep a snapshot of this recommendation so you can compare it with
+            future searches from this device.
+          </p>
+        </div>
+        <div className="flex shrink-0 gap-2">
+          <button
+            type="button"
+            onClick={handleSave}
+            disabled={saved}
+            className="inline-flex h-9 items-center justify-center rounded-md border border-borderHigh bg-white px-4 text-xs font-black text-text-primary transition-colors duration-fast hover:border-accent/40 hover:text-accent disabled:cursor-default disabled:border-emerald-200 disabled:bg-emerald-50 disabled:text-emerald-700"
+          >
+            {saved ? 'Saved' : 'Save result'}
+          </button>
+          <Link
+            href="/results"
+            className="inline-flex h-9 items-center justify-center rounded-md bg-text-primary px-4 text-xs font-black text-white transition-colors duration-fast hover:bg-slate-950"
+          >
+            History
+          </Link>
+        </div>
+      </div>
+    </section>
   )
 }
 

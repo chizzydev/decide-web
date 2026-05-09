@@ -228,24 +228,40 @@ export default async function HomePage() {
 
             <div className="overflow-hidden rounded-lg border border-accent/20 bg-white shadow-xl shadow-slate-900/5">
               <div className="grid gap-0 md:grid-cols-[1fr_auto]">
-                <div className="flex min-w-0 gap-4 p-4 sm:p-5">
-                  <img
-                    src="/icon-192.png"
-                    alt=""
-                    className="h-16 w-16 shrink-0 rounded-[18px] shadow-lg shadow-slate-900/15"
-                  />
-                  <div className="min-w-0 space-y-1.5">
-                    <p className="text-xs font-black uppercase tracking-[0.18em] text-accent">
-                      Android app now available
-                    </p>
-                    <h2 className="text-xl font-black tracking-tight text-text-primary">
-                      Get Decide on your phone before Play Store launch
-                    </h2>
-                    <p className="max-w-2xl text-sm leading-relaxed text-text-secondary">
-                      This is the official Decide APK, signed from our Android build. Android may
-                      show an extra install warning because it is downloaded from the website while
-                      the Play Store listing is still in review.
-                    </p>
+                <div className="min-w-0 space-y-4 p-4 sm:p-5">
+                  <div className="flex min-w-0 gap-4">
+                    <img
+                      src="/icon-192.png"
+                      alt=""
+                      className="h-16 w-16 shrink-0 rounded-[18px] shadow-lg shadow-slate-900/15"
+                    />
+                    <div className="min-w-0 space-y-1.5">
+                      <p className="text-xs font-black uppercase tracking-[0.18em] text-accent">
+                        Android app now available
+                      </p>
+                      <h2 className="text-xl font-black tracking-tight text-text-primary">
+                        Get Decide on your phone before Play Store launch
+                      </h2>
+                      <p className="max-w-2xl text-sm leading-relaxed text-text-secondary">
+                        This is the official Decide APK, signed from our Android build.
+                        Recent install checks passed on Google Play Protect and Xiaomi
+                        security. Android may still show an extra prompt because the app
+                        is downloaded from the website while the Play Store listing is in review.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <SecurityCheckCard
+                      src="/images/app-security/google-play-protect.jpg"
+                      label="Google Play Protect"
+                      status="Looks safe"
+                    />
+                    <SecurityCheckCard
+                      src="/images/app-security/xiaomi-security-check.jpg"
+                      label="Xiaomi security scan"
+                      status="No risks detected"
+                    />
                   </div>
                 </div>
                 <div className="border-t border-border bg-surfaceHigh px-4 py-4 md:border-l md:border-t-0 md:px-5">
@@ -254,6 +270,13 @@ export default async function HomePage() {
                     <DownloadTrustStat label="Size" value={ANDROID_APK_SIZE} />
                     <DownloadTrustStat label="Source" value="Official" />
                   </div>
+                  <a
+                    href={ANDROID_APK_PATH}
+                    download
+                    className="mt-4 inline-flex h-10 w-full items-center justify-center rounded-md bg-text-primary px-4 text-sm font-black text-white transition-colors duration-fast hover:bg-slate-950"
+                  >
+                    Download APK
+                  </a>
                 </div>
               </div>
             </div>
@@ -788,6 +811,28 @@ const DownloadTrustStat = ({ label, value }: DownloadTrustStatProps) => (
   <div className="min-w-0">
     <p className="truncate text-sm font-black text-text-primary">{value}</p>
     <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.12em] text-text-muted">{label}</p>
+  </div>
+)
+
+interface SecurityCheckCardProps {
+  src: string
+  label: string
+  status: string
+}
+
+const SecurityCheckCard = ({ src, label, status }: SecurityCheckCardProps) => (
+  <div className="flex items-center gap-3 rounded-md border border-border bg-surfaceHigh p-2.5">
+    <img
+      src={src}
+      alt={`${label}: ${status}`}
+      className="h-14 w-20 shrink-0 rounded-md object-cover"
+    />
+    <div className="min-w-0">
+      <p className="truncate text-xs font-black text-text-primary">{label}</p>
+      <p className="mt-0.5 text-[11px] font-bold uppercase tracking-[0.12em] text-emerald-700">
+        {status}
+      </p>
+    </div>
   </div>
 )
 
