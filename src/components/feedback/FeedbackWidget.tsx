@@ -104,12 +104,13 @@ export const FeedbackWidget = () => {
         type="button"
         onClick={() => setOpen(true)}
         className="
-          fixed bottom-24 right-4 z-50 inline-flex h-11 items-center justify-center
-          rounded-md border border-accent/30 bg-text-primary px-4 text-sm font-black
-          text-white shadow-xl shadow-slate-900/20 transition-all duration-fast
-          hover:-translate-y-0.5 hover:bg-slate-950 focus-visible:outline-none
-          focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2
-          md:bottom-5
+          fixed bottom-24 right-3 z-50 inline-flex h-10 items-center justify-center
+          rounded-md border border-accent/30 bg-text-primary px-3 text-xs font-black
+          text-white shadow-lg shadow-slate-900/15 transition-all duration-fast
+          hover:bg-slate-950 focus-visible:outline-none focus-visible:ring-2
+          focus-visible:ring-accent focus-visible:ring-offset-2 md:bottom-auto md:right-0
+          md:top-1/2 md:h-auto md:-translate-y-1/2 md:rounded-l-md md:rounded-r-none
+          md:px-2.5 md:py-4 md:text-[11px] md:[writing-mode:vertical-rl]
         "
       >
         Feedback
