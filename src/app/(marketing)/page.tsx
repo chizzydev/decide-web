@@ -657,7 +657,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="px-4 py-24 text-center">
+      <section className="px-4 py-14 text-center md:py-16">
         <div className="mx-auto max-w-xl space-y-6">
           <h2 className="text-4xl font-black leading-tight tracking-tight text-text-primary">
             Ready to decide?

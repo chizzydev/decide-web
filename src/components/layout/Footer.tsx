@@ -33,7 +33,7 @@ export const Footer = () => {
   const currentYear = new Date().getFullYear()
 
   return (
-    <footer className="bg-navy-700 mt-24">
+    <footer className="bg-navy-700 mt-10 md:mt-16">
       <div className="max-w-6xl mx-auto px-4 pt-12 pb-28 md:pb-12">
 
         {/* Top row — brand and link columns */}
@@ -57,9 +57,9 @@ export const Footer = () => {
             </p>
 
             <p className="mt-4 text-xs text-slate-500 leading-relaxed max-w-xs">
-              Prices are scraped from Jumia and Slot every 6 hours.
-              Always verify before buying. Decide is not responsible
-              for price changes after publication.
+              Prices are tracked from Nigerian store listings and updated as new
+              checks are available. Always verify before buying because store
+              prices can change after publication.
             </p>
 
             <a
