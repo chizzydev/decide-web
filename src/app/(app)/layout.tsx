@@ -9,6 +9,7 @@ import { Navbar } from '@/components/layout/Navbar'
 import { MobileNav } from '@/components/layout/MobileNav'
 import { Footer } from '@/components/layout/Footer'
 import { CompareTray } from '@/components/layout/CompareTray'
+import { FeedbackWidget } from '@/components/feedback'
 
 interface AppLayoutProps {
   children: React.ReactNode
@@ -29,6 +30,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
       </main>
       {!isAssistantRoute ? <Footer /> : null}
       {!isAssistantRoute ? <CompareTray /> : null}
+      <FeedbackWidget />
       <MobileNav />
     </div>
   )
