@@ -33,7 +33,7 @@ export const Footer = () => {
   const currentYear = new Date().getFullYear()
 
   return (
-    <footer className="bg-navy-700 mt-10 md:mt-16">
+    <footer className="bg-navy-700 mt-0">
       <div className="max-w-6xl mx-auto px-4 pt-12 pb-28 md:pb-12">
 
         {/* Top row — brand and link columns */}

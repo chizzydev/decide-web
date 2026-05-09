@@ -29,6 +29,8 @@ interface FormState {
 }
 
 const pendingAlertProReferenceKey = 'decide.alertPro.pendingReference'
+const ALERT_PRO_PRICE_LABEL = 'N500 / 30 days'
+const ALERT_PRO_BUTTON_LABEL = 'N500'
 
 const BellIcon = () => (
   <svg
@@ -498,8 +500,12 @@ const PriceAlertButtonContent = ({
                         Free Launch
                       </p>
                       <p className="mt-1 text-sm text-text-secondary">
-                        Free Launch keeps one trusted-store alert. Alert Pro unlocks Jiji
-                        marketplace alerts and more active phone watches.
+                        Free Launch keeps one trusted-store alert. Alert Pro is{' '}
+                        <span className="font-semibold text-text-primary">
+                          {ALERT_PRO_PRICE_LABEL}
+                        </span>{' '}
+                        and unlocks Jiji marketplace alerts and more active phone
+                        watches.
                       </p>
                     </div>
 
@@ -539,6 +545,7 @@ const PriceAlertButtonContent = ({
                         <li>1 active trusted-store alert</li>
                         <li>2 alert creations per 24 hours</li>
                         <li>15 minute cooldown between alert creations</li>
+                        <li>Alert Pro costs {ALERT_PRO_PRICE_LABEL}</li>
                         <li>Jiji marketplace alerts require Alert Pro</li>
                       </ul>
                     </div>
@@ -635,11 +642,32 @@ const PriceAlertButtonContent = ({
                             <span className="font-semibold text-text-primary">
                               1 active trusted-store alert
                             </span>
-                            . Upgrade to Alert Pro for 10 active alerts, Smart
-                            Nearby matches, and Jiji marketplace leads.
+                            . Alert Pro costs{' '}
+                            <span className="font-semibold text-text-primary">
+                              {ALERT_PRO_PRICE_LABEL}
+                            </span>{' '}
+                            and unlocks 10 active alerts, Smart Nearby matches,
+                            and Jiji marketplace leads.
                           </>
                         )}
                       </p>
+                      {!isPro ? (
+                        <div className="mt-3 rounded-xl border border-accent/20 bg-tealTint px-3 py-3">
+                          <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-accent">
+                            Alert Pro price
+                          </p>
+                          <p className="mt-1 text-2xl font-black leading-none text-text-primary">
+                            {ALERT_PRO_BUTTON_LABEL}{' '}
+                            <span className="text-sm font-bold text-text-secondary">
+                              / 30 days
+                            </span>
+                          </p>
+                          <p className="mt-1 text-xs leading-relaxed text-text-secondary">
+                            One payment unlocks the extra alert features for the
+                            full 30-day period.
+                          </p>
+                        </div>
+                      ) : null}
                       {!isPro ? (
                         <>
                           <button
@@ -648,7 +676,9 @@ const PriceAlertButtonContent = ({
                             disabled={upgradeLoading}
                             className="mt-3 rounded-lg border border-accent/25 px-3 py-2 text-xs font-bold text-accent transition-colors duration-fast hover:border-accent hover:bg-accent-subtle disabled:cursor-not-allowed disabled:opacity-50"
                           >
-                            {upgradeLoading ? 'Opening checkout...' : 'Upgrade to Pro'}
+                            {upgradeLoading
+                              ? 'Opening checkout...'
+                              : `Upgrade for ${ALERT_PRO_BUTTON_LABEL}`}
                           </button>
                         {pendingReference ? (
                           <button
@@ -799,8 +829,9 @@ const PriceAlertButtonContent = ({
 
                       {!isPro ? (
                         <p className="text-xs text-text-muted">
-                          Locked for Free Launch. Upgrade to Alert Pro for
-                          Smart Nearby Alerts and Jiji leads.
+                          Locked for Free Launch. Upgrade to Alert Pro for{' '}
+                          {ALERT_PRO_PRICE_LABEL} to unlock Smart Nearby Alerts
+                          and Jiji leads.
                         </p>
                       ) : null}
                     </div>
@@ -818,7 +849,9 @@ const PriceAlertButtonContent = ({
                             disabled={upgradeLoading}
                             className="mt-3 rounded-lg bg-accent px-4 py-2 text-xs font-bold text-white transition-colors duration-fast hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-50"
                           >
-                            {upgradeLoading ? 'Opening checkout...' : 'Upgrade to Pro'}
+                            {upgradeLoading
+                              ? 'Opening checkout...'
+                              : `Upgrade for ${ALERT_PRO_BUTTON_LABEL}`}
                           </button>
                         ) : null}
                       </div>

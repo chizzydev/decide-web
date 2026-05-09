@@ -6,6 +6,8 @@ interface AlertPlanStatusProps {
   loading?: boolean
 }
 
+const ALERT_PRO_PRICE_LABEL = 'N500 / 30d'
+
 export const AlertPlanStatus = ({ entitlement, loading = false }: AlertPlanStatusProps) => {
   const isPro = entitlement?.plan === 'premium'
 
@@ -32,7 +34,7 @@ export const AlertPlanStatus = ({ entitlement, loading = false }: AlertPlanStatu
           <p className="max-w-2xl text-sm leading-relaxed text-text-secondary">
             {isPro
               ? 'Smart Nearby Alerts and optional Jiji marketplace leads are unlocked for your account.'
-              : 'Free keeps one exact trusted-store alert. Upgrade from any alert setup to unlock Smart Nearby and Jiji leads.'}
+              : `Free keeps one exact trusted-store alert. Alert Pro is ${ALERT_PRO_PRICE_LABEL} and can be started from any alert setup to unlock Smart Nearby and Jiji leads.`}
           </p>
         </div>
 
@@ -41,8 +43,13 @@ export const AlertPlanStatus = ({ entitlement, loading = false }: AlertPlanStatu
             {isPro ? 'Pro plan' : 'Free plan'}
           </PlanBadge>
           <PlanBadge tone="neutral">
-            {entitlement ? `${entitlement.max_active_alerts} active alerts` : 'N500 / 30d'}
+            {entitlement
+              ? `${entitlement.max_active_alerts} active ${
+                  entitlement.max_active_alerts === 1 ? 'alert' : 'alerts'
+                }`
+              : '1 active alert'}
           </PlanBadge>
+          {!isPro ? <PlanBadge tone="neutral">Pro {ALERT_PRO_PRICE_LABEL}</PlanBadge> : null}
           {isPro ? <PlanBadge tone="positive">Jiji unlocked</PlanBadge> : null}
           {isPro ? <PlanBadge tone="positive">Smart Nearby on</PlanBadge> : null}
         </div>
