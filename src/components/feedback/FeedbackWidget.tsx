@@ -108,7 +108,7 @@ export const FeedbackWidget = () => {
           rounded-md border border-accent/30 bg-text-primary px-3 text-xs font-black
           text-white shadow-lg shadow-slate-900/15 transition-all duration-fast
           hover:bg-slate-950 focus-visible:outline-none focus-visible:ring-2
-          focus-visible:ring-accent focus-visible:ring-offset-2 md:bottom-auto md:right-0
+          focus-visible:ring-accent focus-visible:ring-offset-2 md:bottom-auto md:right-2
           md:top-1/2 md:h-auto md:-translate-y-1/2 md:rounded-l-md md:rounded-r-none
           md:px-2.5 md:py-4 md:text-[11px] md:[writing-mode:vertical-rl]
         "

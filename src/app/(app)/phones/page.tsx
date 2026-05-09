@@ -267,7 +267,7 @@ export default async function PhonesPage({ searchParams }: PhonesPageProps) {
 
             <Link
               href={compareLead.href}
-              className="inline-flex h-10 items-center rounded-md bg-accent px-4 text-sm font-bold text-white transition-colors duration-fast hover:bg-accent-hover"
+              className="inline-flex h-10 w-full items-center justify-center rounded-md bg-accent px-4 text-sm font-bold text-white transition-colors duration-fast hover:bg-accent-hover sm:w-fit"
             >
               Open comparison
             </Link>
