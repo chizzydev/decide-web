@@ -32,6 +32,9 @@ const nextConfig: NextConfig = {
     minimumCacheTTL: 60 * 60 * 24 * 30,
     localPatterns: [
       {
+        pathname: '/icon-192.png',
+      },
+      {
         pathname: '/images/**',
       },
     ],
