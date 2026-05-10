@@ -1,5 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import type { Metadata } from 'next'
 import { PhoneGrid } from '@/components/phone'
 import { MarketplaceLeadFeed } from '@/components/market/MarketplaceLeadFeed'
@@ -18,9 +19,11 @@ import type {
 } from '@/types'
 
 export const metadata: Metadata = {
-  title: "Nigeria's Smartest Phone Advisor",
+  title: {
+    absolute: 'Decide - Live Phone Prices, Deals and Alerts in Nigeria',
+  },
   description:
-    'Answer five questions, browse live Nigerian price movement, and get clearer phone verdicts before you buy.',
+    'Compare Nigerian phone prices, live drops, buy-or-wait verdicts, Jiji marketplace context, price alerts, and used-phone guidance before you pay.',
 }
 
 export const revalidate = 21600
@@ -220,9 +223,11 @@ export default async function HomePage() {
               <div className="grid gap-0">
                 <div className="min-w-0 space-y-4 p-4 sm:p-5">
                   <div className="flex min-w-0 gap-4">
-                    <img
+                    <Image
                       src="/icon-192.png"
-                      alt=""
+                      alt="Decide Android app icon"
+                      width={64}
+                      height={64}
                       className="h-16 w-16 shrink-0 rounded-[18px] shadow-lg shadow-slate-900/15"
                     />
                     <div className="min-w-0 space-y-1.5">
@@ -814,9 +819,12 @@ interface SecurityCheckCardProps {
 
 const SecurityCheckCard = ({ src, label, status }: SecurityCheckCardProps) => (
   <div className="flex items-center gap-3 rounded-md border border-border bg-surfaceHigh p-2.5">
-    <img
+    <Image
       src={src}
       alt={`${label}: ${status}`}
+      width={80}
+      height={56}
+      sizes="80px"
       className="h-14 w-20 shrink-0 rounded-md object-cover"
     />
     <div className="min-w-0">

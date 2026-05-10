@@ -13,15 +13,35 @@ const geist = Geist({
   display: 'swap',
 })
 
+const DEFAULT_TITLE = 'Decide - Live Phone Prices, Deals and Alerts in Nigeria'
+const DEFAULT_DESCRIPTION =
+  'Compare Nigerian phone prices, live drops, buy-or-wait verdicts, Jiji marketplace context, price alerts, and used-phone guidance before you pay.'
+
+const getOriginFromUrl = (value?: string) => {
+  if (!value || value.startsWith('your_')) {
+    return null
+  }
+
+  try {
+    const url = new URL(value)
+    return `${url.protocol}//${url.host}`
+  } catch {
+    return null
+  }
+}
+
+const sentryPreconnectOrigin = getOriginFromUrl(
+  process.env.NEXT_PUBLIC_SENTRY_DSN ?? process.env.SENTRY_DSN
+)
+
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   applicationName: 'Decide',
   title: {
-    default: "Decide - Nigeria's Smartest Phone Advisor",
+    default: DEFAULT_TITLE,
     template: '%s | Decide',
   },
-  description:
-    'Decide helps Nigerian buyers choose the right phone with live local prices, buy-or-wait verdicts, Jiji marketplace context, alerts, and gray-market warnings.',
+  description: DEFAULT_DESCRIPTION,
   keywords: [
     'buy phone Nigeria',
     'best phone Nigeria',
@@ -56,9 +76,8 @@ export const metadata: Metadata = {
     locale: 'en_NG',
     url: '/',
     siteName: 'Decide',
-    title: "Decide - Nigeria's Smartest Phone Advisor",
-    description:
-      'Live Nigerian phone prices, buy-or-wait verdicts, Jiji marketplace context, alerts, and safer buying guidance.',
+    title: DEFAULT_TITLE,
+    description: DEFAULT_DESCRIPTION,
     images: [
       {
         url: '/images/og-image.png',
@@ -70,9 +89,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: "Decide - Nigeria's Smartest Phone Advisor",
-    description:
-      'Live Nigerian phone prices, buy-or-wait verdicts, Jiji marketplace context, alerts, and safer buying guidance.',
+    title: DEFAULT_TITLE,
+    description: DEFAULT_DESCRIPTION,
     images: ['/images/og-image.png'],
   },
   robots: {
@@ -100,27 +118,59 @@ export default function RootLayout({ children }: RootLayoutProps) {
 
   const structuredData = {
     '@context': 'https://schema.org',
-    '@type': 'WebSite',
-    name: 'Decide',
-    url: SITE_URL,
-    description:
-      'Nigeria phone buying intelligence for live prices, alerts, buy-or-wait verdicts, and marketplace guidance.',
-    potentialAction: {
-      '@type': 'SearchAction',
-      target: `${SITE_URL}/phones?search={search_term_string}`,
-      'query-input': 'required name=search_term_string',
-    },
-    publisher: {
-      '@type': 'Organization',
-      name: 'Decide',
-      url: SITE_URL,
-      logo: `${SITE_URL}/icon-512.png`,
-      ...(sameAs.length > 0 ? { sameAs } : {}),
-    },
+    '@graph': [
+      {
+        '@type': 'Organization',
+        '@id': `${SITE_URL}/#organization`,
+        name: 'Decide',
+        url: SITE_URL,
+        logo: `${SITE_URL}/icon-512.png`,
+        ...(sameAs.length > 0 ? { sameAs } : {}),
+      },
+      {
+        '@type': 'WebSite',
+        '@id': `${SITE_URL}/#website`,
+        name: 'Decide',
+        url: SITE_URL,
+        description: DEFAULT_DESCRIPTION,
+        publisher: {
+          '@id': `${SITE_URL}/#organization`,
+        },
+        potentialAction: {
+          '@type': 'SearchAction',
+          target: `${SITE_URL}/phones?search={search_term_string}`,
+          'query-input': 'required name=search_term_string',
+        },
+      },
+      {
+        '@type': 'WebApplication',
+        '@id': `${SITE_URL}/#app`,
+        name: 'Decide',
+        url: SITE_URL,
+        applicationCategory: 'ShoppingApplication',
+        operatingSystem: 'Web, Android',
+        description: DEFAULT_DESCRIPTION,
+        featureList: [
+          'Live Nigerian phone price tracking',
+          'Buy-or-wait phone verdicts',
+          'Phone comparison and recommendation tools',
+          'Jiji marketplace context for used phone leads',
+          'Price alerts for watched phones',
+        ],
+        provider: {
+          '@id': `${SITE_URL}/#organization`,
+        },
+      },
+    ],
   }
 
   return (
     <html lang="en" className={geist.variable} data-scroll-behavior="smooth">
+      <head>
+        {sentryPreconnectOrigin ? (
+          <link rel="preconnect" href={sentryPreconnectOrigin} crossOrigin="" />
+        ) : null}
+      </head>
       <body className="font-ui bg-bg text-text-primary antialiased">
         <script
           type="application/ld+json"

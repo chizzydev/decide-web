@@ -105,6 +105,15 @@ const nextConfig: NextConfig = {
           },
         ],
       },
+      {
+        source: '/images/app-security/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
     ]
   },
 

@@ -1,0 +1,35 @@
+# Decide
+
+> Decide is a Nigerian phone buying intelligence product that helps shoppers choose, compare, track, and pressure-test phones before paying.
+
+## Core Pages
+
+- [Home](https://www.decide.com.ng/): Overview of Decide's phone buying intelligence, Android app, live market pulse, and main buying workflows.
+- [Find My Phone](https://www.decide.com.ng/assistant): Guided phone recommendation flow for Nigerian buyers.
+- [Browse Phones](https://www.decide.com.ng/phones): Searchable phone catalog with prices, specs, verdicts, and ownership signals.
+- [Compare Phones](https://www.decide.com.ng/compare): Side-by-side comparison flow for two phone options.
+- [Analyze a Phone](https://www.decide.com.ng/analyze): Buy-or-wait analysis for a phone a buyer already has in mind.
+- [Deals Radar](https://www.decide.com.ng/deals): Live tracked phone price drops with current and previous tracked prices.
+- [Today's Deals](https://www.decide.com.ng/deals/today): Freshest tracked price movement and deal candidates.
+- [Used Phone Checker](https://www.decide.com.ng/used/checker): Used-phone buying checks, Jiji context, and risk guidance.
+- [How It Works](https://www.decide.com.ng/how-it-works): Explanation of Decide's recommendation and market intelligence process.
+
+## What Decide Helps With
+
+- Finding phones that fit a buyer's budget, usage, and brand preferences.
+- Comparing phones beyond specs, including ownership, support, resale, and repair reality.
+- Tracking live Nigerian phone prices and visible drops from supported retailers.
+- Separating trusted retailer prices from Jiji marketplace leads.
+- Setting price alerts and saving phones for later decision-making.
+- Giving safer guidance for used-phone buying and gray-market risk.
+
+## Important Notes
+
+- Decide is a buying guidance product, not a retailer.
+- Prices can change after publication, so buyers should verify the final retailer price before paying.
+- Jiji marketplace leads are treated as leads, not verified retailer prices.
+- Alert Pro is a paid feature for stronger phone price monitoring.
+
+## Contact
+
+- Support email: support@decide.com.ng
