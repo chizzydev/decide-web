@@ -26,8 +26,8 @@ export const metadata: Metadata = {
 export const revalidate = 21600
 
 const BUDGET_WATCH_CAP_NGN = 250_000
-const ANDROID_APK_PATH = '/downloads/decide-android-v1.0.0.apk'
-const ANDROID_APK_SIZE = '76 MB'
+const ANDROID_APK_PATH = '/downloads/decide-android-v1.0.1.apk'
+const ANDROID_APK_SIZE = '71 MB'
 
 const pickFreshestDeal = (deals: PriceDropRadarItem[]) =>
   [...deals].sort(
@@ -258,7 +258,7 @@ export default async function HomePage() {
                 </div>
                 <div className="border-t border-border bg-surfaceHigh px-4 py-4 md:px-5">
                   <div className="grid grid-cols-3 gap-3 text-center">
-                    <DownloadTrustStat label="Version" value="1.0.0" />
+                    <DownloadTrustStat label="Version" value="1.0.1" />
                     <DownloadTrustStat label="Size" value={ANDROID_APK_SIZE} />
                     <DownloadTrustStat label="Source" value="Official" />
                   </div>
