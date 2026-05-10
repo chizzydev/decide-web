@@ -27,6 +27,7 @@ import { WorthItVerdictCard } from '@/components/market/WorthItVerdictCard'
 import { DecisionLoopPanel } from '@/components/market/DecisionLoopPanel'
 import { RelatedComparePanel } from '@/components/market/RelatedComparePanel'
 import { StructuredData } from '@/components/seo/StructuredData'
+import { buildVersionedImageUrl } from '@/lib/imageUrl'
 import { getTopPhoneDetailCompareActions } from '@/lib/relatedCompare'
 import {
   buildBuyNowWaitHref,
@@ -285,6 +286,7 @@ export default async function PhonePage({ params, searchParams }: PhonePageProps
     }
   )
   const selectedVariantHref = (variantId: number) => `/phones/${phone.slug}?variant_id=${variantId}#variant-pricing`
+  const versionedImageUrl = buildVersionedImageUrl(phone.image_url, phone.updated_at)
   const structuredData = [
     {
       '@context': 'https://schema.org',
@@ -393,9 +395,9 @@ export default async function PhonePage({ params, searchParams }: PhonePageProps
 
       <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
         <div className="flex min-h-64 items-center justify-center rounded-md border border-border bg-surface p-8">
-          {hasRealImage(phone.image_url) ? (
+          {versionedImageUrl && hasRealImage(versionedImageUrl) ? (
             <Image
-              src={`${phone.image_url!}?v=${phone.updated_at}`}
+              src={versionedImageUrl}
               alt={phone.name}
               width={240}
               height={240}

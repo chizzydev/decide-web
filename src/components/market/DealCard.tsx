@@ -5,6 +5,7 @@ import { PriceAlertButton } from '@/components/phone/PriceAlertButton'
 import { SaveButton } from '@/components/phone/SaveButton'
 import { Card } from '@/components/ui'
 import { formatNaira, formatRelativeTime } from '@/lib/formatters'
+import { buildVersionedImageUrl } from '@/lib/imageUrl'
 import type { RelatedCompareAction } from '@/lib/relatedCompare'
 import type { PriceDropRadarItem } from '@/types'
 import { PriceChangeBadge } from './PriceChangeBadge'
@@ -90,7 +91,8 @@ const getResaleTone = (
 }
 
 export const DealCard = ({ deal, compareAction }: DealCardProps) => {
-  const hasRealImage = !!deal.image_url && !deal.image_url.includes('placeholder')
+  const versionedImageUrl = buildVersionedImageUrl(deal.image_url, deal.scraped_at)
+  const hasRealImage = !!versionedImageUrl && !versionedImageUrl.includes('placeholder')
   const storeLabel = STORE_LABELS[deal.store]
   const ownership = deal.ownership
   const detailHref = buildDealDetailHref(deal)
@@ -118,7 +120,7 @@ export const DealCard = ({ deal, compareAction }: DealCardProps) => {
           <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-xl border border-border bg-surfaceHigh">
             {hasRealImage ? (
               <Image
-                src={`${deal.image_url!}?v=${deal.scraped_at}`}
+                src={versionedImageUrl!}
                 alt={deal.phone_name}
                 width={88}
                 height={88}

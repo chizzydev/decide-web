@@ -18,6 +18,7 @@ import type { RelatedCompareAction } from '@/lib/relatedCompare'
 import { mapToComparePhone } from '@/lib/compareContext'
 import { useCompareStore } from '@/store/compareStore'
 import { formatGb, formatMah, formatMp, formatHz } from '@/lib/formatters'
+import { buildVersionedImageUrl } from '@/lib/imageUrl'
 import type {
   CatalogDiscoverySignal,
   PhoneCard as PhoneCardType,
@@ -44,6 +45,7 @@ export const PhoneCard = ({
   const isTrayFull = useCompareStore((s) => s.isTrayFull())
   const hasTrustedPrice = (phone.prices ?? []).length > 0
   const hasJijiContext = (phone.marketplace_signal_count ?? 0) > 0
+  const versionedImageUrl = buildVersionedImageUrl(phone.image_url, phone.updated_at)
 
   const handleCompareToggle = (e: React.MouseEvent): void => {
     e.preventDefault()
@@ -87,9 +89,9 @@ export const PhoneCard = ({
             featured ? 'bg-tealTint' : 'bg-surfaceHigh',
           ].join(' ')}
         >
-          {phone.image_url && !phone.image_url.includes('placeholder') ? (
+          {versionedImageUrl && !versionedImageUrl.includes('placeholder') ? (
             <Image
-              src={`${phone.image_url}?v=${phone.updated_at}`}
+              src={versionedImageUrl}
               alt={phone.name}
               width={160}
               height={160}
