@@ -75,6 +75,59 @@ const getMovementCopy = (offer: MarketplaceLeadItem) => {
   }
 }
 
+const getOfferAgeHours = (offer: MarketplaceLeadItem) => {
+  const scrapedAt = new Date(offer.scraped_at).getTime()
+  return Number.isFinite(scrapedAt)
+    ? Math.max(0, (Date.now() - scrapedAt) / 3_600_000)
+    : Number.POSITIVE_INFINITY
+}
+
+const getCanonicalOfferUrl = (offer: MarketplaceLeadItem) => {
+  try {
+    const parsed = new URL(offer.url)
+    parsed.search = ''
+    parsed.hash = ''
+    return parsed.toString()
+  } catch {
+    return offer.url
+  }
+}
+
+const getFreshMarketplaceOffers = (offers: MarketplaceLeadItem[]) => {
+  const seen = new Set<string>()
+  return offers.filter((offer) => {
+    if (getOfferAgeHours(offer) > 24) return false
+
+    const key = getCanonicalOfferUrl(offer)
+    if (seen.has(key)) return false
+    seen.add(key)
+    return true
+  })
+}
+
+const getFreshnessCopy = (offer: MarketplaceLeadItem) => {
+  const ageHours = getOfferAgeHours(offer)
+
+  if (ageHours <= 6) {
+    return {
+      label: 'Fresh lead',
+      className: 'border-emerald-200 bg-emerald-50 text-emerald-700',
+    }
+  }
+
+  if (ageHours <= 24) {
+    return {
+      label: 'Today',
+      className: 'border-sky-200 bg-sky-50 text-sky-700',
+    }
+  }
+
+  return {
+    label: 'Recheck first',
+    className: 'border-amber-200 bg-amber-50 text-amber-700',
+  }
+}
+
 export const MarketplaceLeadFeed = ({
   offers,
   title = 'Jiji marketplace intelligence',
@@ -82,7 +135,7 @@ export const MarketplaceLeadFeed = ({
   compact = false,
   status = offers?.length ? 'ready' : 'empty',
 }: MarketplaceLeadFeedProps) => {
-  const visibleOffers = offers ?? []
+  const visibleOffers = getFreshMarketplaceOffers(offers ?? [])
   const isReady = status === 'ready' && visibleOffers.length > 0
 
   return (
@@ -111,6 +164,35 @@ export const MarketplaceLeadFeed = ({
         </div>
 
         {isReady ? (
+          <div className="grid gap-2 sm:grid-cols-3">
+            <div className="rounded-2xl border border-amber-200 bg-white/70 px-3 py-3">
+              <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-amber-700">
+                Fresh leads
+              </p>
+              <p className="mt-1 text-lg font-black text-text-primary">
+                {visibleOffers.length}
+              </p>
+            </div>
+            <div className="rounded-2xl border border-amber-200 bg-white/70 px-3 py-3">
+              <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-amber-700">
+                Source
+              </p>
+              <p className="mt-1 text-lg font-black text-text-primary">
+                Jiji only
+              </p>
+            </div>
+            <div className="rounded-2xl border border-amber-200 bg-white/70 px-3 py-3">
+              <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-amber-700">
+                Rule
+              </p>
+              <p className="mt-1 text-lg font-black text-text-primary">
+                Inspect first
+              </p>
+            </div>
+          </div>
+        ) : null}
+
+        {isReady ? (
           <div className={`grid gap-3 ${compact ? 'lg:grid-cols-3' : 'md:grid-cols-2 xl:grid-cols-3'}`}>
             {visibleOffers.slice(0, compact ? 3 : 6).map((offer) => {
             const variantLabel = getVariantLabel(offer)
@@ -118,6 +200,7 @@ export const MarketplaceLeadFeed = ({
             const dealQuality = getDealQuality(offer)
             const reasonLabels = getReasonLabels(offer)
             const movement = getMovementCopy(offer)
+            const freshness = getFreshnessCopy(offer)
 
             return (
               <article
@@ -138,6 +221,9 @@ export const MarketplaceLeadFeed = ({
                           {variantLabel}
                         </p>
                       ) : null}
+                      <p className="line-clamp-2 text-xs font-semibold text-text-secondary">
+                        {offer.listing_title}
+                      </p>
                     </div>
                     <span
                       className={`shrink-0 rounded-full border px-2 py-1 text-[11px] font-bold uppercase tracking-[0.12em] ${riskClass[riskLevel]}`}
@@ -162,6 +248,9 @@ export const MarketplaceLeadFeed = ({
                   </div>
 
                   <div className="flex flex-wrap gap-2">
+                    <span className={`rounded-full border px-2.5 py-1 text-[11px] font-bold ${freshness.className}`}>
+                      {freshness.label}
+                    </span>
                     {movement ? (
                       <span className={`rounded-full border px-2.5 py-1 text-[11px] font-bold ${movement.className}`}>
                         {movement.label}
@@ -197,7 +286,7 @@ export const MarketplaceLeadFeed = ({
                       href={offer.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-sm font-bold text-amber-800 transition-colors duration-fast hover:text-amber-900"
+                      className="inline-flex h-9 items-center rounded-md border border-amber-300 bg-amber-50 px-3 text-sm font-bold text-amber-900 transition-colors duration-fast hover:bg-amber-100"
                     >
                       Open Jiji listing
                     </a>
@@ -216,12 +305,12 @@ export const MarketplaceLeadFeed = ({
               <h3 className="text-xl font-black tracking-tight text-text-primary">
                 {status === 'unavailable'
                   ? 'Jiji leads are not connected in this running build yet'
-                  : 'No Jiji bargain leads in this pass yet'}
+                  : 'No fresh Jiji leads worth spotlighting right now'}
               </h3>
               <p className="max-w-3xl text-sm leading-relaxed text-amber-900">
                 {status === 'unavailable'
                   ? 'The web lane is ready, but the running API did not return the marketplace route. Restart the API after deploying the market route so this section can fill with scored Jiji leads.'
-                  : 'Decide will keep this lane separate from trusted Jumia and Slot pricing. When a useful Jiji lead is available, it will appear here with quality, risk, and safe-buying guidance.'}
+                  : 'Decide now keeps this lane fresh and separate from trusted Jumia and Slot pricing. When a useful recent Jiji lead is available, it will appear here with quality, risk, and safe-buying guidance.'}
               </p>
               <div className="flex flex-wrap gap-3">
                 <Link

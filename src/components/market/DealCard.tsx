@@ -96,6 +96,9 @@ export const DealCard = ({ deal, compareAction }: DealCardProps) => {
   const storeLabel = STORE_LABELS[deal.store]
   const ownership = deal.ownership
   const detailHref = buildDealDetailHref(deal)
+  const previousTrackedCopy = deal.previous_scraped_at
+    ? `Compared with the previous tracked ${storeLabel} price from ${formatRelativeTime(deal.previous_scraped_at)}.`
+    : `Compared with the previous tracked ${storeLabel} price.`
 
   return (
     <Card className="flex h-full flex-col overflow-hidden border-borderHigh bg-surface p-0 shadow-sm">
@@ -149,12 +152,15 @@ export const DealCard = ({ deal, compareAction }: DealCardProps) => {
             <p className="text-sm text-text-secondary">
               Was {formatNaira(deal.previous_price_ngn)}, now {formatNaira(deal.current_price_ngn)}.
             </p>
+            <p className="text-xs leading-relaxed text-text-muted">
+              {previousTrackedCopy}
+            </p>
           </div>
         </div>
 
         <div className="grid grid-cols-2 gap-2">
           <DealStat label="Current price" value={formatNaira(deal.current_price_ngn)} />
-          <DealStat label="Previous price" value={formatNaira(deal.previous_price_ngn)} />
+          <DealStat label="Previous tracked" value={formatNaira(deal.previous_price_ngn)} />
         </div>
 
         {ownership ? (

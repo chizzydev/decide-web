@@ -1,6 +1,25 @@
 import type { NextConfig } from 'next'
 import { withSentryConfig } from '@sentry/nextjs'
 
+const isProduction = process.env.NODE_ENV === 'production'
+const configuredApiUrl = process.env.NEXT_PUBLIC_API_URL?.replace(/\/+$/, '')
+
+const connectSources = [
+  "'self'",
+  'https://decide-api-production-8aa7.up.railway.app',
+  ...(configuredApiUrl && (!isProduction || configuredApiUrl.startsWith('https://'))
+    ? [configuredApiUrl]
+    : []),
+  ...(!isProduction
+    ? ['http://localhost:3001', 'http://127.0.0.1:3001']
+    : []),
+  'https://accounts.google.com',
+  'https://*.sentry.io',
+  'https://*.ingest.sentry.io',
+  'https://vercel.live',
+  'wss://ws-us3.pusher.com',
+]
+
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
@@ -49,7 +68,7 @@ const nextConfig: NextConfig = {
           "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
           "img-src 'self' data: blob: https://fdn2.gsmarena.com https://ng.jumia.is https://lh3.googleusercontent.com",
           "font-src 'self' data: https://fonts.gstatic.com",
-          "connect-src 'self' https://decide-api-production-8aa7.up.railway.app https://accounts.google.com https://*.sentry.io https://*.ingest.sentry.io https://vercel.live wss://ws-us3.pusher.com",
+          `connect-src ${Array.from(new Set(connectSources)).join(' ')}`,
           "frame-src 'self' https://accounts.google.com https://vercel.live",
           "upgrade-insecure-requests",
         ].join('; '),
