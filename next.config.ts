@@ -3,6 +3,7 @@ import { withSentryConfig } from '@sentry/nextjs'
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  poweredByHeader: false,
   turbopack: {
     root: process.cwd(),
   },
