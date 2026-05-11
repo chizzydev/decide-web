@@ -100,6 +100,19 @@ export interface CompareSummary {
   strengths_b: string[]
 }
 
+export interface CompareDecisionContext {
+  mode: 'clear' | 'close' | 'cross_os_context'
+  is_cross_os: boolean
+  overall_winner: string | null
+  score_a: number
+  score_b: number
+  row_score_a: number
+  row_score_b: number
+  category_wins_a: string[]
+  category_wins_b: string[]
+  note: string | null
+}
+
 export interface CompareOwnershipLayer {
   longevity_signal: import('./editorial').LongevitySignal
   repair_support_signal: import('./editorial').RepairSupportSignal
@@ -121,6 +134,7 @@ export interface CompareResult {
   phone_b: import('./phone').PhoneDetail
   rows: CompareRow[]
   overall_winner: string | null
+  decision_context: CompareDecisionContext
   summary: CompareSummary
   ownership: {
     phone_a: CompareOwnershipLayer
