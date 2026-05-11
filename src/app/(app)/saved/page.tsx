@@ -560,7 +560,7 @@ const WatchlistCard = ({
                 compareAction.context ??
                 `Compare ${item.phone_name} with ${compareAction.counterpart.phone_name}`
               }
-              className="inline-flex h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-text-secondary transition-colors duration-fast hover:border-borderHigh hover:text-text-primary"
+              className="inline-flex h-10 items-center justify-center rounded-md border border-accent/25 bg-tealTint px-4 text-sm font-black text-accent transition-colors duration-fast hover:border-accent/40 hover:bg-accent/10 hover:text-accent-hover"
             >
               Compare finalists
             </Link>

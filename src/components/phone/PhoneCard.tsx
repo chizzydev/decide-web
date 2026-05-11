@@ -248,7 +248,7 @@ export const PhoneCard = ({
           {compareAction ? (
             <Link
               href={compareAction.href}
-              className="max-w-full truncate font-semibold text-text-secondary transition-colors duration-fast hover:text-text-primary"
+              className="inline-flex max-w-full items-center truncate rounded-md border border-accent/25 bg-tealTint px-2.5 py-1.5 font-black text-accent transition-colors duration-fast hover:border-accent/40 hover:bg-accent/10 hover:text-accent-hover"
               title={
                 compareAction.compare_context
                   ? `Compare with ${compareAction.counterpart.name}: ${compareAction.compare_context}`
@@ -287,13 +287,13 @@ export const PhoneCard = ({
             onClick={handleCompareToggle}
             disabled={!canAddToTray}
             className={[
-              'w-full h-8 rounded-md text-xs font-semibold tracking-wide',
+              'w-full h-9 rounded-md text-xs font-black tracking-wide',
               'border transition-all duration-fast',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-1 focus-visible:ring-offset-bg',
               'disabled:opacity-40 disabled:cursor-not-allowed',
               isInTray
-                ? 'border-accent text-accent bg-accent-subtle hover:bg-accent hover:text-navy-800'
-                : 'border-border text-slate-400 hover:border-borderHigh hover:text-text-primary',
+                ? 'border-accent bg-accent text-navy-900 hover:border-accent-hover hover:bg-accent-hover'
+                : 'border-accent/25 bg-tealTint text-accent hover:border-accent/40 hover:bg-accent/10 hover:text-accent-hover',
             ]
               .filter(Boolean)
               .join(' ')}

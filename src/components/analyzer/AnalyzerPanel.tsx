@@ -840,7 +840,7 @@ const AlternativesSection = ({
             <div className="flex flex-wrap items-center gap-3 px-4 pb-3 text-xs">
               <Link
                 href={`/compare/${selectedPhoneSlug}/vs/${phone.slug}`}
-                className="font-bold text-accent transition-colors duration-fast hover:text-accent-hover"
+                className="inline-flex items-center rounded-md border border-accent/25 bg-tealTint px-2.5 py-1.5 font-black text-accent transition-colors duration-fast hover:border-accent/40 hover:bg-accent/10 hover:text-accent-hover"
               >
                 Compare with your pick
               </Link>

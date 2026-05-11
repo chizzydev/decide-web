@@ -149,7 +149,7 @@ export const BuyNowWaitCard = ({
                 </Link>
                 <Link
                   href="/compare"
-                  className="text-sm font-semibold text-text-secondary transition-colors duration-fast hover:text-text-primary"
+                  className="inline-flex h-10 items-center justify-center rounded-md border border-accent/25 bg-tealTint px-4 text-sm font-black text-accent transition-colors duration-fast hover:border-accent/40 hover:bg-accent/10 hover:text-accent-hover"
                 >
                   Compare phones
                 </Link>

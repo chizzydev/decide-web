@@ -383,23 +383,25 @@ const PriceAlertButtonContent = ({
           inline-flex w-auto shrink-0
           rounded-md border border-accent bg-accent
           px-4 py-0 h-10
-          text-sm font-bold text-white
+          text-sm font-black text-white
           hover:border-accent-hover hover:bg-accent-hover hover:text-white
         `
       : triggerVariant === 'inlineSecondary'
         ? `
           inline-flex w-auto shrink-0
-          rounded-md border border-border bg-white
+          rounded-md border border-accent/20 bg-white
           px-4 py-0 h-10
-          text-sm font-semibold text-text-secondary
-          hover:border-borderHigh hover:text-text-primary
+          text-sm font-black text-text-primary
+          shadow-sm
+          hover:border-accent/40 hover:bg-tealTint hover:text-accent
         `
         : `
           flex w-full
-          rounded-sm border border-border bg-surface
+          rounded-sm border border-accent/20 bg-surface
           px-4 py-2.5
-          text-sm font-semibold text-text-primary
-          hover:border-borderHigh hover:bg-surface-hover
+          text-sm font-black text-text-primary
+          shadow-sm
+          hover:border-accent/40 hover:bg-tealTint hover:text-accent
         `
 
   return (
@@ -921,20 +923,22 @@ const PriceAlertButtonFallback = ({
           inline-flex w-auto shrink-0
           rounded-md border border-accent bg-accent
           px-4 py-0 h-10
-          text-sm font-bold text-white
+          text-sm font-black text-white
         `
         : triggerVariant === 'inlineSecondary'
           ? `
           inline-flex w-auto shrink-0
-          rounded-md border border-border bg-white
+          rounded-md border border-accent/20 bg-white
           px-4 py-0 h-10
-          text-sm font-semibold text-text-secondary
+          text-sm font-black text-text-primary
+          shadow-sm
         `
           : `
           flex w-full
-          rounded-sm border border-border bg-surface
+          rounded-sm border border-accent/20 bg-surface
           px-4 py-2.5
-          text-sm font-semibold text-text-primary
+          text-sm font-black text-text-primary
+          shadow-sm
         `,
       triggerClassName ?? '',
     ].join(' ')}

@@ -239,7 +239,7 @@ export const DealCard = ({ deal, compareAction }: DealCardProps) => {
                       : `Compare ${deal.phone_name} with ${compareAction.counterpart.phone_name}`
                     : undefined
                 }
-                className="text-sm font-semibold text-text-secondary transition-colors duration-fast hover:text-text-primary"
+                className="inline-flex h-10 items-center justify-center rounded-md border border-accent/25 bg-tealTint px-4 text-sm font-black text-accent transition-colors duration-fast hover:border-accent/40 hover:bg-accent/10 hover:text-accent-hover"
               >
                 {compareAction ? 'Compare with closest match' : 'Compare options'}
               </Link>
@@ -294,7 +294,7 @@ export const DealCard = ({ deal, compareAction }: DealCardProps) => {
               href={deal.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex h-9 items-center rounded-md border border-border px-3 text-sm font-semibold text-text-secondary transition-colors duration-fast hover:border-borderHigh hover:text-text-primary"
+              className="inline-flex h-9 min-w-[140px] items-center justify-center rounded-md border border-border px-3 text-center text-sm font-semibold text-text-secondary transition-colors duration-fast hover:border-borderHigh hover:text-text-primary"
             >
               Open on {storeLabel}
             </a>

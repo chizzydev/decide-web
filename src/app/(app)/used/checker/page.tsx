@@ -380,7 +380,7 @@ const UsedGuideCard = ({
         <Link
           href={compareAction.href}
           title={`Compare ${phone.name} with ${compareAction.counterpart.name}`}
-          className="inline-flex items-center text-sm font-semibold text-text-secondary transition-colors duration-fast hover:text-text-primary"
+          className="inline-flex h-9 items-center justify-center rounded-md border border-accent/25 bg-tealTint px-3 text-sm font-black text-accent transition-colors duration-fast hover:border-accent/40 hover:bg-accent/10 hover:text-accent-hover"
         >
           Compare with closest match
         </Link>

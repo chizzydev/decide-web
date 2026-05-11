@@ -828,7 +828,7 @@ const ResultCard = ({ phone, rank, priorities, result }: ResultCardProps) => {
             disabled={!isInTray && isTrayFull}
             aria-pressed={isInTray}
             aria-label={isInTray ? `Remove ${phone.name} from comparison` : `Add ${phone.name} to comparison`}
-            className="shrink-0"
+            className="shrink-0 border border-accent/25 bg-tealTint text-accent hover:border-accent/40 hover:bg-accent/10 hover:text-accent-hover"
           >
             {isInTray ? '✓ Comparing' : 'Compare'}
           </Button>
