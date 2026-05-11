@@ -2,6 +2,7 @@ import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import type { Metadata } from 'next'
+import { ResetTokenRedirect } from '@/components/auth/ResetTokenRedirect'
 import { PhoneGrid } from '@/components/phone'
 import { MarketplaceLeadFeed } from '@/components/market/MarketplaceLeadFeed'
 import { ShortlistBuilderPanel } from '@/components/market/ShortlistBuilderPanel'
@@ -162,6 +163,7 @@ export default async function HomePage() {
 
   return (
     <div className="flex flex-col overflow-x-hidden">
+      <ResetTokenRedirect />
       <section className="relative overflow-hidden border-b border-border">
         <div
           className="absolute inset-0 opacity-[0.03]"
