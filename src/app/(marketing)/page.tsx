@@ -30,7 +30,9 @@ export const metadata: Metadata = {
 export const revalidate = 21600
 
 const BUDGET_WATCH_CAP_NGN = 250_000
-const ANDROID_APK_PATH = '/downloads/decide-android-v1.0.1.apk'
+const ANDROID_APK_VERSION = '1.0.2'
+const ANDROID_APK_UPDATED_AT = 'May 12, 2026, 8:59 PM WAT'
+const ANDROID_APK_PATH = '/downloads/decide-android-v1.0.2.apk'
 const ANDROID_APK_SIZE = '71 MB'
 
 const pickFreshestDeal = (deals: PriceDropRadarItem[]) =>
@@ -262,10 +264,30 @@ export default async function HomePage() {
                       status="No risks detected"
                     />
                   </div>
+
+                  <div className="rounded-md border border-accent/25 bg-accent/10 p-3 shadow-sm shadow-slate-900/5">
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                      <div>
+                        <p className="text-[11px] font-black uppercase tracking-[0.18em] text-accent">
+                          Latest app update
+                        </p>
+                        <p className="mt-1 text-sm font-black text-text-primary">
+                          Version {ANDROID_APK_VERSION} · Updated {ANDROID_APK_UPDATED_AT}
+                        </p>
+                      </div>
+                      <span className="inline-flex w-fit rounded-full bg-text-primary px-3 py-1 text-[11px] font-black uppercase tracking-[0.12em] text-white">
+                        Update old app
+                      </span>
+                    </div>
+                    <p className="mt-2 text-xs leading-relaxed text-text-secondary">
+                      Already installed Decide before today&apos;s launch update? Download this APK
+                      and install it over the old one to get the newest fixes and marketplace updates.
+                    </p>
+                  </div>
                 </div>
                 <div className="border-t border-border bg-surfaceHigh px-4 py-4 md:px-5">
                   <div className="grid grid-cols-3 gap-3 text-center">
-                    <DownloadTrustStat label="Version" value="1.0.1" />
+                    <DownloadTrustStat label="Version" value={ANDROID_APK_VERSION} />
                     <DownloadTrustStat label="Size" value={ANDROID_APK_SIZE} />
                     <DownloadTrustStat label="Source" value="Official" />
                   </div>
