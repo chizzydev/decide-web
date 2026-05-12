@@ -276,12 +276,13 @@ export default async function HomePage() {
                         </p>
                       </div>
                       <span className="inline-flex w-fit rounded-full bg-text-primary px-3 py-1 text-[11px] font-black uppercase tracking-[0.12em] text-white">
-                        Update old app
+                        Delete old app first
                       </span>
                     </div>
                     <p className="mt-2 text-xs leading-relaxed text-text-secondary">
-                      Already installed Decide before today&apos;s launch update? Download this APK
-                      and install it over the old one to get the newest fixes and marketplace updates.
+                      Already installed Decide after launch? Please delete the old app first, then
+                      download and install this new APK. This avoids Android package conflict errors
+                      and gives you the newest fixes and marketplace updates.
                     </p>
                   </div>
                 </div>
