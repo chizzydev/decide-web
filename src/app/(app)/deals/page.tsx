@@ -28,8 +28,8 @@ export const metadata: Metadata = buildPageMetadata({
 })
 
 const BUDGET_CAP_NGN = 250_000
-const FULL_RADAR_LIMIT = 80
-const MARKETPLACE_LEAD_LIMIT = 80
+const FULL_RADAR_LIMIT = 50
+const MARKETPLACE_LEAD_LIMIT = 50
 
 const pickFreshestDeal = (deals: PriceDropRadarItem[]) =>
   [...deals].sort(
