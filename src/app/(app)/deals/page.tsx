@@ -28,6 +28,8 @@ export const metadata: Metadata = buildPageMetadata({
 })
 
 const BUDGET_CAP_NGN = 250_000
+const FULL_RADAR_LIMIT = 80
+const MARKETPLACE_LEAD_LIMIT = 80
 
 const pickFreshestDeal = (deals: PriceDropRadarItem[]) =>
   [...deals].sort(
@@ -62,8 +64,8 @@ export default async function DealsPage() {
   let marketplaceStatus: 'ready' | 'empty' | 'unavailable' = 'unavailable'
 
   const [radarResult, marketplaceResult] = await Promise.allSettled([
-    marketApi.getPriceDropRadar({ limit: 24, min_drop_ngn: 5000 }),
-    marketApi.getMarketplaceLeads(12),
+    marketApi.getPriceDropRadar({ limit: FULL_RADAR_LIMIT, min_drop_ngn: 5000 }),
+    marketApi.getMarketplaceLeads(MARKETPLACE_LEAD_LIMIT),
   ])
 
   if (radarResult.status === 'fulfilled') {
@@ -80,9 +82,9 @@ export default async function DealsPage() {
   const deals = radar?.deals ?? []
   const topDeal = deals[0] ?? null
   const totalDrop = deals.reduce((sum, deal) => sum + deal.change_amount_ngn, 0)
-  const budgetDeals = filterBudgetDeals(deals).slice(0, 6)
-  const jumiaDeals = filterStoreDeals(deals, 'jumia').slice(0, 6)
-  const slotDeals = filterStoreDeals(deals, 'slot').slice(0, 6)
+  const budgetDeals = filterBudgetDeals(deals)
+  const jumiaDeals = filterStoreDeals(deals, 'jumia')
+  const slotDeals = filterStoreDeals(deals, 'slot')
   const freshestDeal = pickFreshestDeal(deals)
   const biggestPercentDeal = pickBiggestPercentDeal(deals)
   const budgetLead = pickBudgetDeal(deals)
@@ -241,7 +243,7 @@ export default async function DealsPage() {
       ) : (
         <>
           <DealFeed
-            deals={deals.slice(0, 9)}
+            deals={deals}
             title="Fresh drops worth checking"
             description="This is the main radar feed: the strongest currently tracked drops across the stores Decide monitors."
             action={

@@ -136,6 +136,7 @@ export const MarketplaceLeadFeed = ({
   status = offers?.length ? 'ready' : 'empty',
 }: MarketplaceLeadFeedProps) => {
   const visibleOffers = getFreshMarketplaceOffers(offers ?? [])
+  const displayedOffers = compact ? visibleOffers.slice(0, 3) : visibleOffers
   const isReady = status === 'ready' && visibleOffers.length > 0
 
   return (
@@ -194,106 +195,106 @@ export const MarketplaceLeadFeed = ({
 
         {isReady ? (
           <div className={`grid gap-3 ${compact ? 'lg:grid-cols-3' : 'md:grid-cols-2 xl:grid-cols-3'}`}>
-            {visibleOffers.slice(0, compact ? 3 : 6).map((offer) => {
-            const variantLabel = getVariantLabel(offer)
-            const riskLevel = getRiskLevel(offer)
-            const dealQuality = getDealQuality(offer)
-            const reasonLabels = getReasonLabels(offer)
-            const movement = getMovementCopy(offer)
-            const freshness = getFreshnessCopy(offer)
+            {displayedOffers.map((offer) => {
+              const variantLabel = getVariantLabel(offer)
+              const riskLevel = getRiskLevel(offer)
+              const dealQuality = getDealQuality(offer)
+              const reasonLabels = getReasonLabels(offer)
+              const movement = getMovementCopy(offer)
+              const freshness = getFreshnessCopy(offer)
 
-            return (
-              <article
-                key={offer.id}
-                className="rounded-2xl border border-amber-200 bg-white/90 px-4 py-4 shadow-sm"
-              >
-                <div className="space-y-3">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0 space-y-1">
-                      <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-text-muted">
-                        {offer.brand_name}
+              return (
+                <article
+                  key={offer.id}
+                  className="rounded-2xl border border-amber-200 bg-white/90 px-4 py-4 shadow-sm"
+                >
+                  <div className="space-y-3">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0 space-y-1">
+                        <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-text-muted">
+                          {offer.brand_name}
+                        </p>
+                        <h3 className="text-lg font-black leading-tight tracking-tight text-text-primary">
+                          {offer.phone_name}
+                        </h3>
+                        {variantLabel ? (
+                          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-accent">
+                            {variantLabel}
+                          </p>
+                        ) : null}
+                        <p className="line-clamp-2 text-xs font-semibold text-text-secondary">
+                          {offer.listing_title}
+                        </p>
+                      </div>
+                      <span
+                        className={`shrink-0 rounded-full border px-2 py-1 text-[11px] font-bold uppercase tracking-[0.12em] ${riskClass[riskLevel]}`}
+                      >
+                        {riskLevel} risk
+                      </span>
+                    </div>
+
+                    <div className="rounded-2xl border border-amber-100 bg-amber-50/80 px-3 py-3">
+                      <p className="text-xl font-black text-amber-900">
+                        {formatNaira(offer.price_ngn)}
                       </p>
-                      <h3 className="text-lg font-black leading-tight tracking-tight text-text-primary">
-                        {offer.phone_name}
-                      </h3>
-                      {variantLabel ? (
-                        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-accent">
-                          {variantLabel}
+                      <p className="mt-1 text-xs text-amber-800">
+                        {offer.location ?? 'Location not shown'} - synced{' '}
+                        {formatRelativeTime(offer.scraped_at)}
+                      </p>
+                      {offer.trusted_price_ngn ? (
+                        <p className="mt-2 text-xs font-semibold text-amber-900">
+                          Trusted-store context: {formatNairaCompact(offer.trusted_price_ngn)}
                         </p>
                       ) : null}
-                      <p className="line-clamp-2 text-xs font-semibold text-text-secondary">
-                        {offer.listing_title}
-                      </p>
                     </div>
-                    <span
-                      className={`shrink-0 rounded-full border px-2 py-1 text-[11px] font-bold uppercase tracking-[0.12em] ${riskClass[riskLevel]}`}
-                    >
-                      {riskLevel} risk
-                    </span>
-                  </div>
 
-                  <div className="rounded-2xl border border-amber-100 bg-amber-50/80 px-3 py-3">
-                    <p className="text-xl font-black text-amber-900">
-                      {formatNaira(offer.price_ngn)}
-                    </p>
-                    <p className="mt-1 text-xs text-amber-800">
-                      {offer.location ?? 'Location not shown'} - synced{' '}
-                      {formatRelativeTime(offer.scraped_at)}
-                    </p>
-                    {offer.trusted_price_ngn ? (
-                      <p className="mt-2 text-xs font-semibold text-amber-900">
-                        Trusted-store context: {formatNairaCompact(offer.trusted_price_ngn)}
-                      </p>
-                    ) : null}
-                  </div>
-
-                  <div className="flex flex-wrap gap-2">
-                    <span className={`rounded-full border px-2.5 py-1 text-[11px] font-bold ${freshness.className}`}>
-                      {freshness.label}
-                    </span>
-                    {movement ? (
-                      <span className={`rounded-full border px-2.5 py-1 text-[11px] font-bold ${movement.className}`}>
-                        {movement.label}
+                    <div className="flex flex-wrap gap-2">
+                      <span className={`rounded-full border px-2.5 py-1 text-[11px] font-bold ${freshness.className}`}>
+                        {freshness.label}
                       </span>
-                    ) : null}
-                    <span className="rounded-full bg-accent-subtle px-2.5 py-1 text-[11px] font-bold text-accent">
-                      {qualityLabel[dealQuality]}
-                    </span>
-                    <span className="rounded-full bg-surfaceHigh px-2.5 py-1 text-[11px] font-bold text-text-secondary">
-                      {Math.round(offer.confidence_score)}% match
-                    </span>
+                      {movement ? (
+                        <span className={`rounded-full border px-2.5 py-1 text-[11px] font-bold ${movement.className}`}>
+                          {movement.label}
+                        </span>
+                      ) : null}
+                      <span className="rounded-full bg-accent-subtle px-2.5 py-1 text-[11px] font-bold text-accent">
+                        {qualityLabel[dealQuality]}
+                      </span>
+                      <span className="rounded-full bg-surfaceHigh px-2.5 py-1 text-[11px] font-bold text-text-secondary">
+                        {Math.round(offer.confidence_score)}% match
+                      </span>
+                    </div>
+
+                    <ul className="space-y-1 text-xs leading-relaxed text-text-secondary">
+                      {reasonLabels.slice(0, 3).map((reason) => (
+                        <li key={reason}>- {reason}</li>
+                      ))}
+                    </ul>
+
+                    <p className="text-xs leading-relaxed text-amber-900">
+                      {offer.buyer_note ??
+                        'Treat this as a marketplace lead only. Inspect the phone and seller before money moves.'}
+                    </p>
+
+                    <div className="flex flex-wrap items-center gap-3">
+                      <Link
+                        href={`/phones/${offer.phone_slug}`}
+                        className="text-sm font-bold text-accent transition-colors duration-fast hover:text-accent-hover"
+                      >
+                        View Decide page
+                      </Link>
+                      <a
+                        href={offer.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex h-9 items-center rounded-md border border-amber-300 bg-amber-50 px-3 text-sm font-bold text-amber-900 transition-colors duration-fast hover:bg-amber-100"
+                      >
+                        Open Jiji listing
+                      </a>
+                    </div>
                   </div>
-
-                  <ul className="space-y-1 text-xs leading-relaxed text-text-secondary">
-                    {reasonLabels.slice(0, 3).map((reason) => (
-                      <li key={reason}>- {reason}</li>
-                    ))}
-                  </ul>
-
-                  <p className="text-xs leading-relaxed text-amber-900">
-                    {offer.buyer_note ??
-                      'Treat this as a marketplace lead only. Inspect the phone and seller before money moves.'}
-                  </p>
-
-                  <div className="flex flex-wrap items-center gap-3">
-                    <Link
-                      href={`/phones/${offer.phone_slug}`}
-                      className="text-sm font-bold text-accent transition-colors duration-fast hover:text-accent-hover"
-                    >
-                      View Decide page
-                    </Link>
-                    <a
-                      href={offer.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex h-9 items-center rounded-md border border-amber-300 bg-amber-50 px-3 text-sm font-bold text-amber-900 transition-colors duration-fast hover:bg-amber-100"
-                    >
-                      Open Jiji listing
-                    </a>
-                  </div>
-                </div>
-              </article>
-            )
+                </article>
+              )
             })}
           </div>
         ) : (
