@@ -6,7 +6,9 @@ import React, { Suspense, useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL
+const API_URL = (
+  process.env.NEXT_PUBLIC_API_URL || 'https://decide-api-production-8aa7.up.railway.app'
+).replace(/\/+$/, '')
 
 export default function ResetPasswordPage() {
   return (
@@ -60,17 +62,23 @@ function ResetPasswordPageContent() {
         headers: { 'Content-Type': 'application/json' },
         body:    JSON.stringify({ token, password }),
       })
-      const json = await res.json()
+      const contentType = res.headers.get('content-type') ?? ''
+      const json = contentType.includes('application/json')
+        ? await res.json()
+        : null
 
-      if (!json.success) {
-        setError(json.message ?? 'This reset link is invalid or has expired.')
+      if (!res.ok || !json?.success) {
+        setError(
+          json?.message ??
+            'We could not reset your password from this link. Request a fresh reset email and try again.'
+        )
         return
       }
 
       setSuccess(true)
       setTimeout(() => router.push('/login'), 3000)
     } catch {
-      setError('Something went wrong. Please try again.')
+      setError('Decide could not reach the reset service. Please check your connection and try again.')
     } finally {
       setLoading(false)
     }
@@ -118,9 +126,8 @@ function ResetPasswordPageContent() {
                 <label htmlFor="password" className="block text-sm font-semibold text-text-primary">
                   New password
                 </label>
-                <input
+                <PasswordInput
                   id="password"
-                  type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
@@ -128,7 +135,7 @@ function ResetPasswordPageContent() {
                   placeholder="At least 8 characters"
                   minLength={8}
                   disabled={!token}
-                  className="w-full px-3 py-2.5 rounded-sm text-sm bg-surface border border-border text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent transition-colors duration-fast disabled:opacity-50"
+                  className="disabled:opacity-50"
                 />
               </div>
 
@@ -136,16 +143,15 @@ function ResetPasswordPageContent() {
                 <label htmlFor="confirm" className="block text-sm font-semibold text-text-primary">
                   Confirm password
                 </label>
-                <input
+                <PasswordInput
                   id="confirm"
-                  type="password"
                   value={confirm}
                   onChange={(e) => setConfirm(e.target.value)}
                   required
                   autoComplete="new-password"
                   placeholder="Repeat your password"
                   disabled={!token}
-                  className="w-full px-3 py-2.5 rounded-sm text-sm bg-surface border border-border text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent transition-colors duration-fast disabled:opacity-50"
+                  className="disabled:opacity-50"
                 />
               </div>
 
@@ -200,4 +206,62 @@ const AuthShellFallback = ({ title, subtitle }: AuthShellFallbackProps) => (
       </div>
     </div>
   </div>
+)
+
+type PasswordInputProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, 'type'>
+
+const PasswordInput = ({ className = '', disabled, ...props }: PasswordInputProps) => {
+  const [visible, setVisible] = useState(false)
+
+  return (
+    <div className="relative">
+      <input
+        {...props}
+        disabled={disabled}
+        type={visible ? 'text' : 'password'}
+        className={`w-full rounded-sm border border-border bg-surface px-3 py-2.5 pr-11 text-sm text-text-primary placeholder:text-text-muted transition-colors duration-fast focus:border-accent focus:outline-none disabled:cursor-not-allowed ${className}`}
+      />
+      <button
+        type="button"
+        onClick={() => setVisible((current) => !current)}
+        disabled={disabled}
+        aria-label={visible ? 'Hide password' : 'Show password'}
+        className="absolute inset-y-0 right-0 flex w-10 items-center justify-center text-text-muted transition-colors duration-fast hover:text-text-primary disabled:cursor-not-allowed disabled:opacity-50"
+      >
+        {visible ? <EyeOffIcon /> : <EyeIcon />}
+      </button>
+    </div>
+  )
+}
+
+const EyeIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path
+      d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+)
+
+const EyeOffIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path d="m3 3 18 18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+    <path
+      d="M10.6 10.6A2 2 0 0 0 12 14a2 2 0 0 0 1.4-.6M7 6.8C4.1 8.4 2.5 12 2.5 12s3.5 6 9.5 6c1.7 0 3.2-.5 4.5-1.2M12 6c6 0 9.5 6 9.5 6a15 15 0 0 1-2.8 3.4"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
 )
