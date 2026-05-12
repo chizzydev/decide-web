@@ -375,6 +375,7 @@ export default async function HomePage() {
                 step={item.step}
                 title={item.title}
                 description={item.description}
+                visual={'visual' in item ? item.visual : undefined}
               />
             ))}
           </div>
@@ -798,7 +799,8 @@ const PRODUCT_GUIDE_STEPS = [
     step: 'Watchlist',
     title: 'Use the heart to save phones',
     description:
-      'Tap the heart on a phone to save it. Tap your initials beside Find My Phone, then Watchlist, to see saved phones.',
+      'Tap the heart on a phone to save it. Then tap the round button with the first letter(s) of your name beside Find My Phone and open Watchlist.',
+    visual: 'profile-button',
   },
   {
     step: 'Alerts',
@@ -819,11 +821,13 @@ const ProductGuideCard = ({
   step,
   title,
   description,
+  visual,
 }: {
   index: number
   step: string
   title: string
   description: string
+  visual?: 'profile-button'
 }) => (
   <article className="rounded-2xl border border-borderHigh bg-surface px-5 py-5 shadow-sm">
     <div className="flex items-start gap-4">
@@ -840,9 +844,40 @@ const ProductGuideCard = ({
         <p className="text-sm leading-relaxed text-text-secondary">
           {description}
         </p>
+        {visual === 'profile-button' && <ProfileButtonGuideVisual />}
       </div>
     </div>
   </article>
+)
+
+const ProfileButtonGuideVisual = () => (
+  <div className="mt-4 rounded-2xl border border-accent/15 bg-tealTint/70 p-3">
+    <p className="mb-2 text-[10px] font-black uppercase tracking-[0.16em] text-accent">
+      What to tap
+    </p>
+    <div className="flex items-center gap-3 rounded-xl border border-border bg-white px-3 py-3 shadow-sm">
+      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-accent text-base font-black text-white shadow-sm">
+        CC
+      </div>
+      <svg
+        aria-hidden="true"
+        className="h-5 w-5 shrink-0 text-text-primary"
+        viewBox="0 0 24 24"
+        fill="none"
+      >
+        <path
+          d="M6 9l6 6 6-6"
+          stroke="currentColor"
+          strokeWidth="2.4"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+      <p className="text-xs font-semibold leading-relaxed text-text-secondary">
+        Your own button may show different letters.
+      </p>
+    </div>
+  </div>
 )
 
 const HOW_IT_WORKS = [

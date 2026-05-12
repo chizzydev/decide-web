@@ -181,8 +181,8 @@ export const SaveButton = ({
         <div className="absolute right-0 top-10 z-50 w-56 space-y-2 rounded-md border border-border bg-surface p-3 shadow-lg">
           <p className="text-xs font-semibold text-text-primary">Saved to watchlist</p>
           <p className="text-xs leading-relaxed text-text-secondary">
-            Tap your initials beside Find My Phone, then open Watchlist to see this phone, set
-            alerts, or compare later.
+            Tap the round button with the first letter(s) of your name beside Find My Phone,
+            then open Watchlist to see this phone, set alerts, or compare later.
           </p>
           <div className="flex gap-2 pt-1">
             <button
