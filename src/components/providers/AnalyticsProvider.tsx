@@ -2,8 +2,8 @@
 
 import { useEffect } from 'react'
 import { usePathname, useSearchParams } from 'next/navigation'
+import { API_BASE_URL } from '@/lib/apiBaseUrl'
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL?.replace(/\/+$/, '')
 const SESSION_KEY = 'decide_analytics_session_id'
 
 const createSessionId = () => {
@@ -28,8 +28,6 @@ const getSessionId = () => {
 }
 
 const postAnalyticsEvent = (payload: Record<string, unknown>) => {
-  if (!API_BASE_URL) return
-
   const url = `${API_BASE_URL}/api/v1/analytics/events`
   const body = JSON.stringify(payload)
 

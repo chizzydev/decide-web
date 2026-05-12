@@ -181,14 +181,14 @@ export default async function PhonesPage({ searchParams }: PhonesPageProps) {
             <span className="hidden text-sm text-text-muted md:inline">or</span>
             <Link
               href="/deals/today"
-              className="text-sm font-semibold text-text-secondary transition-colors duration-fast hover:text-text-primary"
+              className="text-sm font-bold text-accent transition-colors duration-fast hover:text-accent-hover"
             >
               Today&apos;s shortlist
             </Link>
             <span className="hidden text-sm text-text-muted md:inline">or</span>
             <Link
               href="/deals/under/200k"
-              className="text-sm font-semibold text-text-secondary transition-colors duration-fast hover:text-text-primary"
+              className="text-sm font-bold text-accent transition-colors duration-fast hover:text-accent-hover"
             >
               Budget guides
             </Link>
@@ -204,6 +204,12 @@ export default async function PhonesPage({ searchParams }: PhonesPageProps) {
         currentSearch={params.q}
         androidBrands={androidBrands}
       />
+
+      <div className="rounded-2xl border border-accent/15 bg-tealTint px-4 py-3 text-sm leading-relaxed text-text-secondary">
+        <span className="font-black text-text-primary">Quick tip:</span> All OS means Android and
+        iPhone. Use Brands if you already have Samsung, Tecno, Infinix, iPhone, or another brand in
+        mind. Tap any phone card to open its full page.
+      </div>
 
       <ShortlistBuilderPanel
         contextLabel="Browse workflow"

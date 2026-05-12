@@ -4,8 +4,7 @@ import React, { Suspense, useState } from 'react'
 import Link from 'next/link'
 import { signIn } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL
+import { API_BASE_URL } from '@/lib/apiBaseUrl'
 
 export default function RegisterPage() {
   return (
@@ -46,7 +45,7 @@ function RegisterPageContent() {
     setLoading(true)
 
     try {
-      const response = await fetch(`${API_URL}/api/v1/auth/register`, {
+      const response = await fetch(`${API_BASE_URL}/api/v1/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

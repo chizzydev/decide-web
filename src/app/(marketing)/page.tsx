@@ -334,6 +334,53 @@ export default async function HomePage() {
         </div>
       </section>
 
+      <section className="border-b border-border bg-bg px-4 py-14">
+        <div className="mx-auto max-w-6xl space-y-6">
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+            <div className="space-y-2">
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-accent">
+                Quick guide
+              </p>
+              <div className="space-y-1">
+                <h2 className="text-3xl font-black tracking-tight text-text-primary">
+                  How to use Decide
+                </h2>
+                <p className="max-w-3xl text-base leading-relaxed text-text-secondary">
+                  Tap a phone to open its full page. Save with the heart, set alerts from the phone
+                  page, and use the bottom menu whenever you want to switch tools.
+                </p>
+              </div>
+            </div>
+            <div className="flex flex-col gap-2 sm:flex-row">
+              <Link
+                href="/phones"
+                className="inline-flex h-11 items-center justify-center rounded-md bg-accent px-5 text-sm font-black text-white transition-colors duration-fast hover:bg-accent-hover"
+              >
+                Browse phones
+              </Link>
+              <Link
+                href="/assistant"
+                className="inline-flex h-11 items-center justify-center rounded-md border border-accent/25 bg-tealTint px-5 text-sm font-black text-accent transition-colors duration-fast hover:border-accent/40 hover:bg-accent/10"
+              >
+                Open Advisor
+              </Link>
+            </div>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {PRODUCT_GUIDE_STEPS.map((item, index) => (
+              <ProductGuideCard
+                key={item.title}
+                index={index}
+                step={item.step}
+                title={item.title}
+                description={item.description}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section className="border-b border-border px-4 py-16">
         <div className="mx-auto max-w-6xl space-y-6">
           <div className="space-y-2 text-center sm:text-left">
@@ -727,6 +774,76 @@ const START_PATHS = [
     accent: false,
   },
 ] as const
+
+const PRODUCT_GUIDE_STEPS = [
+  {
+    step: 'Home',
+    title: 'Start from what moved today',
+    description:
+      'Use Home to see live drops, Jiji bargain leads, and the fastest paths into the right buying tool.',
+  },
+  {
+    step: 'Advisor',
+    title: 'Guided is the default',
+    description:
+      'Advisor opens in Guided mode first. Tap AI Agent at the top if you want to chat instead.',
+  },
+  {
+    step: 'Browse',
+    title: 'Search, filter, then tap a phone',
+    description:
+      'All OS means Android and iPhone. Pick a brand if you already have one in mind. Tap any phone card to open its full page.',
+  },
+  {
+    step: 'Watchlist',
+    title: 'Use the heart to save phones',
+    description:
+      'Tap the heart on a phone to save it. Tap your initials beside Find My Phone, then Watchlist, to see saved phones.',
+  },
+  {
+    step: 'Alerts',
+    title: 'Set alerts from a phone page',
+    description:
+      'Open a phone, scroll near the store price, buy button, or Jiji context, then tap Set alert.',
+  },
+  {
+    step: 'Compare',
+    title: 'Compare before you pay',
+    description:
+      'Find a phone in Browse and tap Compare, or open Compare from the bottom menu when you already have two phones in mind.',
+  },
+] as const
+
+const ProductGuideCard = ({
+  index,
+  step,
+  title,
+  description,
+}: {
+  index: number
+  step: string
+  title: string
+  description: string
+}) => (
+  <article className="rounded-2xl border border-borderHigh bg-surface px-5 py-5 shadow-sm">
+    <div className="flex items-start gap-4">
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-tealTint text-sm font-black text-accent">
+        {index + 1}
+      </div>
+      <div className="space-y-2">
+        <p className="text-xs font-bold uppercase tracking-[0.16em] text-accent">
+          {step}
+        </p>
+        <h3 className="text-lg font-black leading-tight text-text-primary">
+          {title}
+        </h3>
+        <p className="text-sm leading-relaxed text-text-secondary">
+          {description}
+        </p>
+      </div>
+    </div>
+  </article>
+)
 
 const HOW_IT_WORKS = [
   {

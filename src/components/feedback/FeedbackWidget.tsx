@@ -4,8 +4,7 @@ import React, { useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import type { ApiResponse } from '@/types'
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL
+import { API_BASE_URL } from '@/lib/apiBaseUrl'
 
 const FEEDBACK_CATEGORIES = [
   { value: 'general', label: 'General feedback' },
@@ -46,11 +45,6 @@ export const FeedbackWidget = () => {
       return
     }
 
-    if (!API_URL) {
-      setError('Feedback is not configured yet.')
-      return
-    }
-
     setSubmitting(true)
     try {
       const pageUrl =
@@ -58,7 +52,7 @@ export const FeedbackWidget = () => {
           ? `${window.location.pathname}${window.location.search}${window.location.hash}`
           : pathname
 
-      const response = await fetch(`${API_URL}/api/v1/feedback`, {
+      const response = await fetch(`${API_BASE_URL}/api/v1/feedback`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

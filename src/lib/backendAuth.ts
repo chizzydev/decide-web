@@ -1,14 +1,7 @@
 'use client'
 
 import { getSession } from 'next-auth/react'
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL
-
-if (!API_URL) {
-  throw new Error(
-    'NEXT_PUBLIC_API_URL is not set. Add it to .env.local and restart the dev server.'
-  )
-}
+import { API_BASE_URL } from '@/lib/apiBaseUrl'
 
 export type ApiEnvelope<T> = {
   success: boolean
@@ -60,7 +53,7 @@ export async function requestJsonWithBackendAuth<T>(
 ): Promise<T> {
   const accessToken = await requireBackendAccessToken()
 
-  const response = await fetch(`${API_URL}/api/v1${endpoint}`, {
+  const response = await fetch(`${API_BASE_URL}/api/v1${endpoint}`, {
     ...options,
     headers: buildBackendHeaders(options, accessToken),
   })

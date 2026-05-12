@@ -7,8 +7,7 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { StarRating }  from './StarRating'
 import { ReviewForm }  from './ReviewForm'
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL
+import { API_BASE_URL } from '@/lib/apiBaseUrl'
 
 interface Review {
   id:                string
@@ -36,7 +35,7 @@ export const ReviewList = ({ phoneId, phoneName }: ReviewListProps) => {
 
   const fetchReviews = useCallback(async () => {
     try {
-      const res  = await fetch(`${API_URL}/api/v1/reviews?phone_id=${phoneId}`)
+      const res  = await fetch(`${API_BASE_URL}/api/v1/reviews?phone_id=${phoneId}`)
       const json = await res.json()
       if (json.success) {
         setReviews(json.data.reviews)
@@ -54,7 +53,7 @@ export const ReviewList = ({ phoneId, phoneName }: ReviewListProps) => {
 
   const handleFlag = async (review_id: string) => {
     try {
-      await fetch(`${API_URL}/api/v1/reviews/${review_id}/flag`, { method: 'POST' })
+      await fetch(`${API_BASE_URL}/api/v1/reviews/${review_id}/flag`, { method: 'POST' })
       setFlagged((prev) => new Set(prev).add(review_id))
     } catch {
       // silently fail

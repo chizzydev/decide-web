@@ -1,6 +1,7 @@
 'use client'
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL?.replace(/\/+$/, '')
+import { API_BASE_URL } from '@/lib/apiBaseUrl'
+
 const SESSION_KEY = 'decide_analytics_session_id'
 
 const getSessionId = () => {
@@ -23,7 +24,7 @@ export const trackDecideEvent = (
   eventName: string,
   metadata: Record<string, string | number | boolean | null | undefined> = {}
 ) => {
-  if (!API_BASE_URL || typeof window === 'undefined') return
+  if (typeof window === 'undefined') return
 
   const payload = JSON.stringify({
     event_name: eventName,

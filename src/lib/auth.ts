@@ -6,12 +6,7 @@
 import type { NextAuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import GoogleProvider from 'next-auth/providers/google'
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL
-
-if (!API_URL) {
-  throw new Error('NEXT_PUBLIC_API_URL is not set.')
-}
+import { API_BASE_URL } from '@/lib/apiBaseUrl'
 
 type BackendAuthResponse = {
   user: {
@@ -35,7 +30,7 @@ const readBackendSession = async (
   body: Record<string, unknown>
 ): Promise<BackendAuthResponse | null> => {
   try {
-    const res = await fetch(`${API_URL}${path}`, {
+    const res = await fetch(`${API_BASE_URL}${path}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),

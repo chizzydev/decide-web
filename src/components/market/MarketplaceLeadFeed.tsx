@@ -157,7 +157,7 @@ export const MarketplaceLeadFeed = ({
           </div>
           <Link
             href="/deals"
-            className="inline-flex h-10 items-center rounded-md border border-amber-300 bg-white/70 px-4 text-sm font-bold text-amber-800 transition-colors duration-fast hover:bg-white"
+            className="inline-flex h-11 w-full items-center justify-center rounded-md bg-accent px-4 text-sm font-black text-white shadow-sm transition-colors duration-fast hover:bg-accent-hover sm:w-fit"
           >
             Open market radar
           </Link>

@@ -389,11 +389,11 @@ const PriceAlertButtonContent = ({
       : triggerVariant === 'inlineSecondary'
         ? `
           inline-flex w-auto shrink-0
-          rounded-md border border-accent/20 bg-white
+          rounded-md border border-accent/25 bg-tealTint
           px-4 py-0 h-10
-          text-sm font-black text-text-primary
+          text-sm font-black text-accent
           shadow-sm
-          hover:border-accent/40 hover:bg-tealTint hover:text-accent
+          hover:border-accent/40 hover:bg-accent/10 hover:text-accent-hover
         `
         : `
           flex w-full
@@ -928,9 +928,9 @@ const PriceAlertButtonFallback = ({
         : triggerVariant === 'inlineSecondary'
           ? `
           inline-flex w-auto shrink-0
-          rounded-md border border-accent/20 bg-white
+          rounded-md border border-accent/25 bg-tealTint
           px-4 py-0 h-10
-          text-sm font-black text-text-primary
+          text-sm font-black text-accent
           shadow-sm
         `
           : `

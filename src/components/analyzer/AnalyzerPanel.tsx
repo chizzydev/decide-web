@@ -748,10 +748,10 @@ const NextMoveLink = ({
 }) => (
   <Link
     href={href}
-    className="rounded-md border border-border bg-white/85 px-3 py-3 transition-colors duration-fast hover:border-borderHigh hover:bg-white"
+    className="rounded-md border border-accent/15 bg-white/85 px-3 py-3 transition-colors duration-fast hover:border-accent/35 hover:bg-tealTint"
   >
     <div className="space-y-1">
-      <p className="text-sm font-bold text-text-primary">{title}</p>
+      <p className="text-sm font-black text-accent">{title}</p>
       <p className="text-xs leading-relaxed text-text-secondary">{description}</p>
     </div>
   </Link>
@@ -846,13 +846,13 @@ const AlternativesSection = ({
               </Link>
               <Link
                 href={`/worth-it/${phone.slug}`}
-                className="font-semibold text-text-secondary transition-colors duration-fast hover:text-text-primary"
+                className="font-bold text-accent transition-colors duration-fast hover:text-accent-hover"
               >
                 Check still worth it
               </Link>
               <Link
                 href={`/buy-now-or-wait/${phone.slug}`}
-                className="font-semibold text-text-secondary transition-colors duration-fast hover:text-text-primary"
+                className="font-bold text-accent transition-colors duration-fast hover:text-accent-hover"
               >
                 Read buy now or wait
               </Link>

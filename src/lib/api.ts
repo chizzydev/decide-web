@@ -23,14 +23,7 @@ import type {
   UserPreferences,
 } from '@/types'
 import type { AnalyzeInput, AnalyzeResult } from '@/types/analyzer'
-
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL
-
-if (!BASE_URL) {
-  throw new Error(
-    'NEXT_PUBLIC_API_URL is not set. Add it to .env.local and restart the dev server.'
-  )
-}
+import { API_BASE_URL } from '@/lib/apiBaseUrl'
 
 const defaultOptions: RequestInit = {
   headers: {
@@ -51,7 +44,7 @@ async function request<T>(
   endpoint: string,
   options: DecideRequestInit = {}
 ): Promise<T> {
-  const url = `${BASE_URL}/api/v1${endpoint}`
+  const url = `${API_BASE_URL}/api/v1${endpoint}`
   const controller = new AbortController()
   const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS)
   const handleAbort = () => controller.abort()
