@@ -34,6 +34,8 @@ const ANDROID_APK_VERSION = '1.0.2'
 const ANDROID_APK_UPDATED_AT = 'May 12, 2026, 8:59 PM WAT'
 const ANDROID_APK_PATH = '/downloads/decide-android-v1.0.2.apk'
 const ANDROID_APK_SIZE = '71 MB'
+const HOME_RADAR_LIMIT = 50
+const HOME_MARKETPLACE_LEAD_LIMIT = 50
 
 const pickFreshestDeal = (deals: PriceDropRadarItem[]) =>
   [...deals].sort(
@@ -129,8 +131,8 @@ export default async function HomePage() {
     await Promise.allSettled([
     phonesApi.getFeatured(),
     phonesApi.getAll({ limit: 18 }),
-    marketApi.getPriceDropRadar({ limit: 12, min_drop_ngn: 5000 }),
-    marketApi.getMarketplaceLeads(6),
+    marketApi.getPriceDropRadar({ limit: HOME_RADAR_LIMIT, min_drop_ngn: 5000 }),
+    marketApi.getMarketplaceLeads(HOME_MARKETPLACE_LEAD_LIMIT),
   ])
 
   if (featuredResult.status === 'fulfilled') {
