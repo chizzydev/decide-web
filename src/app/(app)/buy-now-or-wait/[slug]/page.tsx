@@ -8,6 +8,7 @@ import { OwnershipSignalPanel } from '@/components/market/OwnershipSignalPanel'
 import { StructuredData } from '@/components/seo/StructuredData'
 import { VerdictPageHero } from '@/components/market/VerdictPageHero'
 import { absoluteUrl, buildPageMetadata } from '@/lib/seo'
+import { buildOfferStructuredData } from '@/lib/structuredData'
 import {
   buildBuyNowWaitHref,
   buildPhoneDetailHref,
@@ -68,33 +69,37 @@ export default async function BuyNowWaitPage({
     const detailHref = buildPhoneDetailHref(data.phone.slug, { variantId })
     const worthItHref = buildWorthItHref(data.phone.slug, { variantId })
     const verdictHref = buildBuyNowWaitHref(data.phone.slug, { variantId })
+    const productMainEntity =
+      data.price_signal.current_best_price_ngn != null
+        ? {
+            '@type': 'Product',
+            name: data.phone.name,
+            brand: {
+              '@type': 'Brand',
+              name: data.phone.brand_name,
+            },
+            image: data.phone.image_url ?? undefined,
+            releaseDate: data.phone.released_year
+              ? `${data.phone.released_year}-01-01`
+              : undefined,
+            offers: buildOfferStructuredData({
+              price: data.price_signal.current_best_price_ngn,
+              url: absoluteUrl(detailHref),
+              sellerName: 'Tracked Nigerian retailer',
+            }),
+          }
+        : undefined
     const structuredData = {
       '@context': 'https://schema.org',
       '@type': 'Article',
       headline: buildBuyNowWaitTitle(data.phone.name),
       description: buildBuyNowWaitDescription(data.phone.name),
       dateModified: data.generated_at,
-      mainEntity: {
-        '@type': 'Product',
+      about: {
+        '@type': 'Thing',
         name: data.phone.name,
-        brand: {
-          '@type': 'Brand',
-          name: data.phone.brand_name,
-        },
-        image: data.phone.image_url ?? undefined,
-        releaseDate: data.phone.released_year
-          ? `${data.phone.released_year}-01-01`
-          : undefined,
-        offers:
-          data.price_signal.current_best_price_ngn != null
-            ? {
-                '@type': 'Offer',
-                price: data.price_signal.current_best_price_ngn,
-                priceCurrency: 'NGN',
-                url: absoluteUrl(detailHref),
-              }
-            : undefined,
       },
+      mainEntity: productMainEntity,
       url: absoluteUrl(verdictHref),
       author: {
         '@type': 'Organization',

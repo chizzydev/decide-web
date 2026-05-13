@@ -8,6 +8,7 @@ import { marketApi } from '@/lib/api'
 import { BUDGET_GUIDES } from '@/lib/budgetGuides'
 import { formatNairaCompact, formatRelativeTime } from '@/lib/formatters'
 import { absoluteUrl, buildPageMetadata } from '@/lib/seo'
+import { buildOfferStructuredData, getStructuredDataSellerName } from '@/lib/structuredData'
 import type {
   MarketplaceLeadsResponse,
   PriceDropRadarItem,
@@ -56,9 +57,6 @@ const filterStoreDeals = (
 
 const filterBudgetDeals = (deals: PriceDropRadarItem[]) =>
   deals.filter((deal) => deal.current_price_ngn <= BUDGET_CAP_NGN)
-
-const getStoreName = (store: PriceDropRadarItem['store']) =>
-  store === 'jumia' ? 'Jumia' : 'Slot'
 
 export default async function DealsPage() {
   let error: string | null = null
@@ -111,19 +109,12 @@ export default async function DealsPage() {
             name: deal.brand_name,
           },
           image: deal.image_url ?? undefined,
-          offers: {
-            '@type': 'Offer',
+          offers: buildOfferStructuredData({
             price: deal.current_price_ngn,
-            priceCurrency: 'NGN',
-            availability: deal.in_stock
-              ? 'https://schema.org/InStock'
-              : 'https://schema.org/OutOfStock',
-            seller: {
-              '@type': 'Organization',
-              name: getStoreName(deal.store),
-            },
+            inStock: deal.in_stock,
+            sellerName: getStructuredDataSellerName(deal.store),
             url: deal.url ?? absoluteUrl(`/phones/${deal.phone_slug}`),
-          },
+          }),
         },
       })),
     },

@@ -128,15 +128,10 @@ export default async function UsedPhoneGuidePage({
       headline: `Used ${phone.name} in Nigeria`,
       description: `Decide's used-phone guide for ${phone.name}: tokunbo vs new reality, red flags, seller questions, and the checks to run before you pay.`,
       url: absoluteUrl(guideHref),
-      mainEntity: {
-        '@type': 'Product',
+      about: {
+        '@type': 'Thing',
         name: phone.name,
-        brand: {
-          '@type': 'Brand',
-          name: phone.brand_name,
-        },
-        image: phone.image_url ?? undefined,
-        releaseDate: phone.released_year ? `${phone.released_year}-01-01` : undefined,
+        url: absoluteUrl(detailHref),
       },
       author: {
         '@type': 'Organization',

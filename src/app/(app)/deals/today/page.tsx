@@ -7,6 +7,7 @@ import { StructuredData } from '@/components/seo/StructuredData'
 import { marketApi } from '@/lib/api'
 import { formatNairaCompact, formatRelativeTime } from '@/lib/formatters'
 import { absoluteUrl, buildPageMetadata } from '@/lib/seo'
+import { buildOfferStructuredData, getStructuredDataSellerName } from '@/lib/structuredData'
 import type { MarketplaceLeadsResponse, PriceDropRadarResponse } from '@/types'
 
 const TODAY_DEALS_TITLE = "Today's Best Phone Deals in Nigeria: Live Drop Radar - Decide"
@@ -66,15 +67,12 @@ export default async function DealsTodayPage() {
             name: deal.brand_name,
           },
           image: deal.image_url ?? undefined,
-          offers: {
-            '@type': 'Offer',
+          offers: buildOfferStructuredData({
             price: deal.current_price_ngn,
-            priceCurrency: 'NGN',
-            availability: deal.in_stock
-              ? 'https://schema.org/InStock'
-              : 'https://schema.org/OutOfStock',
+            inStock: deal.in_stock,
+            sellerName: getStructuredDataSellerName(deal.store),
             url: deal.url ?? absoluteUrl(`/phones/${deal.phone_slug}`),
-          },
+          }),
         },
       })),
     },

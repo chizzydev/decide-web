@@ -14,6 +14,7 @@ import {
 } from '@/lib/budgetGuides'
 import { formatNairaCompact, formatRelativeTime } from '@/lib/formatters'
 import { absoluteUrl, buildPageMetadata } from '@/lib/seo'
+import { buildOfferStructuredData, getStructuredDataSellerName } from '@/lib/structuredData'
 import type { PriceDropRadarItem, PriceDropRadarResponse } from '@/types'
 
 interface BudgetDealsPageProps {
@@ -100,15 +101,12 @@ export default async function BudgetDealsPage({ params }: BudgetDealsPageProps) 
             name: deal.brand_name,
           },
           image: deal.image_url ?? undefined,
-          offers: {
-            '@type': 'Offer',
+          offers: buildOfferStructuredData({
             price: deal.current_price_ngn,
-            priceCurrency: 'NGN',
-            availability: deal.in_stock
-              ? 'https://schema.org/InStock'
-              : 'https://schema.org/OutOfStock',
+            inStock: deal.in_stock,
+            sellerName: getStructuredDataSellerName(deal.store),
             url: deal.url ?? absoluteUrl(`/phones/${deal.phone_slug}`),
-          },
+          }),
         },
       })),
     },

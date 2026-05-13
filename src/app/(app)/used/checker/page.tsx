@@ -122,12 +122,8 @@ export default async function UsedCheckerPage() {
         position: index + 1,
         url: absoluteUrl(`/used/${phone.slug}`),
         item: {
-          '@type': 'Product',
+          '@type': 'Thing',
           name: phone.name,
-          brand: {
-            '@type': 'Brand',
-            name: phone.brand_name,
-          },
           image: phone.image_url ?? undefined,
         },
       })),

@@ -237,12 +237,8 @@ export default async function CompareLandingPage({
           position: index + 1,
           url: absoluteUrl(`/phones/${phone.slug}`),
           item: {
-            '@type': 'Product',
+            '@type': 'Thing',
             name: phone.name,
-            brand: {
-              '@type': 'Brand',
-              name: phone.brand_name,
-            },
             image: phone.image_url ?? undefined,
           },
         })),

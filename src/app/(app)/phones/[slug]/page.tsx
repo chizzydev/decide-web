@@ -29,6 +29,7 @@ import { RelatedComparePanel } from '@/components/market/RelatedComparePanel'
 import { StructuredData } from '@/components/seo/StructuredData'
 import { buildVersionedImageUrl } from '@/lib/imageUrl'
 import { getTopPhoneDetailCompareActions } from '@/lib/relatedCompare'
+import { buildOfferStructuredData, getStructuredDataSellerName } from '@/lib/structuredData'
 import {
   buildBuyNowWaitHref,
   buildUsedGuideHref,
@@ -290,6 +291,74 @@ export default async function PhonePage({ params, searchParams }: PhonePageProps
   )
   const selectedVariantHref = (variantId: number) => `/phones/${phone.slug}?variant_id=${variantId}#variant-pricing`
   const versionedImageUrl = buildVersionedImageUrl(phone.image_url, phone.updated_at)
+  const productStructuredData = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: phone.name,
+    description: phoneDescription,
+    url: absoluteUrl(`/phones/${phone.slug}`),
+    brand: {
+      '@type': 'Brand',
+      name: phone.brand_name,
+    },
+    category: 'Smartphone',
+    image: phone.image_url ? absoluteUrl(phone.image_url) : undefined,
+    sku: phone.slug,
+    releaseDate: phone.released_year ? `${phone.released_year}-01-01` : undefined,
+    aggregateRating:
+      phone.review_count > 0
+        ? {
+            '@type': 'AggregateRating',
+            ratingValue: Number(phone.average_rating.toFixed(1)),
+            reviewCount: phone.review_count,
+          }
+        : undefined,
+    offers:
+      inStockOffers.length > 0 && lowestInStockPrice != null && highestInStockPrice != null
+        ? {
+            '@type': 'AggregateOffer',
+            priceCurrency: 'NGN',
+            lowPrice: lowestInStockPrice,
+            highPrice: highestInStockPrice,
+            offerCount: inStockOffers.length,
+            offers: inStockOffers.map((offer) =>
+              buildOfferStructuredData({
+                price: offer.price_ngn,
+                inStock: offer.in_stock,
+                sellerName: getStructuredDataSellerName(offer.store),
+                url: offer.url ?? absoluteUrl(`/phones/${phone.slug}`),
+              })
+            ),
+          }
+        : undefined,
+    additionalProperty: [
+      {
+        '@type': 'PropertyValue',
+        name: 'Operating system',
+        value: phone.os_type === 'ios' ? 'iOS' : 'Android',
+      },
+      {
+        '@type': 'PropertyValue',
+        name: 'RAM',
+        value: phone.ram_gb ? `${phone.ram_gb} GB` : 'Unknown',
+      },
+      {
+        '@type': 'PropertyValue',
+        name: 'Storage',
+        value: phone.storage_gb ? `${phone.storage_gb} GB` : 'Unknown',
+      },
+      {
+        '@type': 'PropertyValue',
+        name: 'Battery',
+        value: phone.battery_mah ? `${phone.battery_mah} mAh` : 'Unknown',
+      },
+      {
+        '@type': 'PropertyValue',
+        name: '5G',
+        value: phone.has_5g ? 'Yes' : 'No',
+      },
+    ],
+  }
   const structuredData = [
     {
       '@context': 'https://schema.org',
@@ -309,79 +378,9 @@ export default async function PhonePage({ params, searchParams }: PhonePageProps
         },
       ],
     },
-    {
-      '@context': 'https://schema.org',
-      '@type': 'Product',
-      name: phone.name,
-      description: phoneDescription,
-      url: absoluteUrl(`/phones/${phone.slug}`),
-      brand: {
-        '@type': 'Brand',
-        name: phone.brand_name,
-      },
-      category: 'Smartphone',
-      image: phone.image_url ? absoluteUrl(phone.image_url) : undefined,
-      sku: phone.slug,
-      releaseDate: phone.released_year ? `${phone.released_year}-01-01` : undefined,
-      aggregateRating:
-        phone.review_count > 0
-          ? {
-              '@type': 'AggregateRating',
-              ratingValue: Number(phone.average_rating.toFixed(1)),
-              reviewCount: phone.review_count,
-            }
-          : undefined,
-      offers:
-        inStockOffers.length > 0 && lowestInStockPrice != null && highestInStockPrice != null
-          ? {
-              '@type': 'AggregateOffer',
-              priceCurrency: 'NGN',
-              lowPrice: lowestInStockPrice,
-              highPrice: highestInStockPrice,
-              offerCount: inStockOffers.length,
-              offers: inStockOffers.map((offer) => ({
-                '@type': 'Offer',
-                priceCurrency: 'NGN',
-                price: offer.price_ngn,
-                availability: offer.in_stock
-                  ? 'https://schema.org/InStock'
-                  : 'https://schema.org/OutOfStock',
-                seller: {
-                  '@type': 'Organization',
-                  name: offer.store === 'jumia' ? 'Jumia' : 'Slot',
-                },
-                url: offer.url ?? absoluteUrl(`/phones/${phone.slug}`),
-              })),
-            }
-          : undefined,
-      additionalProperty: [
-        {
-          '@type': 'PropertyValue',
-          name: 'Operating system',
-          value: phone.os_type === 'ios' ? 'iOS' : 'Android',
-        },
-        {
-          '@type': 'PropertyValue',
-          name: 'RAM',
-          value: phone.ram_gb ? `${phone.ram_gb} GB` : 'Unknown',
-        },
-        {
-          '@type': 'PropertyValue',
-          name: 'Storage',
-          value: phone.storage_gb ? `${phone.storage_gb} GB` : 'Unknown',
-        },
-        {
-          '@type': 'PropertyValue',
-          name: 'Battery',
-          value: phone.battery_mah ? `${phone.battery_mah} mAh` : 'Unknown',
-        },
-        {
-          '@type': 'PropertyValue',
-          name: '5G',
-          value: phone.has_5g ? 'Yes' : 'No',
-        },
-      ],
-    },
+    ...(productStructuredData.offers || productStructuredData.aggregateRating
+      ? [productStructuredData]
+      : []),
   ]
 
   return (
