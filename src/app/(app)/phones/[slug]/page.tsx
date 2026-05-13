@@ -26,9 +26,11 @@ import { PriceHistoryChart } from '@/components/market/PriceHistoryChart'
 import { WorthItVerdictCard } from '@/components/market/WorthItVerdictCard'
 import { DecisionLoopPanel } from '@/components/market/DecisionLoopPanel'
 import { RelatedComparePanel } from '@/components/market/RelatedComparePanel'
+import { BestAlternativePanel } from '@/components/market/BestAlternativePanel'
 import { StructuredData } from '@/components/seo/StructuredData'
 import { buildVersionedImageUrl } from '@/lib/imageUrl'
 import { getTopPhoneDetailCompareActions } from '@/lib/relatedCompare'
+import { getBestAlternativeRightNow } from '@/lib/bestAlternative'
 import { buildOfferStructuredData, getStructuredDataSellerName } from '@/lib/structuredData'
 import {
   buildBuyNowWaitHref,
@@ -164,9 +166,8 @@ export default async function PhonePage({ params, searchParams }: PhonePageProps
     ;[compareCandidates, priceHistory, buyNowWait, stillWorthIt, marketplaceOffers] = await Promise.all([
       phonesApi
         .getAll({
-          os_type: phone.os_type,
           max_price: compareSearchMaxPrice,
-          limit: 24,
+          limit: 36,
         })
         .catch(() => []),
       marketApi
@@ -287,6 +288,15 @@ export default async function PhonePage({ params, searchParams }: PhonePageProps
     {
       id: selectedVariant?.id,
       label: selectedVariant?.label ?? null,
+    }
+  )
+  const bestAlternative = getBestAlternativeRightNow(
+    phone,
+    compareCandidates,
+    {
+      id: selectedVariant?.id,
+      label: selectedVariant?.label ?? null,
+      prices: selectedVariantPrices,
     }
   )
   const selectedVariantHref = (variantId: number) => `/phones/${phone.slug}?variant_id=${variantId}#variant-pricing`
@@ -851,6 +861,13 @@ export default async function PhonePage({ params, searchParams }: PhonePageProps
               items={verdictLoopItems}
             />
           </section>
+        </>
+      ) : null}
+
+      {bestAlternative ? (
+        <>
+          <Divider />
+          <BestAlternativePanel phoneName={phone.name} insight={bestAlternative} />
         </>
       ) : null}
 
