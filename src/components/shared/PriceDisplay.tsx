@@ -2,6 +2,7 @@ import React from 'react'
 import Link from 'next/link'
 import { Badge, Tooltip } from '@/components/ui'
 import { PriceVerdictBadge } from '@/components/market/PriceVerdictBadge'
+import { MarketConfidencePanel } from '@/components/market/MarketConfidencePanel'
 import { formatNaira, formatPriceFreshness } from '@/lib/formatters'
 import {
   buildStorePriceVerdict,
@@ -14,6 +15,7 @@ import {
   getPriceFreshnessSummary,
   type PriceFreshnessStatus,
 } from '@/lib/priceFreshness'
+import { buildMarketConfidence } from '@/lib/marketConfidence'
 import { STORE_LABELS } from '@/lib/constants'
 import type { CurrentPrice, StoreType } from '@/types'
 
@@ -110,6 +112,7 @@ export const PriceDisplay = ({
   const visibleDecisionLinks = decisionLinks.slice(0, 3)
   const lowestVariantText = lowestPrice ? getVariantText(lowestPrice) : null
   const overallPriceVerdict = buildTrustedPriceVerdict(safePrices)
+  const marketConfidence = buildMarketConfidence(safePrices)
   const freshestStatus = freshestKnownPrice
     ? getPriceFreshnessStatus(freshestKnownPrice.scraped_at)
     : null
@@ -157,6 +160,7 @@ export const PriceDisplay = ({
                 </Badge>
               ) : null}
               <PriceVerdictBadge verdict={overallPriceVerdict} compact />
+              <MarketConfidencePanel confidence={marketConfidence} compact />
             </div>
 
             {showRange && highestPrice && !compactStoreSummary ? (
@@ -201,6 +205,7 @@ export const PriceDisplay = ({
                 </Badge>
               ) : null}
               <PriceVerdictBadge verdict={overallPriceVerdict} />
+              <MarketConfidencePanel confidence={marketConfidence} compact />
             </div>
 
             {lowestVariantText ? (
@@ -267,6 +272,8 @@ export const PriceDisplay = ({
           </div>
         </div>
       ) : null}
+
+      <MarketConfidencePanel confidence={marketConfidence} />
 
       <div className="space-y-2">
         <div className="flex flex-wrap items-center justify-between gap-2">
