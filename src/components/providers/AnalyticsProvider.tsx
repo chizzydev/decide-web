@@ -3,6 +3,7 @@
 import { useEffect } from 'react'
 import { usePathname, useSearchParams } from 'next/navigation'
 import { API_BASE_URL } from '@/lib/apiBaseUrl'
+import { isKnownCrawlerBrowser } from '@/lib/crawler'
 
 const SESSION_KEY = 'decide_analytics_session_id'
 
@@ -52,6 +53,7 @@ export function AnalyticsProvider() {
 
   useEffect(() => {
     if (!pathname) return
+    if (isKnownCrawlerBrowser()) return
 
     const search = searchParams.toString()
     postAnalyticsEvent({

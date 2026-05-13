@@ -3,10 +3,12 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import MustCheckToggle from '@/components/phone/MustCheckToggle'
 import { DecisionLoopPanel } from '@/components/market/DecisionLoopPanel'
+import { UsedPhoneRiskPanel } from '@/components/market/UsedPhoneRiskPanel'
 import { StructuredData } from '@/components/seo/StructuredData'
 import { Badge } from '@/components/ui'
 import { phonesApi } from '@/lib/api'
 import { absoluteUrl, buildPageMetadata } from '@/lib/seo'
+import { buildUsedPhoneRiskIndicators } from '@/lib/usedPhoneRisk'
 import {
   buildBuyNowWaitHref,
   buildPhoneDetailHref,
@@ -122,6 +124,7 @@ export default async function UsedPhoneGuidePage({
     const guideHref = buildUsedGuideHref(phone.slug, { variantId })
     const yearsSinceRelease = getYearsSinceRelease(phone)
     const usedRead = buildUsedPhoneRead(phone)
+    const riskIndicators = buildUsedPhoneRiskIndicators(phone)
     const structuredData = {
       '@context': 'https://schema.org',
       '@type': 'Article',
@@ -219,6 +222,12 @@ export default async function UsedPhoneGuidePage({
             </div>
           </div>
         </section>
+
+        <UsedPhoneRiskPanel
+          title={`Scam and risk indicators for used ${phone.name}`}
+          description="These are the model-specific traps Decide wants you to check before you meet a seller, send a deposit, or accept a too-clean story."
+          indicators={riskIndicators}
+        />
 
         <section className="rounded-2xl border border-borderHigh bg-surface px-5 py-5 shadow-sm">
           <div className="space-y-4">

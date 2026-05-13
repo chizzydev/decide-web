@@ -1,6 +1,7 @@
 'use client'
 
 import { API_BASE_URL } from '@/lib/apiBaseUrl'
+import { isKnownCrawlerBrowser } from '@/lib/crawler'
 
 const SESSION_KEY = 'decide_analytics_session_id'
 
@@ -25,6 +26,7 @@ export const trackDecideEvent = (
   metadata: Record<string, string | number | boolean | null | undefined> = {}
 ) => {
   if (typeof window === 'undefined') return
+  if (isKnownCrawlerBrowser()) return
 
   const payload = JSON.stringify({
     event_name: eventName,

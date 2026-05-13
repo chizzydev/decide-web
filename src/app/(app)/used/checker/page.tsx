@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { DecisionLoopPanel } from '@/components/market/DecisionLoopPanel'
+import { UsedPhoneRiskPanel } from '@/components/market/UsedPhoneRiskPanel'
 import { StructuredData } from '@/components/seo/StructuredData'
 import { Badge } from '@/components/ui'
 import { phonesApi } from '@/lib/api'
@@ -9,6 +10,7 @@ import { formatNaira } from '@/lib/formatters'
 import { absoluteUrl, buildPageMetadata } from '@/lib/seo'
 import { getPrimaryPhoneCardCompareAction } from '@/lib/relatedCompare'
 import { curateShowcasePhones } from '@/lib/showcasePhones'
+import { GENERIC_USED_SCAM_INDICATORS } from '@/lib/usedPhoneRisk'
 import type { PhoneCard } from '@/types'
 
 export const metadata: Metadata = buildPageMetadata({
@@ -194,6 +196,12 @@ export default async function UsedCheckerPage() {
           </article>
         ))}
       </section>
+
+      <UsedPhoneRiskPanel
+        title="Common used-phone scam indicators"
+        description="Use this as your first filter before the model-specific guide. If any of these show up, slow down and verify before money moves."
+        indicators={GENERIC_USED_SCAM_INDICATORS}
+      />
 
       <section className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
         <div className="rounded-2xl border border-borderHigh bg-surface px-5 py-5 shadow-sm">
