@@ -94,11 +94,14 @@ const buildPhoneDetailDescription = (
   lowestInStockPrice: number | undefined
 ) => {
   const priceLead = lowestInStockPrice
-    ? `${phone.name} price in Nigeria starts from ₦${lowestInStockPrice.toLocaleString('en-NG')}.`
+    ? `${phone.name} starts from NGN ${lowestInStockPrice.toLocaleString('en-NG')} in Nigeria.`
     : `${phone.name} price in Nigeria, specs, and buying guidance.`
 
-  return `${priceLead} Compare specs, tracked store prices, price history, reviews, and Decide's buy-now-or-wait and still-worth-it verdicts before you buy.`
+  return `${priceLead} Check tracked store prices, price history, buy-or-wait guidance, ownership risks, reviews, and alternatives before you buy.`
 }
+
+const buildPhoneDetailTitle = (phone: PhoneDetail) =>
+  `${phone.name} in Nigeria: Price, Verdict & Deals - Decide`
 
 export async function generateMetadata(
   { params }: { params: Promise<{ slug: string }> }
@@ -109,7 +112,7 @@ export async function generateMetadata(
     const lowestInStockPrice = getLowestInStockPrice(phone)
 
     return buildPageMetadata({
-      title: `${phone.name} price, specs, and verdicts - Decide`,
+      title: buildPhoneDetailTitle(phone),
       description: buildPhoneDetailDescription(phone, lowestInStockPrice),
       path: `/phones/${phone.slug}`,
       keywords: [

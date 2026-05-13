@@ -15,6 +15,12 @@ import {
   parseVariantIdFromSearchParam,
 } from '@/lib/variantHref'
 
+const buildBuyNowWaitTitle = (phoneName: string) =>
+  `Should You Buy ${phoneName} Now? Nigeria Price Verdict - Decide`
+
+const buildBuyNowWaitDescription = (phoneName: string) =>
+  `See whether ${phoneName} is worth buying now in Nigeria, based on tracked prices, market timing, support outlook, ownership risk, and better alternatives.`
+
 export async function generateMetadata(
   { params }: { params: Promise<{ slug: string }> }
 ): Promise<Metadata> {
@@ -23,8 +29,8 @@ export async function generateMetadata(
     const data = await editorialApi.getBuyNowWait(slug)
 
     return buildPageMetadata({
-      title: `Buy now or wait: ${data.phone.name} - Decide`,
-      description: `Decide's buy-now-or-wait verdict for ${data.phone.name}, built from Nigerian price tracking, support outlook, and ownership risk.`,
+      title: buildBuyNowWaitTitle(data.phone.name),
+      description: buildBuyNowWaitDescription(data.phone.name),
       path: `/buy-now-or-wait/${data.phone.slug}`,
       keywords: [
         `${data.phone.name} buy now or wait`,
@@ -65,8 +71,8 @@ export default async function BuyNowWaitPage({
     const structuredData = {
       '@context': 'https://schema.org',
       '@type': 'Article',
-      headline: `Buy now or wait: ${data.phone.name}`,
-      description: `Decide's buy-now-or-wait verdict for ${data.phone.name}, built from Nigerian price tracking, support outlook, and ownership risk.`,
+      headline: buildBuyNowWaitTitle(data.phone.name),
+      description: buildBuyNowWaitDescription(data.phone.name),
       dateModified: data.generated_at,
       mainEntity: {
         '@type': 'Product',

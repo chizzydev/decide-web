@@ -15,6 +15,12 @@ import {
   parseVariantIdFromSearchParam,
 } from '@/lib/variantHref'
 
+const buildWorthItTitle = (phoneName: string) =>
+  `Is ${phoneName} Still Worth It in Nigeria? - Decide`
+
+const buildWorthItDescription = (phoneName: string) =>
+  `Check if ${phoneName} still makes sense in Nigeria using current prices, support runway, repair reality, resale confidence, and safer alternatives.`
+
 export async function generateMetadata(
   { params }: { params: Promise<{ slug: string }> }
 ): Promise<Metadata> {
@@ -23,8 +29,8 @@ export async function generateMetadata(
     const data = await editorialApi.getStillWorthIt(slug)
 
     return buildPageMetadata({
-      title: `Still worth it: ${data.phone.name} - Decide`,
-      description: `Decide's still-worth-it verdict for ${data.phone.name}, built from Nigerian price tracking, support outlook, and ownership risk.`,
+      title: buildWorthItTitle(data.phone.name),
+      description: buildWorthItDescription(data.phone.name),
       path: `/worth-it/${data.phone.slug}`,
       keywords: [
         `${data.phone.name} still worth it`,
@@ -64,8 +70,8 @@ export default async function WorthItPage({
     const structuredData = {
       '@context': 'https://schema.org',
       '@type': 'Article',
-      headline: `Still worth it: ${data.phone.name}`,
-      description: `Decide's still-worth-it verdict for ${data.phone.name}, built from Nigerian price tracking, support outlook, and ownership risk.`,
+      headline: buildWorthItTitle(data.phone.name),
+      description: buildWorthItDescription(data.phone.name),
       dateModified: data.generated_at,
       mainEntity: {
         '@type': 'Product',

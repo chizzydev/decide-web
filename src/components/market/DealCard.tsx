@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { PriceAlertButton } from '@/components/phone/PriceAlertButton'
 import { SaveButton } from '@/components/phone/SaveButton'
 import { Card } from '@/components/ui'
+import { buildDealIntelligence, type DealIntelligenceTone } from '@/lib/dealIntelligence'
 import { formatNaira, formatRelativeTime } from '@/lib/formatters'
 import { buildVersionedImageUrl } from '@/lib/imageUrl'
 import type { RelatedCompareAction } from '@/lib/relatedCompare'
@@ -63,6 +64,12 @@ const SIGNAL_TONE_CLASSES = {
   neutral: 'border-border bg-surfaceHigh text-text-secondary',
 } as const
 
+const INTELLIGENCE_TONE_CLASSES: Record<DealIntelligenceTone, string> = {
+  strong: 'border-emerald-200 bg-emerald-50 text-emerald-700',
+  good: 'border-accent/25 bg-tealTint text-accent',
+  watch: 'border-amber-200 bg-amber-50 text-amber-700',
+}
+
 const getSupportTone = (
   outlook: NonNullable<PriceDropRadarItem['ownership']>['longevity_signal']['support_outlook']
 ) => {
@@ -96,6 +103,7 @@ export const DealCard = ({ deal, compareAction }: DealCardProps) => {
   const storeLabel = STORE_LABELS[deal.store]
   const ownership = deal.ownership
   const detailHref = buildDealDetailHref(deal)
+  const dealIntelligence = buildDealIntelligence(deal, compareAction)
   const previousTrackedCopy = deal.previous_scraped_at
     ? `Compared with the previous tracked ${storeLabel} price from ${formatRelativeTime(deal.previous_scraped_at)}.`
     : `Compared with the previous tracked ${storeLabel} price.`
@@ -161,6 +169,49 @@ export const DealCard = ({ deal, compareAction }: DealCardProps) => {
         <div className="grid grid-cols-2 gap-2">
           <DealStat label="Current price" value={formatNaira(deal.current_price_ngn)} />
           <DealStat label="Previous tracked" value={formatNaira(deal.previous_price_ngn)} />
+        </div>
+
+        <div className="rounded-2xl border border-accent/15 bg-gradient-to-br from-tealTint via-surface to-surface px-3 py-3">
+          <div className="space-y-3">
+            <div className="space-y-1">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-accent">
+                  Deal intelligence
+                </p>
+                <span
+                  className={`inline-flex items-center rounded-full border px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.12em] ${INTELLIGENCE_TONE_CLASSES[dealIntelligence.timingTone]}`}
+                >
+                  {dealIntelligence.timingLabel}
+                </span>
+              </div>
+              <p className="text-sm leading-relaxed text-text-secondary">
+                {dealIntelligence.timingSummary}
+              </p>
+            </div>
+
+            <div className="grid gap-2 sm:grid-cols-2">
+              <DealIntelligenceBlock
+                label="Market confidence"
+                value={dealIntelligence.confidenceLabel}
+                tone={dealIntelligence.confidenceTone}
+              />
+              <Link
+                href={compareAction?.href ?? '/compare'}
+                className="rounded-xl border border-accent/20 bg-surface px-3 py-2 transition-colors duration-fast hover:border-accent/40 hover:bg-accent/5"
+              >
+                <span className="block text-[11px] font-semibold uppercase tracking-[0.14em] text-accent">
+                  {dealIntelligence.alternativeLabel}
+                </span>
+                <span className="mt-1 block text-sm font-semibold leading-relaxed text-text-primary">
+                  {dealIntelligence.alternativeSummary}
+                </span>
+              </Link>
+            </div>
+
+            <p className="text-xs leading-relaxed text-text-muted">
+              {dealIntelligence.confidenceReason}
+            </p>
+          </div>
         </div>
 
         {ownership ? (
@@ -316,6 +367,29 @@ const DealStat = ({ label, value }: DealStatProps) => (
       {label}
     </p>
     <p className="mt-1 text-sm font-bold text-text-primary">{value}</p>
+  </div>
+)
+
+interface DealIntelligenceBlockProps {
+  label: string
+  value: string
+  tone: DealIntelligenceTone
+}
+
+const DealIntelligenceBlock = ({
+  label,
+  value,
+  tone,
+}: DealIntelligenceBlockProps) => (
+  <div className="rounded-xl border border-border bg-surface px-3 py-2">
+    <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-text-muted">
+      {label}
+    </p>
+    <span
+      className={`mt-2 inline-flex items-center rounded-full border px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.12em] ${INTELLIGENCE_TONE_CLASSES[tone]}`}
+    >
+      {value}
+    </span>
   </div>
 )
 

@@ -9,10 +9,13 @@ import { formatNairaCompact, formatRelativeTime } from '@/lib/formatters'
 import { absoluteUrl, buildPageMetadata } from '@/lib/seo'
 import type { MarketplaceLeadsResponse, PriceDropRadarResponse } from '@/types'
 
+const TODAY_DEALS_TITLE = "Today's Best Phone Deals in Nigeria: Live Drop Radar - Decide"
+const TODAY_DEALS_DESCRIPTION =
+  'A tighter daily shortlist of tracked Nigerian phone price drops with Decide verdicts, best alternatives, and buyer caution signals.'
+
 export const metadata: Metadata = buildPageMetadata({
-  title: "Today's phone deals - Decide",
-  description:
-    "See today's tighter shortlist of live phone price drops in Nigeria, built from the latest tracked store updates.",
+  title: TODAY_DEALS_TITLE,
+  description: TODAY_DEALS_DESCRIPTION,
   path: '/deals/today',
   keywords: [
     'today phone deals Nigeria',
@@ -46,9 +49,8 @@ export default async function DealsTodayPage() {
   const structuredData = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
-    name: "Today's phone deals - Decide",
-    description:
-      "See today's tighter shortlist of live phone price drops in Nigeria, built from the latest tracked store updates.",
+    name: TODAY_DEALS_TITLE,
+    description: TODAY_DEALS_DESCRIPTION,
     url: absoluteUrl('/deals/today'),
     mainEntity: {
       '@type': 'ItemList',

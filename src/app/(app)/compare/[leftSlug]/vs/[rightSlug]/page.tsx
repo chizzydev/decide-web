@@ -138,6 +138,12 @@ const buildCompareOgImagePath = (result: CompareResult) => {
   return `/api/og/compare?${params.toString()}`
 }
 
+const buildCompareTitle = (leftName: string, rightName: string) =>
+  `${leftName} vs ${rightName}: Prices, Winner & Tradeoffs - Decide`
+
+const buildCompareDescription = (leftName: string, rightName: string) =>
+  `${leftName} vs ${rightName}: compare Nigerian prices, category wins, Decide score, Android/iPhone tradeoffs, and what to buy for your use case.`
+
 export async function generateMetadata({
   params,
   searchParams,
@@ -159,9 +165,11 @@ export async function generateMetadata({
       result.focused_variants.phone_b.id ?? undefined
     )
     const ogImage = absoluteUrl(buildCompareOgImagePath(result))
+    const title = buildCompareTitle(result.phone_a.name, result.phone_b.name)
+    const description = buildCompareDescription(result.phone_a.name, result.phone_b.name)
     const metadata = buildPageMetadata({
-      title: `${result.phone_a.name} vs ${result.phone_b.name} - Decide`,
-      description: `${result.phone_a.name} vs ${result.phone_b.name}: compare Nigerian prices, Decide scores, and the differences that matter before you buy.`,
+      title,
+      description,
       path: canonicalPath,
       keywords: [
         `${result.phone_a.name} vs ${result.phone_b.name}`,
@@ -214,11 +222,13 @@ export default async function CompareLandingPage({
       leftVariantId,
       rightVariantId,
     })
+    const title = buildCompareTitle(result.phone_a.name, result.phone_b.name)
+    const description = buildCompareDescription(result.phone_a.name, result.phone_b.name)
     const structuredData = {
       '@context': 'https://schema.org',
       '@type': 'WebPage',
-      name: `${result.phone_a.name} vs ${result.phone_b.name} - Decide`,
-      description: `${result.phone_a.name} vs ${result.phone_b.name}: compare Nigerian prices, Decide scores, and the differences that matter before you buy.`,
+      name: title,
+      description,
       url: absoluteUrl(`/compare/${result.phone_a.slug}/vs/${result.phone_b.slug}`),
       mainEntity: {
         '@type': 'ItemList',

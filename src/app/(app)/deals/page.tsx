@@ -14,10 +14,13 @@ import type {
   PriceDropRadarResponse,
 } from '@/types'
 
+const DEALS_PAGE_TITLE = 'Live Phone Deals in Nigeria: Drops & Market Radar - Decide'
+const DEALS_PAGE_DESCRIPTION =
+  'See tracked Jumia and Slot price drops, Jiji bargain leads, market confidence, best alternatives, and safer buy-or-wait guidance before you spend.'
+
 export const metadata: Metadata = buildPageMetadata({
-  title: 'Deals Radar - Decide',
-  description:
-    'Track live phone price drops in Nigeria across the stores Decide monitors, with fresh deal signals built from current price changes.',
+  title: DEALS_PAGE_TITLE,
+  description: DEALS_PAGE_DESCRIPTION,
   path: '/deals',
   keywords: [
     'phone deals Nigeria',
@@ -91,9 +94,8 @@ export default async function DealsPage() {
   const structuredData = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
-    name: 'Deals Radar - Decide',
-    description:
-      'Track live phone price drops in Nigeria across the stores Decide monitors, with fresh deal signals built from current price changes.',
+    name: DEALS_PAGE_TITLE,
+    description: DEALS_PAGE_DESCRIPTION,
     url: absoluteUrl('/deals'),
     mainEntity: {
       '@type': 'ItemList',
