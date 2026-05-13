@@ -7,9 +7,11 @@ import { Card } from '@/components/ui'
 import { buildDealIntelligence, type DealIntelligenceTone } from '@/lib/dealIntelligence'
 import { formatNaira, formatRelativeTime } from '@/lib/formatters'
 import { buildVersionedImageUrl } from '@/lib/imageUrl'
+import { buildDropPriceVerdict } from '@/lib/priceVerdict'
 import type { RelatedCompareAction } from '@/lib/relatedCompare'
 import type { PriceDropRadarItem } from '@/types'
 import { PriceChangeBadge } from './PriceChangeBadge'
+import { PriceVerdictBadge } from './PriceVerdictBadge'
 
 interface DealCardProps {
   deal: PriceDropRadarItem
@@ -104,6 +106,7 @@ export const DealCard = ({ deal, compareAction }: DealCardProps) => {
   const ownership = deal.ownership
   const detailHref = buildDealDetailHref(deal)
   const dealIntelligence = buildDealIntelligence(deal, compareAction)
+  const priceVerdict = buildDropPriceVerdict(deal.change_amount_ngn, deal.change_percent)
   const previousTrackedCopy = deal.previous_scraped_at
     ? `Compared with the previous tracked ${storeLabel} price from ${formatRelativeTime(deal.previous_scraped_at)}.`
     : `Compared with the previous tracked ${storeLabel} price.`
@@ -119,11 +122,14 @@ export const DealCard = ({ deal, compareAction }: DealCardProps) => {
             Updated {formatRelativeTime(deal.scraped_at)}
           </p>
         </div>
-        <PriceChangeBadge
-          amount_ngn={deal.change_amount_ngn}
-          percent={deal.change_percent}
-          compact
-        />
+        <div className="flex flex-col items-end gap-2 sm:flex-row sm:items-center">
+          <PriceVerdictBadge verdict={priceVerdict} compact />
+          <PriceChangeBadge
+            amount_ngn={deal.change_amount_ngn}
+            percent={deal.change_percent}
+            compact
+          />
+        </div>
       </div>
 
       <div className="flex flex-1 flex-col gap-4 px-4 py-4">

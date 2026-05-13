@@ -107,6 +107,23 @@ const IphoneContent = ({ phone_name }: { phone_name?: string }) => {
 
   return (
     <div className="space-y-4">
+      <Section title="Why iPhone prices can look uneven">
+        <div className="space-y-2 rounded-lg border border-accent/15 bg-tealTint px-3 py-3">
+          <p className="text-xs leading-relaxed text-text-secondary">
+            Do not judge an iPhone by the model name alone. An older Pro can cost more
+            than a newer base model when the exact unit has better storage, cleaner
+            condition, stronger battery health, or a safer region and SIM setup.
+          </p>
+          <div className="space-y-1.5">
+            <CheckItem text="Compare the exact unit: storage size, region code, battery health, SIM or eSIM support, Face ID, True Tone, and repair history." />
+            <CheckItem
+              warning
+              text="Two iPhone 12 units can have different prices. One may be clean stock; another may be converted, repaired, locked, or from a region that is harder to use or resell in Nigeria."
+            />
+          </div>
+        </div>
+      </Section>
+
       <Section title="What sellers say - what it means">
         <div className="overflow-hidden rounded-lg border border-surface">
           <TermRow

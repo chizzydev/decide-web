@@ -1,7 +1,13 @@
 import React from 'react'
 import Link from 'next/link'
 import { Badge, Tooltip } from '@/components/ui'
+import { PriceVerdictBadge } from '@/components/market/PriceVerdictBadge'
 import { formatNaira, formatPriceFreshness } from '@/lib/formatters'
+import {
+  buildStorePriceVerdict,
+  buildTrustedPriceVerdict,
+  type PriceVerdict,
+} from '@/lib/priceVerdict'
 import {
   getPriceFreshnessLabel,
   getPriceFreshnessStatus,
@@ -103,6 +109,7 @@ export const PriceDisplay = ({
   const hasAnyPrice = displayablePrices.length > 0
   const visibleDecisionLinks = decisionLinks.slice(0, 3)
   const lowestVariantText = lowestPrice ? getVariantText(lowestPrice) : null
+  const overallPriceVerdict = buildTrustedPriceVerdict(safePrices)
   const freshestStatus = freshestKnownPrice
     ? getPriceFreshnessStatus(freshestKnownPrice.scraped_at)
     : null
@@ -149,6 +156,7 @@ export const PriceDisplay = ({
                   {getPriceFreshnessLabel(freshestStatus)}
                 </Badge>
               ) : null}
+              <PriceVerdictBadge verdict={overallPriceVerdict} compact />
             </div>
 
             {showRange && highestPrice && !compactStoreSummary ? (
@@ -192,6 +200,7 @@ export const PriceDisplay = ({
                   {getPriceFreshnessLabel(freshestStatus)}
                 </Badge>
               ) : null}
+              <PriceVerdictBadge verdict={overallPriceVerdict} />
             </div>
 
             {lowestVariantText ? (
@@ -292,6 +301,7 @@ export const PriceDisplay = ({
                 lowestPrice?.store === price.store &&
                 lowestPrice?.price_ngn === price.price_ngn
               }
+              verdict={buildStorePriceVerdict(price, displayablePrices)}
             />
           ))}
         </div>
@@ -309,6 +319,7 @@ export const PriceDisplay = ({
 interface StorePriceLineProps {
   price: CurrentPrice
   isLowest: boolean
+  verdict: PriceVerdict | null
 }
 
 const CompactStoreChip = ({ price }: { price: CurrentPrice }) => (
@@ -322,7 +333,7 @@ const CompactStoreChip = ({ price }: { price: CurrentPrice }) => (
   </span>
 )
 
-const StorePriceLine = ({ price, isLowest }: StorePriceLineProps) => {
+const StorePriceLine = ({ price, isLowest, verdict }: StorePriceLineProps) => {
   const storeLabel = STORE_LABELS[price.store]
   const variantText = getVariantText(price)
   const freshnessStatus = getPriceFreshnessStatus(price.scraped_at)
@@ -355,6 +366,7 @@ const StorePriceLine = ({ price, isLowest }: StorePriceLineProps) => {
             >
               {getPriceFreshnessLabel(freshnessStatus)}
             </Badge>
+            <PriceVerdictBadge verdict={verdict} compact />
           </div>
           {variantText ? (
             <p className="break-words text-[11px] text-text-muted">{variantText}</p>

@@ -641,6 +641,14 @@ export default async function PhonePage({ params, searchParams }: PhonePageProps
             differ.
           </p>
 
+          {phone.os_type === 'ios' ? (
+            <p className="text-xs leading-relaxed text-text-muted">
+              iPhone prices can differ even when model names look close. Storage, country or
+              region code, battery health, SIM setup, warranty status, and repair history can
+              make an older Pro unit cost more than a newer base model.
+            </p>
+          ) : null}
+
           {marketplaceOffers?.offers.length ? (
             <section className="rounded-xl border border-amber-200 bg-amber-50/70 px-4 py-4">
               <div className="space-y-3">
