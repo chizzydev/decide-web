@@ -14,6 +14,9 @@ export const CompareSummaryCard = ({ result }: CompareSummaryCardProps) => {
       : result.overall_winner === result.phone_b.slug
         ? result.phone_b
         : null
+  const showCategoryContext =
+    result.decision_context.category_wins_a.length > 0 ||
+    result.decision_context.category_wins_b.length > 0
 
   return (
     <Card className="overflow-hidden border-borderHigh bg-surface shadow-sm">
@@ -39,6 +42,26 @@ export const CompareSummaryCard = ({ result }: CompareSummaryCardProps) => {
         </div>
       </div>
 
+      {showCategoryContext ? (
+        <div className="border-b border-border bg-surface px-5 py-5 md:px-6">
+          <div className="grid gap-4 md:grid-cols-2">
+            <CategoryWinPanel
+              phoneName={result.phone_a.name}
+              wins={result.decision_context.category_wins_a}
+            />
+            <CategoryWinPanel
+              phoneName={result.phone_b.name}
+              wins={result.decision_context.category_wins_b}
+            />
+          </div>
+          {result.decision_context.note ? (
+            <p className="mt-4 max-w-3xl text-xs leading-relaxed text-text-muted">
+              {result.decision_context.note}
+            </p>
+          ) : null}
+        </div>
+      ) : null}
+
       <div className="grid gap-6 px-5 py-5 md:grid-cols-2 md:px-6">
         <CompareStrengthColumn
           title={result.phone_a.name}
@@ -54,6 +77,42 @@ export const CompareSummaryCard = ({ result }: CompareSummaryCardProps) => {
     </Card>
   )
 }
+
+const formatCategoryLabel = (value: string) =>
+  value
+    .split(' ')
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(' ')
+
+const CategoryWinPanel = ({
+  phoneName,
+  wins,
+}: {
+  phoneName: string
+  wins: string[]
+}) => (
+  <div className="space-y-2 rounded-2xl border border-border bg-surfaceHigh px-4 py-4">
+    <p className="text-xs font-bold uppercase tracking-[0.16em] text-text-muted">
+      {phoneName} is stronger for
+    </p>
+    {wins.length > 0 ? (
+      <div className="flex flex-wrap gap-2">
+        {wins.map((win) => (
+          <span
+            key={win}
+            className="inline-flex items-center rounded-full border border-accent/15 bg-tealTint px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.12em] text-accent"
+          >
+            {formatCategoryLabel(win)}
+          </span>
+        ))}
+      </div>
+    ) : (
+      <p className="text-sm text-text-muted">
+        No clear category edge from the decision layer.
+      </p>
+    )}
+  </div>
+)
 
 interface CompareStrengthColumnProps {
   title: string
