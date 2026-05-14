@@ -1,9 +1,3 @@
-export const merchantReturnPolicyStructuredData = {
-  '@type': 'MerchantReturnPolicy',
-  applicableCountry: 'NG',
-  returnPolicyCategory: 'https://schema.org/MerchantReturnUnspecified',
-}
-
 export const getStructuredDataSellerName = (store: string | null | undefined) => {
   const normalizedStore = store?.toLowerCase()
 
@@ -40,5 +34,4 @@ export const buildOfferStructuredData = ({
     name: sellerName ?? 'Retail partner',
   },
   url: url ?? undefined,
-  hasMerchantReturnPolicy: merchantReturnPolicyStructuredData,
 })
