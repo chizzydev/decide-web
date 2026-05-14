@@ -8,7 +8,10 @@ import { StructuredData } from '@/components/seo/StructuredData'
 import { VerdictPageHero } from '@/components/market/VerdictPageHero'
 import { WorthItVerdictCard } from '@/components/market/WorthItVerdictCard'
 import { absoluteUrl, buildPageMetadata } from '@/lib/seo'
-import { buildOfferStructuredData } from '@/lib/structuredData'
+import {
+  buildOfferStructuredData,
+  buildProductStructuredDataDescription,
+} from '@/lib/structuredData'
 import {
   buildBuyNowWaitHref,
   buildPhoneDetailHref,
@@ -73,6 +76,10 @@ export default async function WorthItPage({
         ? {
             '@type': 'Product',
             name: data.phone.name,
+            description: buildProductStructuredDataDescription(
+              data.phone.name,
+              'current Nigerian prices, support runway, repair reality, resale confidence, and whether it is still worth buying'
+            ),
             brand: {
               '@type': 'Brand',
               name: data.phone.brand_name,

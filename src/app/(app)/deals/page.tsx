@@ -8,7 +8,11 @@ import { marketApi } from '@/lib/api'
 import { BUDGET_GUIDES } from '@/lib/budgetGuides'
 import { formatNairaCompact, formatRelativeTime } from '@/lib/formatters'
 import { absoluteUrl, buildPageMetadata } from '@/lib/seo'
-import { buildOfferStructuredData, getStructuredDataSellerName } from '@/lib/structuredData'
+import {
+  buildOfferStructuredData,
+  buildProductStructuredDataDescription,
+  getStructuredDataSellerName,
+} from '@/lib/structuredData'
 import type {
   MarketplaceLeadsResponse,
   PriceDropRadarItem,
@@ -104,6 +108,10 @@ export default async function DealsPage() {
         item: {
           '@type': 'Product',
           name: deal.phone_name,
+          description: buildProductStructuredDataDescription(
+            deal.phone_name,
+            'live Nigerian price drops, trusted-store availability, and safer buy-or-wait guidance'
+          ),
           brand: {
             '@type': 'Brand',
             name: deal.brand_name,

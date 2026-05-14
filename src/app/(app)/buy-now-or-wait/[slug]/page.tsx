@@ -8,7 +8,10 @@ import { OwnershipSignalPanel } from '@/components/market/OwnershipSignalPanel'
 import { StructuredData } from '@/components/seo/StructuredData'
 import { VerdictPageHero } from '@/components/market/VerdictPageHero'
 import { absoluteUrl, buildPageMetadata } from '@/lib/seo'
-import { buildOfferStructuredData } from '@/lib/structuredData'
+import {
+  buildOfferStructuredData,
+  buildProductStructuredDataDescription,
+} from '@/lib/structuredData'
 import {
   buildBuyNowWaitHref,
   buildPhoneDetailHref,
@@ -74,6 +77,10 @@ export default async function BuyNowWaitPage({
         ? {
             '@type': 'Product',
             name: data.phone.name,
+            description: buildProductStructuredDataDescription(
+              data.phone.name,
+              'tracked Nigerian prices, market timing, support outlook, ownership risk, and whether to buy now or wait'
+            ),
             brand: {
               '@type': 'Brand',
               name: data.phone.brand_name,

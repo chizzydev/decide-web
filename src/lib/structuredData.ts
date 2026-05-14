@@ -13,6 +13,11 @@ export const getStructuredDataSellerName = (store: string | null | undefined) =>
   return store ?? 'Retail partner'
 }
 
+export const buildProductStructuredDataDescription = (
+  phoneName: string,
+  context = 'tracked Nigerian prices, buying timing, ownership risk, and safer alternatives'
+) => `${phoneName} buying context from Decide, covering ${context}.`
+
 interface BuildOfferStructuredDataOptions {
   price: number
   url?: string | null

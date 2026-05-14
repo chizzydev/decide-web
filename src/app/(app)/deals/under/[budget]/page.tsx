@@ -14,7 +14,11 @@ import {
 } from '@/lib/budgetGuides'
 import { formatNairaCompact, formatRelativeTime } from '@/lib/formatters'
 import { absoluteUrl, buildPageMetadata } from '@/lib/seo'
-import { buildOfferStructuredData, getStructuredDataSellerName } from '@/lib/structuredData'
+import {
+  buildOfferStructuredData,
+  buildProductStructuredDataDescription,
+  getStructuredDataSellerName,
+} from '@/lib/structuredData'
 import type { PriceDropRadarItem, PriceDropRadarResponse } from '@/types'
 
 interface BudgetDealsPageProps {
@@ -96,6 +100,10 @@ export default async function BudgetDealsPage({ params }: BudgetDealsPageProps) 
         item: {
           '@type': 'Product',
           name: deal.phone_name,
+          description: buildProductStructuredDataDescription(
+            deal.phone_name,
+            `${guide.label.toLowerCase()} Nigerian price drops, trusted-store availability, and budget buying guidance`
+          ),
           brand: {
             '@type': 'Brand',
             name: deal.brand_name,
