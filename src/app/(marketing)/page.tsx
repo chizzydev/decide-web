@@ -31,7 +31,7 @@ export const revalidate = 21600
 
 const BUDGET_WATCH_CAP_NGN = 250_000
 const ANDROID_APK_VERSION = '1.0.2'
-const ANDROID_APK_UPDATED_AT = 'May 12, 2026, 8:59 PM WAT'
+const ANDROID_APK_UPDATED_AT = 'May 16, 2026, 2:36 AM WAT'
 const ANDROID_APK_PATH = '/downloads/decide-android-v1.0.2.apk'
 const ANDROID_APK_SIZE = '71 MB'
 const HOME_RADAR_LIMIT = 50
