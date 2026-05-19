@@ -262,7 +262,7 @@ export const marketApi = {
 
     return request<PriceDropRadarResponse>(
       `/market/deals/radar${suffix ? `?${suffix}` : ''}`,
-      { next: { revalidate: 30, tags: ['market'] } }
+      { cache: 'no-store' }
     )
   },
 
@@ -270,7 +270,7 @@ export const marketApi = {
     const params = new URLSearchParams({ limit: String(limit) })
     return request<MarketplaceLeadsResponse>(
       `/market/marketplace-leads?${params.toString()}`,
-      { next: { revalidate: 30, tags: ['marketplace'] } }
+      { cache: 'no-store' }
     )
   },
 }
