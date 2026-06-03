@@ -23,6 +23,7 @@ import { ReviewList } from '@/components/phone/ReviewList'
 import { BuyNowWaitCard } from '@/components/market/BuyNowWaitCard'
 import { OwnershipSignalPanel } from '@/components/market/OwnershipSignalPanel'
 import { PriceHistoryChart } from '@/components/market/PriceHistoryChart'
+import { PhonePricingIntentPanel } from '@/components/market/PhonePricingIntentPanel'
 import { WorthItVerdictCard } from '@/components/market/WorthItVerdictCard'
 import { DecisionLoopPanel } from '@/components/market/DecisionLoopPanel'
 import { RelatedComparePanel } from '@/components/market/RelatedComparePanel'
@@ -31,6 +32,7 @@ import { StructuredData } from '@/components/seo/StructuredData'
 import { buildVersionedImageUrl } from '@/lib/imageUrl'
 import { getTopPhoneDetailCompareActions } from '@/lib/relatedCompare'
 import { getBestAlternativeRightNow } from '@/lib/bestAlternative'
+import { buildPhonePricingIntentLinks } from '@/lib/phonePricingSeo'
 import { buildOfferStructuredData, getStructuredDataSellerName } from '@/lib/structuredData'
 import {
   buildBuyNowWaitHref,
@@ -290,6 +292,7 @@ export default async function PhonePage({ params, searchParams }: PhonePageProps
       label: selectedVariant?.label ?? null,
     }
   )
+  const pricingIntentLinks = buildPhonePricingIntentLinks(phone.slug, selectedVariantId)
   const bestAlternative = getBestAlternativeRightNow(
     phone,
     compareCandidates,
@@ -796,6 +799,11 @@ export default async function PhonePage({ params, searchParams }: PhonePageProps
           <PriceHistoryChart
             history={priceHistory}
             detailPath={`/phones/${phone.slug}`}
+          />
+          <PhonePricingIntentPanel
+            links={pricingIntentLinks}
+            title="Search-friendly price answers"
+            description="Decide now breaks this phone's tracked price data into dedicated answer pages for the exact questions buyers search for, from price history to the cheapest current trusted-store offer."
           />
         </>
       ) : null}

@@ -62,3 +62,29 @@ export const buildUsedGuideHref = (
   slug: string,
   options: VariantHrefOptions = {}
 ): string => `/used/${slug}${buildVariantSuffix(options)}`
+
+export const buildPhonePriceHistoryHref = (
+  slug: string,
+  options: VariantHrefOptions = {}
+): string => `/phones/${slug}/price-history${buildVariantSuffix(options)}`
+
+export const buildPhoneCheapestPriceHref = (
+  slug: string,
+  options: VariantHrefOptions = {}
+): string => `/phones/${slug}/cheapest-price${buildVariantSuffix(options)}`
+
+export const buildPhonePriceTodayHref = (
+  slug: string,
+  options: VariantHrefOptions = {}
+): string => `/phones/${slug}/price-in-nigeria-today${buildVariantSuffix(options)}`
+
+export const buildPhonePriceDropHref = (
+  slug: string,
+  options: VariantHrefOptions = {}
+): string => `/phones/${slug}/price-drop${buildVariantSuffix(options)}`
+
+export const buildPhoneStorePriceHref = (
+  slug: string,
+  store: 'jumia' | 'slot',
+  options: VariantHrefOptions = {}
+): string => `/phones/${slug}/price-in-${store}${buildVariantSuffix(options)}`

@@ -55,6 +55,12 @@ const getDynamicSitemapEntries = async (now: Date): Promise<MetadataRoute.Sitema
 
       return [
         buildEntry(`/phones/${phone.slug}`, lastModified, 'daily', 0.85),
+        buildEntry(`/phones/${phone.slug}/price-history`, lastModified, 'daily', 0.83),
+        buildEntry(`/phones/${phone.slug}/cheapest-price`, lastModified, 'daily', 0.82),
+        buildEntry(`/phones/${phone.slug}/price-in-nigeria-today`, lastModified, 'daily', 0.82),
+        buildEntry(`/phones/${phone.slug}/price-drop`, lastModified, 'daily', 0.8),
+        buildEntry(`/phones/${phone.slug}/price-in-jumia`, lastModified, 'daily', 0.78),
+        buildEntry(`/phones/${phone.slug}/price-in-slot`, lastModified, 'daily', 0.78),
         buildEntry(`/buy-now-or-wait/${phone.slug}`, lastModified, 'daily', 0.8),
         buildEntry(`/worth-it/${phone.slug}`, lastModified, 'weekly', 0.78),
         buildEntry(`/used/${phone.slug}`, lastModified, 'weekly', 0.76),
