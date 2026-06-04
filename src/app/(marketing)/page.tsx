@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     'Compare Nigerian phone prices, live drops, buy-or-wait verdicts, Jiji marketplace context, price alerts, and used-phone guidance before you pay.',
 }
 
-export const revalidate = 21600
+export const dynamic = 'force-dynamic'
 
 const BUDGET_WATCH_CAP_NGN = 250_000
 const ANDROID_APK_VERSION = '1.0.2'
