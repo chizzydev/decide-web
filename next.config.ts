@@ -3,6 +3,14 @@ import { withSentryConfig } from '@sentry/nextjs'
 
 const isProduction = process.env.NODE_ENV === 'production'
 const configuredApiUrl = process.env.NEXT_PUBLIC_API_URL?.replace(/\/+$/, '')
+const scriptSources = [
+  "'self'",
+  "'unsafe-inline'",
+  ...(!isProduction ? ["'unsafe-eval'"] : []),
+  'https://accounts.google.com',
+  'https://apis.google.com',
+  'https://vercel.live',
+]
 
 const connectSources = [
   "'self'",
@@ -67,7 +75,7 @@ const nextConfig: NextConfig = {
           "form-action 'self'",
           "frame-ancestors 'none'",
           "object-src 'none'",
-          "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://accounts.google.com https://apis.google.com https://vercel.live",
+          `script-src ${scriptSources.join(' ')}`,
           "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
           "img-src 'self' data: blob: https://fdn2.gsmarena.com https://ng.jumia.is https://lh3.googleusercontent.com",
           "font-src 'self' data: https://fonts.gstatic.com",
