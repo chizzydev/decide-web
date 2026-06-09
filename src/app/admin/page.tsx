@@ -30,6 +30,18 @@ interface AnalyticsOverview {
     event_name: string
     count:      number
   }>
+  top_referrers?: Array<{
+    referrer: string
+    count:    number
+  }>
+  top_landing_pages?: Array<{
+    path:  string
+    count: number
+  }>
+  top_utm_sources?: Array<{
+    source: string
+    count:  number
+  }>
 }
 
 const EMPTY_ANALYTICS: AnalyticsOverview = {
@@ -39,6 +51,9 @@ const EMPTY_ANALYTICS: AnalyticsOverview = {
   actions_today: 0,
   top_pages: [],
   top_events: [],
+  top_referrers: [],
+  top_landing_pages: [],
+  top_utm_sources: [],
 }
 
 export default function AdminOverviewPage() {
@@ -143,6 +158,33 @@ export default function AdminOverviewPage() {
               }))}
             />
           </div>
+
+          <div className="grid gap-4 lg:grid-cols-3">
+            <AnalyticsList
+              title="Top referrers"
+              empty="No referrer data recorded in the last 24 hours."
+              rows={(analytics.top_referrers ?? []).map((item) => ({
+                label: item.referrer,
+                count: item.count,
+              }))}
+            />
+            <AnalyticsList
+              title="Landing pages"
+              empty="No landing pages recorded in the last 24 hours."
+              rows={(analytics.top_landing_pages ?? []).map((item) => ({
+                label: item.path,
+                count: item.count,
+              }))}
+            />
+            <AnalyticsList
+              title="UTM sources"
+              empty="No UTM sources recorded in the last 24 hours."
+              rows={(analytics.top_utm_sources ?? []).map((item) => ({
+                label: formatUtmSource(item.source),
+                count: item.count,
+              }))}
+            />
+          </div>
         </section>
       ) : null}
 
@@ -173,6 +215,14 @@ function formatEventName(eventName: string) {
     .split('_')
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
     .join(' ')
+}
+
+function formatUtmSource(source: string) {
+  try {
+    return decodeURIComponent(source.replace(/\+/g, ' '))
+  } catch {
+    return source
+  }
 }
 
 interface AnalyticsListProps {
