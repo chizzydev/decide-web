@@ -7,6 +7,21 @@ import Link from 'next/link'
 import { signIn } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
 
+const normalizeCallbackUrl = (value: string | null) => {
+  if (!value) return '/'
+  if (!value.startsWith('/') || value.startsWith('//')) return '/'
+  return value
+}
+
+const formatRetryMessage = (retryAfterSeconds: number | null) => {
+  if (!retryAfterSeconds || Number.isNaN(retryAfterSeconds) || retryAfterSeconds <= 0) {
+    return 'Too many sign-in attempts were entered. Please wait a few minutes before trying again.'
+  }
+
+  const retryAfterMinutes = Math.max(1, Math.ceil(retryAfterSeconds / 60))
+  return `Too many sign-in attempts were entered. Please wait about ${retryAfterMinutes} minute${retryAfterMinutes === 1 ? '' : 's'} before trying again, or reset your password if you’ve forgotten it.`
+}
+
 export default function LoginPage() {
   return (
     <Suspense fallback={<AuthShellFallback title="Welcome back" subtitle="Sign in to your account to continue" />}>
@@ -18,14 +33,18 @@ export default function LoginPage() {
 function LoginPageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const callbackUrl = searchParams.get('callbackUrl') || '/'
+  const callbackUrl = normalizeCallbackUrl(searchParams.get('callbackUrl'))
   const sessionExpired = searchParams.get('reason') === 'session-expired'
   const registered = searchParams.get('registered') === '1'
   const initialEmail = searchParams.get('email') || ''
+  const rateLimited = searchParams.get('error') === 'TooManyLoginAttempts'
+  const retryAfterSeconds = Number.parseInt(searchParams.get('retryAfter') || '', 10)
 
   const [email,    setEmail]    = useState(initialEmail)
   const [password, setPassword] = useState('')
-  const [error,    setError]    = useState<string | null>(null)
+  const [error,    setError]    = useState<string | null>(
+    rateLimited ? formatRetryMessage(retryAfterSeconds) : null
+  )
   const [loading,  setLoading]  = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -33,14 +52,37 @@ function LoginPageContent() {
     setError(null)
     setLoading(true)
 
-    const result = await signIn('credentials', {
-      email,
-      password,
-      redirect: false,
-      callbackUrl,
-    })
+    let result: Awaited<ReturnType<typeof signIn>> | undefined
+    try {
+      result = await signIn('credentials', {
+        email,
+        password,
+        redirect: false,
+        callbackUrl,
+      })
+    } catch {
+      setLoading(false)
+      setError('We could not complete sign-in just now. Please try again in a moment.')
+      return
+    }
 
     setLoading(false)
+
+    if (result?.error === 'TooManyLoginAttempts') {
+      let nextRetryAfterSeconds: number | null = null
+
+      if (result.url) {
+        try {
+          const url = new URL(result.url, window.location.origin)
+          nextRetryAfterSeconds = Number.parseInt(url.searchParams.get('retryAfter') || '', 10)
+        } catch {
+          nextRetryAfterSeconds = null
+        }
+      }
+
+      setError(formatRetryMessage(nextRetryAfterSeconds))
+      return
+    }
 
     if (result?.error) {
       setError('Invalid email or password.')
@@ -139,9 +181,25 @@ function LoginPageContent() {
               />
             </div>
 
-            {error && (
-              <p className="text-sm text-error" role="alert">{error}</p>
-            )}
+            {error ? (
+              <div
+                className="rounded-md border border-rose-200 bg-rose-50 px-3 py-3 text-sm text-rose-800"
+                role="alert"
+              >
+                <p>{error}</p>
+                {(rateLimited || error.includes('Too many sign-in attempts')) ? (
+                  <p className="mt-2">
+                    <Link
+                      href="/forgot-password"
+                      className="font-semibold text-rose-900 underline underline-offset-2"
+                    >
+                      Reset your password
+                    </Link>{' '}
+                    if you no longer remember it.
+                  </p>
+                ) : null}
+              </div>
+            ) : null}
 
             <button
               type="submit"

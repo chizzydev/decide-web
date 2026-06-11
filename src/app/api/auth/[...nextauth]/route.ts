@@ -116,6 +116,8 @@ const tooManyAttemptsResponse = (blockedUntil: number) => {
     1,
     Math.ceil((blockedUntil - Date.now()) / 1000)
   )
+  const retryAfterMinutes = Math.max(1, Math.ceil(retryAfterSeconds / 60))
+  const url = `/login?error=TooManyLoginAttempts&retryAfter=${retryAfterSeconds}&retryAfterMinutes=${retryAfterMinutes}`
 
   return Response.json(
     {
@@ -124,7 +126,7 @@ const tooManyAttemptsResponse = (blockedUntil: number) => {
       error: 'TooManyLoginAttempts',
       message:
         'Too many failed sign-in attempts. Please wait a few minutes and try again.',
-      url: null,
+      url,
     },
     {
       status: 429,
