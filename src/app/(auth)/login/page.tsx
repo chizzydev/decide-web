@@ -22,6 +22,26 @@ const formatRetryMessage = (retryAfterSeconds: number | null) => {
   return `Too many sign-in attempts were entered. Please wait about ${retryAfterMinutes} minute${retryAfterMinutes === 1 ? '' : 's'} before trying again, or reset your password if you’ve forgotten it.`
 }
 
+const parseSignInError = (value: string | null) => {
+  if (!value) return { code: null, retryAfterSeconds: null as number | null }
+
+  const [code, query] = value.split('&', 2)
+  if (!query) {
+    return { code, retryAfterSeconds: null as number | null }
+  }
+
+  const params = new URLSearchParams(query)
+  const retryAfterSeconds = Number.parseInt(params.get('retryAfter') || '', 10)
+
+  return {
+    code,
+    retryAfterSeconds:
+      Number.isNaN(retryAfterSeconds) || retryAfterSeconds <= 0
+        ? null
+        : retryAfterSeconds,
+  }
+}
+
 export default function LoginPage() {
   return (
     <Suspense fallback={<AuthShellFallback title="Welcome back" subtitle="Sign in to your account to continue" />}>
@@ -68,10 +88,12 @@ function LoginPageContent() {
 
     setLoading(false)
 
-    if (result?.error === 'TooManyLoginAttempts') {
+    const parsedError = parseSignInError(result?.error ?? null)
+
+    if (parsedError.code === 'TooManyLoginAttempts') {
       let nextRetryAfterSeconds: number | null = null
 
-      if (result.url) {
+      if (result?.url) {
         try {
           const url = new URL(result.url, window.location.origin)
           nextRetryAfterSeconds = Number.parseInt(url.searchParams.get('retryAfter') || '', 10)
@@ -80,6 +102,7 @@ function LoginPageContent() {
         }
       }
 
+      nextRetryAfterSeconds ??= parsedError.retryAfterSeconds
       setError(formatRetryMessage(nextRetryAfterSeconds))
       return
     }

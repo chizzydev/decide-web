@@ -139,23 +139,67 @@ const tooManyAttemptsResponse = (blockedUntil: number) => {
   )
 }
 
-const isCredentialsFailure = async (response: Response) => {
+const getCallbackError = async (response: Response) => {
   const location = response.headers.get('location') ?? ''
-  if (location.includes('CredentialsSignin')) return true
-  if (response.status === 401) return true
+  if (location) {
+    try {
+      const url = new URL(location, response.url || 'http://localhost')
+      const error = url.searchParams.get('error')
+
+      if (error) {
+        return {
+          error,
+          retryAfter: Number.parseInt(url.searchParams.get('retryAfter') || '', 10),
+          retryAfterMinutes: Number.parseInt(
+            url.searchParams.get('retryAfterMinutes') || '',
+            10
+          ),
+        }
+      }
+    } catch {
+      // Ignore malformed redirect URLs and fall through to JSON parsing.
+    }
+  }
 
   const contentType = response.headers.get('content-type') ?? ''
-  if (!contentType.includes('application/json')) return false
+  if (!contentType.includes('application/json')) return null
 
   try {
     const body = (await response.clone().json()) as { url?: string; error?: string }
-    return (
-      body.error === 'CredentialsSignin' ||
-      body.url?.includes('CredentialsSignin') === true
-    )
+    if (body.error === 'TooManyLoginAttempts') {
+      return {
+        error: body.error,
+        retryAfter: Number.NaN,
+        retryAfterMinutes: Number.NaN,
+      }
+    }
+
+    if (!body.url) return null
+
+    const url = new URL(body.url, response.url || 'http://localhost')
+    const error = url.searchParams.get('error')
+
+    if (!error) return null
+
+    return {
+      error,
+      retryAfter: Number.parseInt(url.searchParams.get('retryAfter') || '', 10),
+      retryAfterMinutes: Number.parseInt(
+        url.searchParams.get('retryAfterMinutes') || '',
+        10
+      ),
+    }
   } catch {
-    return false
+    return null
   }
+}
+
+const isCredentialsFailure = async (response: Response) => {
+  const callbackError = await getCallbackError(response)
+  if (callbackError?.error === 'CredentialsSignin') return true
+  if (response.status === 401) return true
+
+  return false
 }
 
 export const GET = nextAuthHandler
@@ -179,6 +223,15 @@ export async function POST(request: Request, context: unknown) {
   }
 
   const response = await nextAuthHandler(request, context)
+  const callbackError = await getCallbackError(response)
+
+  if (callbackError?.error === 'TooManyLoginAttempts') {
+    const retryAfterSeconds = Number.isNaN(callbackError.retryAfter)
+      ? LOGIN_BLOCK_MS / 1000
+      : callbackError.retryAfter
+
+    return tooManyAttemptsResponse(Date.now() + retryAfterSeconds * 1000)
+  }
 
   if (await isCredentialsFailure(response)) {
     const newEmailBlockUntil = hashedEmailKey

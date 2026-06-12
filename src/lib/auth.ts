@@ -23,12 +23,32 @@ type BackendAuthResponse = {
   refresh_token_expires_at: string
 }
 
+type BackendAuthResult =
+  | { ok: true; data: BackendAuthResponse }
+  | { ok: false; status: number; message: string | null }
+
 const REFRESH_RETRY_BACKOFF_MS = 5_000
+
+const buildLoginRateLimitError = (message: string | null) => {
+  const normalized = message?.trim() || ''
+  const minuteMatch = normalized.match(/(\d+)\s+minute/i)
+  const retryAfterMinutes = minuteMatch ? Number.parseInt(minuteMatch[1] || '', 10) : null
+  const retryAfterSeconds =
+    retryAfterMinutes && !Number.isNaN(retryAfterMinutes)
+      ? retryAfterMinutes * 60
+      : null
+
+  const search = new URLSearchParams({ error: 'TooManyLoginAttempts' })
+  if (retryAfterSeconds) search.set('retryAfter', String(retryAfterSeconds))
+  if (retryAfterMinutes) search.set('retryAfterMinutes', String(retryAfterMinutes))
+
+  return search.toString()
+}
 
 const readBackendSession = async (
   path: '/api/v1/mobile-auth/login' | '/api/v1/mobile-auth/google' | '/api/v1/mobile-auth/refresh',
   body: Record<string, unknown>
-): Promise<BackendAuthResponse | null> => {
+): Promise<BackendAuthResult> => {
   try {
     const res = await fetch(`${API_BASE_URL}${path}`, {
       method: 'POST',
@@ -37,20 +57,43 @@ const readBackendSession = async (
     })
 
     const text = await res.text()
-    if (!text) return null
+    if (!text) {
+      return {
+        ok: false,
+        status: res.status,
+        message: null,
+      }
+    }
 
-    let json: { success?: boolean; data?: unknown }
+    let json: { success?: boolean; data?: unknown; message?: unknown }
     try {
       json = JSON.parse(text)
     } catch {
-      return null
+      return {
+        ok: false,
+        status: res.status,
+        message: null,
+      }
     }
 
-    if (!json.success || !json.data) return null
+    if (!res.ok || !json.success || !json.data) {
+      return {
+        ok: false,
+        status: res.status,
+        message: typeof json.message === 'string' ? json.message : null,
+      }
+    }
 
-    return json.data as BackendAuthResponse
+    return {
+      ok: true,
+      data: json.data as BackendAuthResponse,
+    }
   } catch {
-    return null
+    return {
+      ok: false,
+      status: 0,
+      message: null,
+    }
   }
 }
 
@@ -82,19 +125,25 @@ export const authOptions: NextAuthOptions = {
           password: credentials.password,
         })
 
-        if (!backendSession) return null
+        if (!backendSession.ok) {
+          if (backendSession.status === 429) {
+            throw new Error(buildLoginRateLimitError(backendSession.message))
+          }
+
+          return null
+        }
 
         return {
-          id: backendSession.user.id,
-          email: backendSession.user.email,
-          name: backendSession.user.display_name,
-          image: backendSession.user.avatar_url,
-          role: backendSession.user.role,
-          provider: backendSession.user.provider,
-          backendAccessToken: backendSession.access_token,
-          backendRefreshToken: backendSession.refresh_token,
-          backendAccessTokenExpiresAt: backendSession.access_token_expires_at,
-          backendRefreshTokenExpiresAt: backendSession.refresh_token_expires_at,
+          id: backendSession.data.user.id,
+          email: backendSession.data.user.email,
+          name: backendSession.data.user.display_name,
+          image: backendSession.data.user.avatar_url,
+          role: backendSession.data.user.role,
+          provider: backendSession.data.user.provider,
+          backendAccessToken: backendSession.data.access_token,
+          backendRefreshToken: backendSession.data.refresh_token,
+          backendAccessTokenExpiresAt: backendSession.data.access_token_expires_at,
+          backendRefreshTokenExpiresAt: backendSession.data.refresh_token_expires_at,
         }
       },
     }),
@@ -112,17 +161,17 @@ export const authOptions: NextAuthOptions = {
           id_token: (account as { id_token?: string } | null)?.id_token,
         })
 
-        if (!backendSession) {
+        if (!backendSession.ok) {
           return false
         }
 
-        user.id = backendSession.user.id
-        user.role = backendSession.user.role
-        user.provider = backendSession.user.provider
-        user.backendAccessToken = backendSession.access_token
-        user.backendRefreshToken = backendSession.refresh_token
-        user.backendAccessTokenExpiresAt = backendSession.access_token_expires_at
-        user.backendRefreshTokenExpiresAt = backendSession.refresh_token_expires_at
+        user.id = backendSession.data.user.id
+        user.role = backendSession.data.user.role
+        user.provider = backendSession.data.user.provider
+        user.backendAccessToken = backendSession.data.access_token
+        user.backendRefreshToken = backendSession.data.refresh_token
+        user.backendAccessTokenExpiresAt = backendSession.data.access_token_expires_at
+        user.backendRefreshTokenExpiresAt = backendSession.data.refresh_token_expires_at
         user.googleIdToken = (account as { id_token?: string } | null)?.id_token
       }
 
@@ -189,21 +238,21 @@ export const authOptions: NextAuthOptions = {
         refresh_token: token.backendRefreshToken,
       })
 
-      if (!refreshed) {
+      if (!refreshed.ok) {
         token.backendAuthError = 'RefreshAccessTokenError'
         token.backendRefreshRetryAt = Date.now() + REFRESH_RETRY_BACKOFF_MS
         return token
       }
 
-      token.id = refreshed.user.id
-      token.name = refreshed.user.display_name ?? token.name
-      token.email = refreshed.user.email
-      token.role = refreshed.user.role
-      token.provider = refreshed.user.provider
-      token.backendAccessToken = refreshed.access_token
-      token.backendRefreshToken = refreshed.refresh_token
-      token.backendAccessTokenExpiresAt = Date.parse(refreshed.access_token_expires_at)
-      token.backendRefreshTokenExpiresAt = Date.parse(refreshed.refresh_token_expires_at)
+      token.id = refreshed.data.user.id
+      token.name = refreshed.data.user.display_name ?? token.name
+      token.email = refreshed.data.user.email
+      token.role = refreshed.data.user.role
+      token.provider = refreshed.data.user.provider
+      token.backendAccessToken = refreshed.data.access_token
+      token.backendRefreshToken = refreshed.data.refresh_token
+      token.backendAccessTokenExpiresAt = Date.parse(refreshed.data.access_token_expires_at)
+      token.backendRefreshTokenExpiresAt = Date.parse(refreshed.data.refresh_token_expires_at)
       token.backendAuthError = undefined
       token.backendRefreshRetryAt = undefined
 
