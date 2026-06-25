@@ -12,7 +12,7 @@ const nextAuthHandler = NextAuth(authOptions) as (
 const LOGIN_WINDOW_MS = 15 * 60 * 1000
 const LOGIN_BLOCK_MS = 15 * 60 * 1000
 const MAX_EMAIL_FAILURES = 5
-const MAX_IP_FAILURES = 12
+const MAX_IP_FAILURES = 8
 
 type AttemptRecord = {
   count: number
