@@ -1,8 +1,10 @@
 import type { MetadataRoute } from 'next'
 import { phonesApi, brandsApi } from '@/lib/api'
 import { BUDGET_GUIDES } from '@/lib/budgetGuides'
+import { buildVersionedImageUrl } from '@/lib/imageUrl'
 import { getPrimaryPhoneCardCompareAction } from '@/lib/relatedCompare'
-import { SITE_URL } from '@/lib/seo'
+import { absoluteUrl, SITE_URL } from '@/lib/seo'
+import { SEO_LANDING_PAGES } from '@/lib/seoLandingPages'
 import type { PhoneCard } from '@/types'
 
 const routes = [
@@ -30,17 +32,28 @@ const buildEntry = (
   path: string,
   lastModified: Date,
   changeFrequency: MetadataRoute.Sitemap[number]['changeFrequency'],
-  priority: number
+  priority: number,
+  images?: string[]
 ): MetadataRoute.Sitemap[number] => ({
   url: `${SITE_URL}${path}`,
   lastModified,
   changeFrequency,
   priority,
+  ...(images && images.length > 0 ? { images } : {}),
 })
 
 const getPhoneLastModified = (phone: PhoneCard, fallback: Date) => {
   const updatedAt = new Date(phone.updated_at)
   return Number.isNaN(updatedAt.getTime()) ? fallback : updatedAt
+}
+
+const hasRealPhoneImage = (url: string | null | undefined): url is string =>
+  Boolean(url && !url.includes('placeholder'))
+
+const getPhoneSitemapImages = (phone: PhoneCard) => {
+  const versionedImageUrl = buildVersionedImageUrl(phone.image_url, phone.updated_at)
+
+  return hasRealPhoneImage(versionedImageUrl) ? [absoluteUrl(versionedImageUrl)] : undefined
 }
 
 const getDynamicSitemapEntries = async (now: Date): Promise<MetadataRoute.Sitemap> => {
@@ -52,9 +65,10 @@ const getDynamicSitemapEntries = async (now: Date): Promise<MetadataRoute.Sitema
 
     const phoneEntries = phones.flatMap((phone) => {
       const lastModified = getPhoneLastModified(phone, now)
+      const images = getPhoneSitemapImages(phone)
 
       return [
-        buildEntry(`/phones/${phone.slug}`, lastModified, 'daily', 0.85),
+        buildEntry(`/phones/${phone.slug}`, lastModified, 'daily', 0.85, images),
         buildEntry(`/phones/${phone.slug}/price-history`, lastModified, 'daily', 0.83),
         buildEntry(`/phones/${phone.slug}/cheapest-price`, lastModified, 'daily', 0.82),
         buildEntry(`/phones/${phone.slug}/price-in-nigeria-today`, lastModified, 'daily', 0.82),
@@ -110,7 +124,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     buildEntry(`/deals/under/${guide.slug}`, now, 'daily', 0.86)
   )
 
+  const seoLandingEntries = SEO_LANDING_PAGES.map((page) =>
+    buildEntry(
+      `/${page.slug}`,
+      now,
+      page.kind === 'deal-radar' ? 'daily' : 'weekly',
+      page.priority === 'high' ? 0.92 : page.priority === 'medium' ? 0.86 : 0.78
+    )
+  )
+
   const dynamicEntries = await getDynamicSitemapEntries(now)
 
-  return [...staticEntries, ...budgetEntries, ...dynamicEntries]
+  return [...staticEntries, ...budgetEntries, ...seoLandingEntries, ...dynamicEntries]
 }

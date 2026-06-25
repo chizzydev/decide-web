@@ -99,14 +99,14 @@ const buildPhoneDetailDescription = (
   lowestInStockPrice: number | undefined
 ) => {
   const priceLead = lowestInStockPrice
-    ? `${phone.name} starts from NGN ${lowestInStockPrice.toLocaleString('en-NG')} in Nigeria.`
+    ? `${phone.name} price in Nigeria starts from N${lowestInStockPrice.toLocaleString('en-NG')}.`
     : `${phone.name} price in Nigeria, specs, and buying guidance.`
 
-  return `${priceLead} Check tracked store prices, price history, buy-or-wait guidance, ownership risks, reviews, and alternatives before you buy.`
+  return `${priceLead} Compare specs, tracked Jumia and Slot prices where available, price history, buy-or-wait verdicts, ownership risks, and alternatives before you buy.`
 }
 
 const buildPhoneDetailTitle = (phone: PhoneDetail) =>
-  `${phone.name} in Nigeria: Price, Verdict & Deals - Decide`
+  `${phone.name} price in Nigeria, specs, and verdicts - Decide`
 
 export async function generateMetadata(
   { params }: { params: Promise<{ slug: string }> }
@@ -115,6 +115,11 @@ export async function generateMetadata(
     const { slug } = await params
     const phone = await phonesApi.getBySlug(slug)
     const lowestInStockPrice = getLowestInStockPrice(phone)
+    const versionedImageUrl = buildVersionedImageUrl(phone.image_url, phone.updated_at)
+    const metadataImage =
+      versionedImageUrl && hasRealImage(versionedImageUrl)
+        ? absoluteUrl(versionedImageUrl)
+        : undefined
 
     return buildPageMetadata({
       title: buildPhoneDetailTitle(phone),
@@ -126,7 +131,7 @@ export async function generateMetadata(
         `${phone.name} review Nigeria`,
         `${phone.brand_name} phones Nigeria`,
       ],
-      image: phone.image_url ?? undefined,
+      image: metadataImage,
     })
   } catch {
     return buildPageMetadata({
@@ -293,6 +298,84 @@ export default async function PhonePage({ params, searchParams }: PhonePageProps
     }
   )
   const pricingIntentLinks = buildPhonePricingIntentLinks(phone.slug, selectedVariantId)
+  const normalizedBrandName = phone.brand_name.toLowerCase()
+  const normalizedPhoneName = phone.name.toLowerCase()
+  const relatedSeoGuides = [
+    { href: '/phone-buying-intelligence-nigeria', label: 'Phone buying intelligence in Nigeria' },
+    { href: '/compare-phone-prices-nigeria', label: 'Compare phone prices in Nigeria' },
+    { href: '/best-phones-in-nigeria', label: 'Best phones in Nigeria' },
+    ...(normalizedBrandName.includes('samsung') || normalizedPhoneName.includes('galaxy')
+      ? [{ href: '/best-samsung-phones-in-nigeria', label: 'Best Samsung phones in Nigeria' }]
+      : []),
+    ...(normalizedBrandName.includes('tecno')
+      ? [{ href: '/best-tecno-phones-in-nigeria', label: 'Best Tecno phones in Nigeria' }]
+      : []),
+    ...(normalizedBrandName.includes('infinix')
+      ? [{ href: '/best-infinix-phones-in-nigeria', label: 'Best Infinix phones in Nigeria' }]
+      : []),
+    ...(normalizedBrandName.includes('xiaomi') ||
+    normalizedPhoneName.includes('redmi') ||
+    normalizedPhoneName.includes('poco')
+      ? [{ href: '/best-redmi-xiaomi-phones-in-nigeria', label: 'Best Redmi/Xiaomi phones in Nigeria' }]
+      : []),
+    ...(normalizedBrandName.includes('apple') || normalizedPhoneName.includes('iphone')
+      ? [{ href: '/best-iphones-in-nigeria', label: 'Best iPhones in Nigeria' }]
+      : []),
+    ...(lowestInStockPrice && lowestInStockPrice <= 150_000
+      ? [{ href: '/best-phones-under-150000-naira-nigeria', label: 'Best phones under N150k' }]
+      : []),
+    ...(lowestInStockPrice && lowestInStockPrice <= 200_000
+      ? [{ href: '/best-phones-under-200000-naira-nigeria', label: 'Best phones under N200k' }]
+      : []),
+    ...(lowestInStockPrice && lowestInStockPrice <= 300_000
+      ? [{ href: '/best-phones-under-300000-naira-nigeria', label: 'Best phones under N300k' }]
+      : []),
+    ...(phone.score_performance >= 70 || (phone.refresh_rate_hz ?? 0) >= 90
+      ? [{ href: '/best-gaming-phones-in-nigeria', label: 'Best gaming phones in Nigeria' }]
+      : []),
+    ...(lowestInStockPrice && lowestInStockPrice <= 200_000 && (phone.score_performance >= 70 || (phone.refresh_rate_hz ?? 0) >= 90)
+      ? [{ href: '/best-gaming-phones-under-200000-naira-nigeria', label: 'Gaming phones under N200k' }]
+      : []),
+    ...(lowestInStockPrice && lowestInStockPrice <= 300_000 && (phone.score_performance >= 70 || (phone.refresh_rate_hz ?? 0) >= 90)
+      ? [{ href: '/best-gaming-phones-under-300000-naira-nigeria', label: 'Gaming phones under N300k' }]
+      : []),
+    ...(phone.score_camera >= 70 || (phone.main_camera_mp ?? 0) >= 50
+      ? [{ href: '/best-camera-phones-in-nigeria', label: 'Best camera phones in Nigeria' }]
+      : []),
+    ...(lowestInStockPrice && lowestInStockPrice <= 200_000 && (phone.score_camera >= 70 || (phone.main_camera_mp ?? 0) >= 50)
+      ? [{ href: '/best-camera-phones-under-200000-naira-nigeria', label: 'Camera phones under N200k' }]
+      : []),
+    ...(phone.score_camera >= 70 || (phone.main_camera_mp ?? 0) >= 50
+      ? [{ href: '/best-phones-for-content-creation-in-nigeria', label: 'Phones for content creation' }]
+      : []),
+    ...(phone.score_camera >= 70 || (phone.main_camera_mp ?? 0) >= 50
+      ? [{ href: '/best-phones-for-tiktok-in-nigeria', label: 'Best phones for TikTok' }]
+      : []),
+    ...(phone.score_battery >= 70 || (phone.battery_mah ?? 0) >= 5000
+      ? [{ href: '/best-battery-phones-in-nigeria', label: 'Best battery phones in Nigeria' }]
+      : []),
+    ...(phone.score_battery >= 70 || (phone.battery_mah ?? 0) >= 5000
+      ? [{ href: '/phones-with-strong-battery-in-nigeria', label: 'Phones with strong battery' }]
+      : []),
+    ...((phone.charging_speed_w ?? 0) >= 25
+      ? [{ href: '/best-fast-charging-phones-in-nigeria', label: 'Best fast charging phones' }]
+      : []),
+    ...(lowestInStockPrice && lowestInStockPrice <= 200_000 && (phone.score_value >= 70 || phone.score_battery >= 70)
+      ? [{ href: '/best-phones-for-students-under-200000-naira-nigeria', label: 'Student phones under N200k' }]
+      : []),
+    ...(phone.prices.some((price) => price.store === 'jumia')
+      ? [{ href: '/jumia-phone-prices-nigeria', label: 'Jumia phone prices in Nigeria' }]
+      : []),
+    ...(phone.prices.some((price) => price.store === 'slot')
+      ? [{ href: '/slot-phone-prices-nigeria', label: 'Slot phone prices in Nigeria' }]
+      : []),
+    ...((phone.marketplace_signal_count ?? 0) > 0
+      ? [{ href: '/jiji-used-phones-nigeria', label: 'Jiji used phones in Nigeria' }]
+      : []),
+    { href: '/where-to-buy-phones-in-nigeria', label: 'Where to buy phones in Nigeria' },
+    { href: '/safest-places-to-buy-phones-in-nigeria', label: 'Safe phone buying checks' },
+    { href: '/phone-price-drops-nigeria', label: 'Phone price drops in Nigeria' },
+  ].slice(0, 8)
   const bestAlternative = getBestAlternativeRightNow(
     phone,
     compareCandidates,
@@ -304,9 +387,14 @@ export default async function PhonePage({ params, searchParams }: PhonePageProps
   )
   const selectedVariantHref = (variantId: number) => `/phones/${phone.slug}?variant_id=${variantId}#variant-pricing`
   const versionedImageUrl = buildVersionedImageUrl(phone.image_url, phone.updated_at)
+  const structuredImageUrl =
+    versionedImageUrl && hasRealImage(versionedImageUrl)
+      ? absoluteUrl(versionedImageUrl)
+      : undefined
   const productStructuredData = {
     '@context': 'https://schema.org',
     '@type': 'Product',
+    '@id': `${absoluteUrl(`/phones/${phone.slug}`)}#product`,
     name: phone.name,
     description: phoneDescription,
     url: absoluteUrl(`/phones/${phone.slug}`),
@@ -315,7 +403,7 @@ export default async function PhonePage({ params, searchParams }: PhonePageProps
       name: phone.brand_name,
     },
     category: 'Smartphone',
-    image: phone.image_url ? absoluteUrl(phone.image_url) : undefined,
+    image: structuredImageUrl ? [structuredImageUrl] : undefined,
     sku: phone.slug,
     releaseDate: phone.released_year ? `${phone.released_year}-01-01` : undefined,
     aggregateRating:
@@ -375,6 +463,29 @@ export default async function PhonePage({ params, searchParams }: PhonePageProps
   const structuredData = [
     {
       '@context': 'https://schema.org',
+      '@type': 'WebPage',
+      '@id': `${absoluteUrl(`/phones/${phone.slug}`)}#webpage`,
+      name: buildPhoneDetailTitle(phone),
+      description: phoneDescription,
+      url: absoluteUrl(`/phones/${phone.slug}`),
+      primaryImageOfPage: structuredImageUrl
+        ? {
+            '@type': 'ImageObject',
+            url: structuredImageUrl,
+            caption: `${phone.name} image`,
+          }
+        : undefined,
+      mainEntity: {
+        '@id': `${absoluteUrl(`/phones/${phone.slug}`)}#product`,
+      },
+      isPartOf: {
+        '@type': 'WebSite',
+        name: 'Decide',
+        url: absoluteUrl('/'),
+      },
+    },
+    {
+      '@context': 'https://schema.org',
       '@type': 'BreadcrumbList',
       itemListElement: [
         {
@@ -391,9 +502,7 @@ export default async function PhonePage({ params, searchParams }: PhonePageProps
         },
       ],
     },
-    ...(productStructuredData.offers || productStructuredData.aggregateRating
-      ? [productStructuredData]
-      : []),
+    productStructuredData,
   ]
 
   return (
@@ -807,6 +916,32 @@ export default async function PhonePage({ params, searchParams }: PhonePageProps
           />
         </>
       ) : null}
+
+      <Divider />
+
+      <section className="space-y-4">
+        <div className="space-y-1">
+          <h2 className="text-xl font-black tracking-tight text-text-primary">
+            Buying guides related to {phone.name}
+          </h2>
+          <p className="max-w-3xl text-sm leading-relaxed text-text-secondary">
+            Use these Decide guides to compare this phone against broader Nigerian buying
+            intents before you leave for an external store or marketplace.
+          </p>
+        </div>
+
+        <div className="grid gap-3 sm:grid-cols-2">
+          {relatedSeoGuides.map((guide) => (
+            <Link
+              key={`${guide.href}-${guide.label}`}
+              href={guide.href}
+              className="rounded-2xl border border-border bg-surface px-4 py-4 text-sm font-bold text-text-primary transition-colors duration-fast hover:border-borderHigh hover:bg-surfaceHigh hover:text-accent"
+            >
+              {guide.label}
+            </Link>
+          ))}
+        </div>
+      </section>
 
       {ownershipSignals ? (
         <>

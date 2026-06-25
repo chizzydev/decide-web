@@ -13,6 +13,34 @@
 - [Today's Deals](https://www.decide.com.ng/deals/today): Freshest tracked price movement and deal candidates.
 - [Used Phone Checker](https://www.decide.com.ng/used/checker): Used-phone buying checks, Jiji context, and risk guidance.
 - [How It Works](https://www.decide.com.ng/how-it-works): Explanation of Decide's recommendation and market intelligence process.
+- [Phone Buying Intelligence Nigeria](https://www.decide.com.ng/phone-buying-intelligence-nigeria): Canonical explanation of Decide as Nigeria's phone buying intelligence platform.
+- [Compare Phone Prices Nigeria](https://www.decide.com.ng/compare-phone-prices-nigeria): Search-focused guide for comparing current Nigerian phone prices before buying.
+- [Best Phones in Nigeria](https://www.decide.com.ng/best-phones-in-nigeria): Broad buying guide for Nigerian phone shoppers.
+- [Best Phones Under N200k](https://www.decide.com.ng/best-phones-under-200000-naira-nigeria): Budget guide for buyers searching around 200k.
+- [Phone Price Drops Nigeria](https://www.decide.com.ng/phone-price-drops-nigeria): Search-focused page for live phone price drops and buy-or-wait context.
+- [Jumia Phone Prices Nigeria](https://www.decide.com.ng/jumia-phone-prices-nigeria): Store-intent guide for tracked Jumia price context before external checkout.
+- [Best Phones On Jumia Nigeria](https://www.decide.com.ng/best-phones-on-jumia-nigeria): Jumia-focused shortlist with Decide comparison and verdict context.
+- [Slot Phone Prices Nigeria](https://www.decide.com.ng/slot-phone-prices-nigeria): Store-intent guide for tracked Slot price context and cross-store checking.
+- [Jiji Used Phones Nigeria](https://www.decide.com.ng/jiji-used-phones-nigeria): Used-market guide for Jiji context, risk checks, and safer buying steps.
+- [Where To Buy Phones In Nigeria](https://www.decide.com.ng/where-to-buy-phones-in-nigeria): Buying route guide covering Jumia, Slot, Jiji, and verification steps.
+- [Safest Places To Buy Phones In Nigeria](https://www.decide.com.ng/safest-places-to-buy-phones-in-nigeria): Safety-first phone buying guide for Nigerian buyers.
+- [Best Samsung Phones Nigeria](https://www.decide.com.ng/best-samsung-phones-in-nigeria): Samsung/Galaxy buying guide with live price and verdict context.
+- [Best Tecno Phones Nigeria](https://www.decide.com.ng/best-tecno-phones-in-nigeria): Tecno buying guide for Spark, Camon, Pova, and other Decide-tracked models.
+- [Best Infinix Phones Nigeria](https://www.decide.com.ng/best-infinix-phones-in-nigeria): Infinix buying guide with battery, gaming, value, and price context.
+- [Best Redmi/Xiaomi Phones Nigeria](https://www.decide.com.ng/best-redmi-xiaomi-phones-in-nigeria): Redmi, Xiaomi, and Poco buying guide for Nigerian shoppers.
+- [Best iPhones Nigeria](https://www.decide.com.ng/best-iphones-in-nigeria): iPhone buying guide with used-market and support-risk context.
+- [Best Redmi Phones Under N200k Nigeria](https://www.decide.com.ng/best-redmi-phones-under-200000-naira-nigeria): Redmi budget guide for Nigerian buyers comparing gaming, battery, and value below N200k.
+- [Best Infinix Phones Under N200k Nigeria](https://www.decide.com.ng/best-infinix-phones-under-200000-naira-nigeria): Infinix budget guide for buyers checking value, battery, and gaming options below N200k.
+- [Best Samsung Phones Under N200k Nigeria](https://www.decide.com.ng/best-samsung-phones-under-200000-naira-nigeria): Samsung/Galaxy budget guide for Nigerians comparing reliable choices below N200k.
+- [Best iPhones Under N500k Nigeria](https://www.decide.com.ng/best-iphones-under-500000-naira-nigeria): iPhone value guide for buyers comparing new and used iPhone options below N500k.
+- [Best Gaming Phones Under N200k Nigeria](https://www.decide.com.ng/best-gaming-phones-under-200000-naira-nigeria): Gaming budget guide for buyers comparing performance, battery, RAM, and price below N200k.
+- [Best Gaming Phones Under N300k Nigeria](https://www.decide.com.ng/best-gaming-phones-under-300000-naira-nigeria): Gaming guide for stronger performance and display options below N300k.
+- [Best Camera Phones Under N200k Nigeria](https://www.decide.com.ng/best-camera-phones-under-200000-naira-nigeria): Camera budget guide for buyers comparing photos, selfies, video, and value below N200k.
+- [Best Phones For Students Under N200k Nigeria](https://www.decide.com.ng/best-phones-for-students-under-200000-naira-nigeria): Student buying guide focused on battery, storage, value, and safer buying below N200k.
+- [Phones With Strong Battery Nigeria](https://www.decide.com.ng/phones-with-strong-battery-in-nigeria): Strong-battery guide for Nigerian buyers comparing long-lasting phones with current prices.
+- [Best Fast Charging Phones Nigeria](https://www.decide.com.ng/best-fast-charging-phones-in-nigeria): Fast-charging guide using charging speed where available, battery, price, and value context.
+- [Best Phones For Content Creation Nigeria](https://www.decide.com.ng/best-phones-for-content-creation-in-nigeria): Creator-focused guide for camera, video, storage, battery, and performance decisions.
+- [Best Phones For TikTok Nigeria](https://www.decide.com.ng/best-phones-for-tiktok-in-nigeria): TikTok and social-video guide for camera, selfie/video, storage, battery, and value context.
 
 ## What Decide Helps With
 

@@ -43,6 +43,10 @@ export const metadata: Metadata = {
   },
   description: DEFAULT_DESCRIPTION,
   keywords: [
+    'Decide phone buying intelligence',
+    'Decide website',
+    'compare phone prices Nigeria',
+    'phone buying intelligence Nigeria',
     'buy phone Nigeria',
     'best phone Nigeria',
     'phone recommendation Nigeria',
@@ -123,6 +127,14 @@ export default function RootLayout({ children }: RootLayoutProps) {
         '@type': 'Organization',
         '@id': `${SITE_URL}/#organization`,
         name: 'Decide',
+        alternateName: [
+          'Decide Nigeria',
+          'Decide phone prices',
+          'Decide phone buying intelligence',
+          'Decide phone comparison',
+        ],
+        description:
+          "Decide is Nigeria's phone buying intelligence platform for comparing live phone prices, price drops, buy-or-wait verdicts, Jiji marketplace context, and safer buying guidance before paying external sellers.",
         url: SITE_URL,
         logo: `${SITE_URL}/icon-512.png`,
         ...(sameAs.length > 0 ? { sameAs } : {}),
@@ -131,6 +143,11 @@ export default function RootLayout({ children }: RootLayoutProps) {
         '@type': 'WebSite',
         '@id': `${SITE_URL}/#website`,
         name: 'Decide',
+        alternateName: [
+          'Decide website',
+          'Decide web app',
+          'Decide Nigeria phones',
+        ],
         url: SITE_URL,
         description: DEFAULT_DESCRIPTION,
         publisher: {
@@ -146,6 +163,11 @@ export default function RootLayout({ children }: RootLayoutProps) {
         '@type': 'WebApplication',
         '@id': `${SITE_URL}/#app`,
         name: 'Decide',
+        alternateName: [
+          'Decide web app',
+          'Decide phone price app',
+          'Decide phone comparison app',
+        ],
         url: SITE_URL,
         applicationCategory: 'ShoppingApplication',
         operatingSystem: 'Web, Android',

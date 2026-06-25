@@ -109,6 +109,7 @@ export interface PhoneCard {
   ram_gb: number | null
   storage_gb: number | null
   battery_mah: number | null
+  charging_speed_w?: number | null
   main_camera_mp: number | null
   has_5g: boolean
   has_nfc: boolean

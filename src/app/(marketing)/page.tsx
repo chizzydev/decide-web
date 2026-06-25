@@ -192,14 +192,13 @@ export default async function HomePage() {
               </p>
               <div className="space-y-3">
                 <h1 className="max-w-full break-words font-display text-4xl font-bold leading-tight tracking-normal text-text-primary sm:text-6xl">
-                  Stop guessing.
+                  Decide is Nigeria&apos;s
                   <br />
-                  <span className="text-accent">Start with the market.</span>
+                  <span className="text-accent">phone buying intelligence.</span>
                 </h1>
                 <p className="max-w-2xl text-lg leading-relaxed text-text-secondary">
-                  Decide helps Nigerian buyers move from vague phone shopping to clear purchase
-                  decisions with live price movement, verdict pages, gray-market warnings, and
-                  local support context.
+                  Compare live phone prices, price drops, buy-or-wait verdicts, Jiji marketplace
+                  context, and safer buying guidance before you pay an external seller.
                 </p>
               </div>
             </div>
@@ -218,10 +217,10 @@ export default async function HomePage() {
                 Open deals today
               </Link>
               <Link
-                href="/phones"
+                href="/phone-buying-intelligence-nigeria"
                 className="inline-flex h-12 w-full items-center justify-center rounded-md border border-border px-8 text-base font-medium text-text-secondary transition-all duration-fast hover:border-borderHigh hover:text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg sm:w-auto"
               >
-                Browse phones
+                What Decide does
               </Link>
             </div>
 
