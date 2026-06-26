@@ -7,9 +7,9 @@ interface PriceVerdictBadgeProps {
 }
 
 const TONE_CLASSES: Record<PriceVerdict['tone'], string> = {
-  great: 'border-emerald-200 bg-emerald-50 text-emerald-700',
-  fair: 'border-accent/25 bg-tealTint text-accent',
-  overpriced: 'border-red-200 bg-red-50 text-red-700',
+  great: 'border-emerald-700/30 bg-emerald-50 text-emerald-800',
+  fair: 'border-teal-600/30 bg-tealTint text-teal-700',
+  overpriced: 'border-red-700/30 bg-red-50 text-red-800',
 }
 
 export const PriceVerdictBadge = ({

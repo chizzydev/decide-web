@@ -22,8 +22,8 @@ export const PriceChangeBadge = ({
 
   const isDrop = amount_ngn > 0
   const toneClass = isDrop
-    ? 'border-accent/15 bg-tealTint text-accent'
-    : 'border-warning/20 bg-warning-subtle text-warning'
+    ? 'border-teal-600/30 bg-tealTint text-teal-700'
+    : 'border-amber-700/35 bg-warning-subtle text-amber-800'
   const directionLabel = isDrop ? 'Down' : 'Up'
   const absAmount = Math.abs(amount_ngn)
 

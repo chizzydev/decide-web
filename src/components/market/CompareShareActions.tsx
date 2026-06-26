@@ -178,7 +178,7 @@ export const CompareShareActions = ({
       <button
         type="button"
         onClick={handleShare}
-        className="inline-flex items-center justify-center rounded-full border border-accent/15 bg-tealTint px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-accent transition-colors duration-fast hover:border-accent/25 hover:bg-accent-subtle"
+        className="inline-flex items-center justify-center rounded-full border border-teal-600/30 bg-tealTint px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-teal-700 transition-colors duration-fast hover:border-teal-600/40 hover:bg-accent-subtle"
       >
         {shareLabel}
       </button>

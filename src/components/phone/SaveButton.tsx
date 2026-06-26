@@ -133,11 +133,11 @@ export const SaveButton = ({
           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-1',
           isInline
             ? saved
-              ? 'border-accent/20 bg-tealTint text-accent hover:bg-tealTint'
+              ? 'border-teal-600/30 bg-tealTint text-teal-700 hover:bg-tealTint'
               : 'border-borderHigh bg-white text-text-primary hover:border-accent/30 hover:text-accent'
             : saved
               ? 'text-red-500 hover:text-red-600'
-              : 'text-slate-400 hover:text-red-400',
+              : 'text-text-muted hover:text-red-700',
           loading || savedPhonesLoading ? 'cursor-not-allowed opacity-50' : '',
           className,
         ].join(' ')}

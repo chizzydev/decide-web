@@ -20,19 +20,19 @@ const VARIANTS: Record<BadgeVariant, string> = {
   // Teal — "Best Match", active filters, featured labels
   // Used sparingly — same rules as the accent colour itself
   accent:
-    'bg-accent-subtle text-accent border border-accent/20',
+    'bg-accent-subtle text-teal-600 border border-teal-600/30',
 
   // Green — "Officially Available", confirmed in stock
   success:
-    'bg-success-subtle text-success border border-success/20',
+    'bg-success-subtle text-emerald-800 border border-emerald-700/30',
 
   // Orange — "Verify Before Buying", medium gray market risk
   warning:
-    'bg-warning-subtle text-warning border border-warning/20',
+    'bg-warning-subtle text-amber-800 border border-amber-700/35',
 
   // Red — "Gray Market Risk", out of stock, high risk
   error:
-    'bg-error-subtle text-error border border-error/20',
+    'bg-error-subtle text-red-800 border border-red-700/30',
 
   // Dimmed — secondary tags, less important metadata
   muted:

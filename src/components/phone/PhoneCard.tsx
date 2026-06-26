@@ -249,7 +249,7 @@ export const PhoneCard = ({
           {compareAction ? (
             <Link
               href={compareAction.href}
-              className="inline-flex min-h-11 max-w-full items-center truncate rounded-md border border-accent/25 bg-tealTint px-3 py-2 font-black text-accent transition-colors duration-fast hover:border-accent/40 hover:bg-accent/10 hover:text-accent-hover"
+              className="inline-flex min-h-11 max-w-full items-center truncate rounded-md border border-teal-600/30 bg-tealTint px-3 py-2 font-black text-teal-700 transition-colors duration-fast hover:border-teal-600/40 hover:bg-accent/10 hover:text-teal-800"
               aria-label={`Compare ${phone.name} with ${compareAction.counterpart.name}`}
               title={
                 compareAction.compare_context
@@ -295,8 +295,8 @@ export const PhoneCard = ({
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-1 focus-visible:ring-offset-bg',
               'disabled:opacity-40 disabled:cursor-not-allowed',
               isInTray
-                ? 'border-accent bg-accent text-navy-900 hover:border-accent-hover hover:bg-accent-hover'
-                : 'border-accent/25 bg-tealTint text-accent hover:border-accent/40 hover:bg-accent/10 hover:text-accent-hover',
+                ? 'border-accent bg-accent text-white hover:border-accent-hover hover:bg-accent-hover'
+                : 'border-teal-600/30 bg-tealTint text-teal-700 hover:border-teal-600/40 hover:bg-accent/10 hover:text-teal-800',
             ]
               .filter(Boolean)
               .join(' ')}
@@ -338,9 +338,9 @@ interface SignalPillProps {
 const SignalPill = ({ label, tone }: SignalPillProps) => {
   const toneClass =
     tone === 'positive'
-      ? 'border-accent/15 bg-white text-accent'
+      ? 'border-teal-600/30 bg-white text-teal-700'
       : tone === 'warning'
-        ? 'border-warning/20 bg-warning-subtle text-warning'
+        ? 'border-amber-700/35 bg-warning-subtle text-amber-800'
         : 'border-border bg-surfaceHigh text-text-primary'
 
   return (

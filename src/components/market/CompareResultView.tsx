@@ -161,7 +161,7 @@ export const CompareResultView = ({
             />
             <Link
               href={actionHref}
-              className="inline-flex items-center justify-center rounded-full border border-accent/15 bg-tealTint px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-accent transition-colors duration-fast hover:border-accent/25 hover:bg-accent-subtle"
+              className="inline-flex items-center justify-center rounded-full border border-teal-600/30 bg-tealTint px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-teal-700 transition-colors duration-fast hover:border-teal-600/40 hover:bg-accent-subtle"
             >
               {actionLabel}
             </Link>
@@ -356,7 +356,7 @@ const ComparePhoneCard = ({
         </div>
 
         {isWinner ? (
-          <div className="inline-flex items-center rounded-full border border-accent/15 bg-tealTint px-3 py-1.5 text-xs font-bold uppercase tracking-[0.16em] text-accent">
+          <div className="inline-flex items-center rounded-full border border-teal-600/30 bg-tealTint px-3 py-1.5 text-xs font-bold uppercase tracking-[0.16em] text-teal-700">
             Overall edge
           </div>
         ) : null}
@@ -370,7 +370,7 @@ const ComparePhoneCard = ({
                 Tracked pricing focus
               </p>
               {focusedVariant.is_default ? (
-                <span className="inline-flex items-center rounded-full border border-accent/15 bg-tealTint px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.12em] text-accent">
+                <span className="inline-flex items-center rounded-full border border-teal-600/30 bg-tealTint px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.12em] text-teal-700">
                   Default tracked config
                 </span>
               ) : null}

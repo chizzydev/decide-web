@@ -73,9 +73,9 @@ export const ScoreBar = ({
             aria-label={`${label} score: ${score} out of 10`}
           >
             {score}
-            <span className="font-regular text-slate-400">/10</span>
+            <span className="font-regular text-text-muted">/10</span>
           </span>
-          <span className="hidden sm:block text-xs text-slate-400">
+          <span className="hidden text-xs text-text-muted sm:block">
             {scoreLabel(score)}
           </span>
         </div>

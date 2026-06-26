@@ -36,7 +36,7 @@ export const CompareSummaryCard = ({ result }: CompareSummaryCardProps) => {
             </div>
           </div>
 
-          <div className="rounded-full border border-accent/15 bg-tealTint px-3 py-1.5 text-xs font-bold uppercase tracking-[0.16em] text-accent">
+          <div className="rounded-full border border-teal-600/30 bg-tealTint px-3 py-1.5 text-xs font-bold uppercase tracking-[0.16em] text-teal-700">
             {winner ? `Overall: ${winner.name}` : 'Overall: Close call'}
           </div>
         </div>
@@ -100,7 +100,7 @@ const CategoryWinPanel = ({
         {wins.map((win) => (
           <span
             key={win}
-            className="inline-flex items-center rounded-full border border-accent/15 bg-tealTint px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.12em] text-accent"
+            className="inline-flex items-center rounded-full border border-teal-600/30 bg-tealTint px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.12em] text-teal-700"
           >
             {formatCategoryLabel(win)}
           </span>

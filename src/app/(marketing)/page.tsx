@@ -384,7 +384,7 @@ export default async function HomePage() {
               </Link>
               <Link
                 href="/assistant"
-                className="inline-flex h-11 items-center justify-center rounded-md border border-accent/25 bg-tealTint px-5 text-sm font-black text-accent transition-colors duration-fast hover:border-accent/40 hover:bg-accent/10"
+                className="inline-flex h-11 items-center justify-center rounded-md border border-teal-600/30 bg-tealTint px-5 text-sm font-black text-teal-700 transition-colors duration-fast hover:border-teal-600/40 hover:bg-accent/10"
               >
                 Open Advisor
               </Link>
@@ -855,7 +855,7 @@ const ProductGuideCard = ({
 }) => (
   <article className="rounded-2xl border border-borderHigh bg-surface px-5 py-5 shadow-sm">
     <div className="flex items-start gap-4">
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-tealTint text-sm font-black text-accent">
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-tealTint text-sm font-black text-teal-700">
         {index + 1}
       </div>
       <div className="space-y-2">
@@ -1135,7 +1135,7 @@ const StartPathCard = ({
         <p className="text-xs font-bold uppercase tracking-[0.18em] text-accent">{eyebrow}</p>
         <h3 className="text-xl font-black tracking-tight text-text-primary">{title}</h3>
       </div>
-      <span className="inline-flex h-8 min-w-8 items-center justify-center rounded-full border border-accent/20 bg-accent-subtle px-2 text-xs font-black text-accent">
+      <span className="inline-flex h-8 min-w-8 items-center justify-center rounded-full border border-teal-600/30 bg-accent-subtle px-2 text-xs font-black text-teal-700">
         0{index + 1}
       </span>
     </div>
@@ -1308,7 +1308,7 @@ const HowItWorksStep = ({ number, eyebrow, title, description }: HowItWorksStepP
   <div className="flex flex-col gap-4">
     <div className="flex items-center gap-3">
       <span
-        className="flex h-8 w-8 items-center justify-center rounded-md border border-accent/20 bg-accent-subtle text-xs font-black text-accent"
+        className="flex h-8 w-8 items-center justify-center rounded-md border border-teal-600/30 bg-accent-subtle text-xs font-black text-teal-700"
         aria-hidden="true"
       >
         {number}
@@ -1331,7 +1331,7 @@ interface DifferentiatorCardProps {
 const DifferentiatorCard = ({ eyebrow, title, description }: DifferentiatorCardProps) => (
   <div className="flex gap-4 rounded-2xl border border-border bg-bg p-4 transition-colors duration-fast hover:border-borderHigh">
     <span
-      className="mt-0.5 inline-flex h-8 items-center rounded-full border border-accent/20 bg-accent-subtle px-3 text-[11px] font-bold uppercase tracking-[0.16em] text-accent"
+      className="mt-0.5 inline-flex h-8 items-center rounded-full border border-teal-600/30 bg-accent-subtle px-3 text-[11px] font-bold uppercase tracking-[0.16em] text-teal-700"
       aria-hidden="true"
     >
       {eyebrow}

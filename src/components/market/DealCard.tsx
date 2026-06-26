@@ -60,16 +60,16 @@ const RESALE_LABELS: Record<
 }
 
 const SIGNAL_TONE_CLASSES = {
-  positive: 'border-emerald-200 bg-emerald-50 text-emerald-700',
-  caution: 'border-amber-200 bg-amber-50 text-amber-700',
-  warning: 'border-red-200 bg-red-50 text-red-700',
+  positive: 'border-emerald-700/30 bg-emerald-50 text-emerald-800',
+  caution: 'border-amber-700/35 bg-amber-50 text-amber-800',
+  warning: 'border-red-700/30 bg-red-50 text-red-800',
   neutral: 'border-border bg-surfaceHigh text-text-secondary',
 } as const
 
 const INTELLIGENCE_TONE_CLASSES: Record<DealIntelligenceTone, string> = {
-  strong: 'border-emerald-200 bg-emerald-50 text-emerald-700',
-  good: 'border-accent/25 bg-tealTint text-accent',
-  watch: 'border-amber-200 bg-amber-50 text-amber-700',
+  strong: 'border-emerald-700/30 bg-emerald-50 text-emerald-800',
+  good: 'border-teal-600/30 bg-tealTint text-teal-700',
+  watch: 'border-amber-700/35 bg-amber-50 text-amber-800',
 }
 
 const getSupportTone = (
@@ -299,7 +299,7 @@ export const DealCard = ({ deal, compareAction }: DealCardProps) => {
                       : `Compare ${deal.phone_name} with ${compareAction.counterpart.phone_name}`
                     : undefined
                 }
-                className="inline-flex min-h-11 items-center justify-center rounded-md border border-accent/25 bg-tealTint px-4 py-2 text-sm font-black text-accent transition-colors duration-fast hover:border-accent/40 hover:bg-accent/10 hover:text-accent-hover"
+                className="inline-flex min-h-11 items-center justify-center rounded-md border border-teal-600/30 bg-tealTint px-4 py-2 text-sm font-black text-teal-700 transition-colors duration-fast hover:border-teal-600/40 hover:bg-accent/10 hover:text-teal-800"
                 aria-label={
                   compareAction
                     ? `Compare ${deal.phone_name} with ${compareAction.counterpart.phone_name}`

@@ -389,11 +389,11 @@ const PriceAlertButtonContent = ({
       : triggerVariant === 'inlineSecondary'
         ? `
           inline-flex w-auto shrink-0
-          rounded-md border border-accent/25 bg-tealTint
+          rounded-md border border-teal-600/30 bg-tealTint
           px-4 py-0 h-10
-          text-sm font-black text-accent
+          text-sm font-black text-teal-700
           shadow-sm
-          hover:border-accent/40 hover:bg-accent/10 hover:text-accent-hover
+          hover:border-teal-600/40 hover:bg-accent/10 hover:text-teal-800
         `
         : `
           flex w-full
@@ -401,7 +401,7 @@ const PriceAlertButtonContent = ({
           px-4 py-2.5
           text-sm font-black text-text-primary
           shadow-sm
-          hover:border-accent/40 hover:bg-tealTint hover:text-accent
+          hover:border-teal-600/40 hover:bg-tealTint hover:text-teal-700
         `
 
   return (

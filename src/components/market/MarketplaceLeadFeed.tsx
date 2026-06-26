@@ -257,7 +257,7 @@ export const MarketplaceLeadFeed = ({
                           {movement.label}
                         </span>
                       ) : null}
-                      <span className="rounded-full bg-accent-subtle px-2.5 py-1 text-[11px] font-bold text-accent">
+                      <span className="rounded-full bg-accent-subtle px-2.5 py-1 text-[11px] font-bold text-teal-700">
                         {qualityLabel[dealQuality]}
                       </span>
                       <span className="rounded-full bg-surfaceHigh px-2.5 py-1 text-[11px] font-bold text-text-secondary">
