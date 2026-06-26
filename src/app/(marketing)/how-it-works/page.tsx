@@ -40,7 +40,7 @@ export default function HowItWorksPage() {
           },
         ].map(({ step, title, body }) => (
           <div key={step} className="flex gap-5">
-            <div className="shrink-0 w-8 h-8 rounded-sm bg-accent text-black font-black text-sm flex items-center justify-center">
+            <div className="shrink-0 w-8 h-8 rounded-sm bg-accent text-white font-black text-sm flex items-center justify-center">
               {step}
             </div>
             <div className="space-y-1 pt-1">
@@ -53,7 +53,7 @@ export default function HowItWorksPage() {
 
       <Link
         href="/assistant"
-        className="inline-flex items-center gap-2 h-10 px-5 rounded-sm bg-accent text-black text-sm font-bold hover:bg-accent-hover transition-colors"
+        className="inline-flex items-center gap-2 h-10 px-5 rounded-sm bg-accent text-white text-sm font-bold hover:bg-accent-hover transition-colors"
       >
         Find my phone →
       </Link>

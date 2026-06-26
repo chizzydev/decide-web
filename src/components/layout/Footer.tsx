@@ -70,13 +70,13 @@ export const Footer = () => {
               <span className="text-teal-400">de</span>
             </Link>
 
-            <p className="max-w-xs text-sm leading-relaxed text-slate-400">
+            <p className="max-w-xs text-sm leading-relaxed text-slate-300">
               Decide is Nigeria&apos;s phone buying intelligence platform. Compare
               live phone prices, price drops, buy-or-wait verdicts, Jiji context,
               and safer buying guidance before you pay.
             </p>
 
-            <p className="mt-4 max-w-xs text-xs leading-relaxed text-slate-500">
+            <p className="mt-4 max-w-xs text-xs leading-relaxed text-slate-300">
               Decide does not sell phones directly. We help you decide what to
               buy and where to verify the latest external price.
             </p>
@@ -107,7 +107,7 @@ export const Footer = () => {
 
           {Object.entries(FOOTER_LINKS).map(([group, links]) => (
             <div key={group}>
-              <p className="mb-3 text-xs font-bold uppercase tracking-wider text-slate-500">
+              <p className="mb-3 text-xs font-bold uppercase tracking-wider text-slate-300">
                 {group}
               </p>
               <ul className="space-y-2">
@@ -115,7 +115,7 @@ export const Footer = () => {
                   <li key={href}>
                     <Link
                       href={href}
-                      className="text-sm text-slate-400 transition-colors duration-fast hover:text-white"
+                      className="text-sm text-slate-300 transition-colors duration-fast hover:text-white"
                     >
                       {label}
                     </Link>
@@ -127,19 +127,19 @@ export const Footer = () => {
         </div>
 
         <div className="flex flex-row flex-wrap items-center justify-between gap-x-6 gap-y-3 pt-6">
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-slate-300">
             &copy; {currentYear} Decide. Built for Nigerians.
           </p>
           <div className="flex items-center gap-4">
             <Link
               href="/privacy"
-              className="text-xs text-slate-500 transition-colors duration-fast hover:text-slate-400"
+              className="text-xs text-slate-300 transition-colors duration-fast hover:text-white"
             >
               Privacy Policy
             </Link>
             <Link
               href="/terms"
-              className="text-xs text-slate-500 transition-colors duration-fast hover:text-slate-400"
+              className="text-xs text-slate-300 transition-colors duration-fast hover:text-white"
             >
               Terms of Use
             </Link>

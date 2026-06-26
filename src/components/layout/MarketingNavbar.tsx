@@ -189,7 +189,7 @@ export const MarketingNavbar = () => {
           ) : (
             <Link
               href="/assistant"
-              className="inline-flex h-9 items-center rounded-sm bg-accent px-5 text-sm font-bold tracking-wide text-black transition-all duration-fast hover:bg-accent-hover active:scale-[0.98]"
+              className="inline-flex h-9 items-center rounded-sm bg-accent px-5 text-sm font-bold tracking-wide text-white transition-all duration-fast hover:bg-accent-hover active:scale-[0.98]"
             >
               Find My Phone
             </Link>

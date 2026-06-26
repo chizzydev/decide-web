@@ -273,7 +273,8 @@ export default async function PhonesPage({ searchParams }: PhonesPageProps) {
 
             <Link
               href={compareLead.href}
-              className="inline-flex h-10 w-full items-center justify-center rounded-md bg-accent px-4 text-sm font-bold text-white transition-colors duration-fast hover:bg-accent-hover sm:w-fit"
+              className="inline-flex min-h-11 w-full items-center justify-center rounded-md bg-accent px-4 py-2 text-sm font-bold text-white transition-colors duration-fast hover:bg-accent-hover sm:w-fit"
+              aria-label={`Open comparison between ${phones[0].name} and ${compareLead.counterpart.name}`}
             >
               Open comparison
             </Link>

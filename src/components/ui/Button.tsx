@@ -23,7 +23,7 @@ const BASE =
 const VARIANTS: Record<ButtonVariant, string> = {
   // The one accent colour — used sparingly on the most important CTA only
   primary:
-    'bg-accent text-black hover:bg-accent-hover active:scale-[0.98]',
+    'bg-accent text-white hover:bg-accent-hover active:scale-[0.98]',
 
   // Outlined — secondary actions like "Go Back" or "View Details"
   secondary:

@@ -132,7 +132,7 @@ export const PhoneCard = ({
                 logoUrl={phone.brand_logo_url}
                 size="xs"
               />
-              <span className="text-xs text-slate-400 font-medium uppercase tracking-wide">
+              <span className="text-xs text-text-muted font-medium uppercase tracking-wide">
                 {phone.brand_name}
               </span>
             </div>

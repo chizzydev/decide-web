@@ -55,8 +55,8 @@ export const tokens = {
 
     // ── Neutral slate (3 levels) ──────────────────────────
     slate700:      '#334155',  // Secondary text
-    slate500:      '#64748b',  // Muted labels, secondary nav
-    slate400:      '#94a3b8',  // Placeholders, timestamps, fine print
+    slate500:      '#475569',  // Muted labels, secondary nav
+    slate400:      '#64748b',  // Fine labels on light surfaces
 
     // ── Semantic — status communication only ──────────────
     success:        '#16a34a',

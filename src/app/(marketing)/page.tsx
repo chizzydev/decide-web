@@ -206,7 +206,7 @@ export default async function HomePage() {
             <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
               <Link
                 href="/assistant"
-                className="inline-flex h-12 w-full items-center justify-center rounded-md bg-accent px-8 text-base font-bold tracking-wide text-navy-800 transition-all duration-fast hover:bg-accent-hover active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg sm:w-auto"
+                className="inline-flex h-12 w-full items-center justify-center rounded-md bg-accent px-8 text-base font-bold tracking-wide text-white transition-all duration-fast hover:bg-accent-hover active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg sm:w-auto"
               >
                 Find my phone
               </Link>
@@ -660,7 +660,7 @@ export default async function HomePage() {
 
               <Link
                 href="/analyze"
-                className="inline-flex h-11 items-center justify-center rounded-md bg-accent px-7 text-sm font-bold tracking-wide text-navy-800 transition-all duration-fast hover:bg-accent-hover active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
+                className="inline-flex h-11 items-center justify-center rounded-md bg-accent px-7 text-sm font-bold tracking-wide text-white transition-all duration-fast hover:bg-accent-hover active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
               >
                 Analyze a phone
               </Link>
@@ -718,7 +718,7 @@ export default async function HomePage() {
                 href={`/phones?max_price=${range.max}`}
                 className="group flex flex-col items-center gap-2 rounded-md border border-border bg-bg p-4 text-center transition-all duration-fast hover:border-accent/40 hover:bg-tealTint"
               >
-                <span className="text-xs font-bold uppercase tracking-wide text-slate-400 transition-colors duration-fast group-hover:text-accent">
+                <span className="text-xs font-bold uppercase tracking-wide text-text-muted transition-colors duration-fast group-hover:text-accent">
                   {range.label}
                 </span>
                 <span className="text-sm font-black text-text-primary">{range.display}</span>
@@ -740,7 +740,7 @@ export default async function HomePage() {
           <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
               href="/assistant"
-              className="inline-flex h-12 items-center justify-center rounded-md bg-accent px-10 text-base font-bold tracking-wide text-navy-800 transition-all duration-fast hover:bg-accent-hover active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
+              className="inline-flex h-12 items-center justify-center rounded-md bg-accent px-10 text-base font-bold tracking-wide text-white transition-all duration-fast hover:bg-accent-hover active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
             >
               Find my phone
             </Link>
@@ -1288,7 +1288,8 @@ const ShowcaseCompareCard = ({
 
       <Link
         href={suggestion.href}
-        className="inline-flex items-center text-sm font-bold text-accent transition-colors duration-fast hover:text-accent-hover"
+        className="inline-flex min-h-11 items-center rounded-md py-2 pr-2 text-sm font-bold text-accent transition-colors duration-fast hover:text-accent-hover"
+        aria-label={`Open comparison between ${suggestion.left.name} and ${suggestion.right.name}`}
       >
         Open comparison
       </Link>
