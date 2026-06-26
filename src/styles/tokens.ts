@@ -29,7 +29,7 @@ export const tokens = {
     // ── Text ──────────────────────────────────────────────
     textPrimary:   '#0f172a',  // Navy-800 — headlines, primary body
     textSecondary: '#334155',  // Slate-700 — subtext, labels
-    textMuted:     '#64748b',  // Slate-500 - placeholders, disabled, fine labels
+    textMuted:     '#475569',  // Slate-600 - placeholders, disabled, fine labels
 
     // ── Teal accent scale ─────────────────────────────────
     // Teal appears ONLY on interactive elements:
@@ -56,7 +56,7 @@ export const tokens = {
     // ── Neutral slate (3 levels) ──────────────────────────
     slate700:      '#334155',  // Secondary text
     slate500:      '#475569',  // Muted labels, secondary nav
-    slate400:      '#64748b',  // Fine labels on light surfaces
+    slate400:      '#475569',  // Fine labels on light surfaces
 
     // ── Semantic — status communication only ──────────────
     success:        '#16a34a',
