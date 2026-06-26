@@ -79,7 +79,8 @@ export const RelatedComparePanel = ({
 
               <Link
                 href={action.href}
-                className="inline-flex h-10 items-center justify-center rounded-md border border-accent/25 bg-tealTint px-4 text-sm font-black text-accent transition-colors duration-fast hover:border-accent/40 hover:bg-accent/10 hover:text-accent-hover"
+                className="inline-flex min-h-11 items-center justify-center rounded-md border border-accent/25 bg-tealTint px-4 py-2 text-sm font-black text-accent transition-colors duration-fast hover:border-accent/40 hover:bg-accent/10 hover:text-accent-hover"
+                aria-label={`Compare ${phoneName} with ${action.counterpart.name}`}
               >
                 Compare with {action.counterpart.name}
               </Link>

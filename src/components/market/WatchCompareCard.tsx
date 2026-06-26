@@ -37,7 +37,8 @@ export const WatchCompareCard = ({
 
       <Link
         href={suggestion.href}
-        className="inline-flex items-center text-sm font-bold text-accent transition-colors duration-fast hover:text-accent-hover"
+        className="inline-flex min-h-11 items-center rounded-md py-2 pr-2 text-sm font-bold text-accent transition-colors duration-fast hover:text-accent-hover"
+        aria-label={`Open comparison between ${suggestion.left.phone_name} and ${suggestion.right.phone_name}`}
       >
         Open comparison
       </Link>

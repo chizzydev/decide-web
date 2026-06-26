@@ -29,7 +29,7 @@ export const tokens = {
     // ── Text ──────────────────────────────────────────────
     textPrimary:   '#0f172a',  // Navy-800 — headlines, primary body
     textSecondary: '#334155',  // Slate-700 — subtext, labels
-    textMuted:     '#94a3b8',  // Slate-400 — placeholders, disabled
+    textMuted:     '#64748b',  // Slate-500 - placeholders, disabled, fine labels
 
     // ── Teal accent scale ─────────────────────────────────
     // Teal appears ONLY on interactive elements:
@@ -38,13 +38,13 @@ export const tokens = {
     // Never on decorative tags, generic text, or backgrounds
     // (except the dedicated tealTint surface above).
     teal300:       '#5eead4',  // Glow, highlight on dark surfaces
-    teal400:       '#2dd4bf',  // Hover states
-    teal500:       '#14b8a6',  // Primary action buttons
-    teal600:       '#0d9488',  // Brand — icons, rings, borders, wordmark
+    teal400:       '#0d9488',  // Hover states
+    teal500:       '#0f766e',  // Primary action buttons
+    teal600:       '#0f766e',  // Brand - icons, rings, borders, wordmark
 
     // Semantic accent aliases
-    accent:        '#14b8a6',  // → teal500 — primary CTA
-    accentHover:   '#2dd4bf',  // → teal400 — hover
+    accent:        '#0f766e',  // teal500 - primary CTA and small accent text
+    accentHover:   '#0d9488',  // teal400 - hover
     accentSubtle:  '#f0fdfa',  // → tealTint — muted accent bg
     accentBrand:   '#0d9488',  // → teal600 — brand identity
 
