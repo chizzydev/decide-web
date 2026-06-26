@@ -271,19 +271,22 @@ export const DealCard = ({ deal, compareAction }: DealCardProps) => {
             <div className="flex flex-wrap items-center gap-3">
               <Link
                 href={`/buy-now-or-wait/${deal.phone_slug}`}
-                className="inline-flex h-10 items-center rounded-md bg-accent px-4 text-sm font-bold text-white transition-colors duration-fast hover:bg-accent-hover"
+                className="inline-flex min-h-11 items-center rounded-md bg-accent px-4 py-2 text-sm font-bold text-white transition-colors duration-fast hover:bg-accent-hover"
+                aria-label={`Read Decide take for ${deal.phone_name}`}
               >
                 Read Decide take
               </Link>
               <Link
                 href={`/worth-it/${deal.phone_slug}`}
-                className="inline-flex h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-text-secondary transition-colors duration-fast hover:border-borderHigh hover:text-text-primary"
+                className="inline-flex min-h-11 items-center rounded-md border border-border px-4 py-2 text-sm font-semibold text-text-secondary transition-colors duration-fast hover:border-borderHigh hover:text-text-primary"
+                aria-label={`Read whether ${deal.phone_name} is still worth it`}
               >
                 Still worth it
               </Link>
               <Link
                 href={detailHref}
-                className="inline-flex h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-text-secondary transition-colors duration-fast hover:border-borderHigh hover:text-text-primary"
+                className="inline-flex min-h-11 items-center rounded-md border border-border px-4 py-2 text-sm font-semibold text-text-secondary transition-colors duration-fast hover:border-borderHigh hover:text-text-primary"
+                aria-label={`View ${deal.phone_name} details`}
               >
                 View phone
               </Link>
@@ -296,7 +299,12 @@ export const DealCard = ({ deal, compareAction }: DealCardProps) => {
                       : `Compare ${deal.phone_name} with ${compareAction.counterpart.phone_name}`
                     : undefined
                 }
-                className="inline-flex h-10 items-center justify-center rounded-md border border-accent/25 bg-tealTint px-4 text-sm font-black text-accent transition-colors duration-fast hover:border-accent/40 hover:bg-accent/10 hover:text-accent-hover"
+                className="inline-flex min-h-11 items-center justify-center rounded-md border border-accent/25 bg-tealTint px-4 py-2 text-sm font-black text-accent transition-colors duration-fast hover:border-accent/40 hover:bg-accent/10 hover:text-accent-hover"
+                aria-label={
+                  compareAction
+                    ? `Compare ${deal.phone_name} with ${compareAction.counterpart.phone_name}`
+                    : `Compare options like ${deal.phone_name}`
+                }
               >
                 {compareAction ? 'Compare with closest match' : 'Compare options'}
               </Link>

@@ -92,6 +92,18 @@ const nextConfig: NextConfig = {
         key: 'X-Content-Type-Options',
         value: 'nosniff',
       },
+      ...(isProduction
+        ? [
+            {
+              key: 'Strict-Transport-Security',
+              value: 'max-age=31536000; includeSubDomains',
+            },
+          ]
+        : []),
+      {
+        key: 'Cross-Origin-Opener-Policy',
+        value: 'same-origin-allow-popups',
+      },
       {
         key: 'Referrer-Policy',
         value: 'strict-origin-when-cross-origin',

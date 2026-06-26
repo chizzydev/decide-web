@@ -240,7 +240,8 @@ export const PhoneCard = ({
           {signal ? (
             <Link
               href={signal.verdict.href}
-              className="font-bold text-accent transition-colors duration-fast hover:text-accent-hover"
+              className="inline-flex min-h-11 items-center rounded-md py-2 pr-2 font-bold text-accent transition-colors duration-fast hover:text-accent-hover"
+              aria-label={`${signal.verdict.link_label} for ${phone.name}`}
             >
               {signal.verdict.link_label}
             </Link>
@@ -248,7 +249,8 @@ export const PhoneCard = ({
           {compareAction ? (
             <Link
               href={compareAction.href}
-              className="inline-flex max-w-full items-center truncate rounded-md border border-accent/25 bg-tealTint px-2.5 py-1.5 font-black text-accent transition-colors duration-fast hover:border-accent/40 hover:bg-accent/10 hover:text-accent-hover"
+              className="inline-flex min-h-11 max-w-full items-center truncate rounded-md border border-accent/25 bg-tealTint px-3 py-2 font-black text-accent transition-colors duration-fast hover:border-accent/40 hover:bg-accent/10 hover:text-accent-hover"
+              aria-label={`Compare ${phone.name} with ${compareAction.counterpart.name}`}
               title={
                 compareAction.compare_context
                   ? `Compare with ${compareAction.counterpart.name}: ${compareAction.compare_context}`
@@ -263,7 +265,8 @@ export const PhoneCard = ({
           {signal?.price_drop ? (
             <Link
               href={signal.price_drop.href}
-              className="font-semibold text-text-secondary transition-colors duration-fast hover:text-text-primary"
+              className="inline-flex min-h-11 items-center rounded-md py-2 pr-2 font-semibold text-text-secondary transition-colors duration-fast hover:text-text-primary"
+              aria-label={`Open live price drop context for ${phone.name}`}
             >
               Live drop context
             </Link>
@@ -287,7 +290,7 @@ export const PhoneCard = ({
             onClick={handleCompareToggle}
             disabled={!canAddToTray}
             className={[
-              'w-full h-9 rounded-md text-xs font-black tracking-wide',
+              'w-full min-h-11 rounded-md text-xs font-black tracking-wide',
               'border transition-all duration-fast',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-1 focus-visible:ring-offset-bg',
               'disabled:opacity-40 disabled:cursor-not-allowed',

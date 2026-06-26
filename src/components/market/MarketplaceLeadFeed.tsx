@@ -279,7 +279,8 @@ export const MarketplaceLeadFeed = ({
                     <div className="flex flex-wrap items-center gap-3">
                       <Link
                         href={`/phones/${offer.phone_slug}`}
-                        className="text-sm font-bold text-accent transition-colors duration-fast hover:text-accent-hover"
+                        className="inline-flex min-h-11 items-center rounded-md py-2 pr-2 text-sm font-bold text-accent transition-colors duration-fast hover:text-accent-hover"
+                        aria-label={`View Decide page for ${offer.phone_name}`}
                       >
                         View Decide page
                       </Link>
@@ -287,7 +288,8 @@ export const MarketplaceLeadFeed = ({
                         href={offer.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex h-9 items-center rounded-md border border-amber-300 bg-amber-50 px-3 text-sm font-bold text-amber-900 transition-colors duration-fast hover:bg-amber-100"
+                        className="inline-flex min-h-11 items-center rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-sm font-bold text-amber-900 transition-colors duration-fast hover:bg-amber-100"
+                        aria-label={`Open Jiji listing for ${offer.phone_name}`}
                       >
                         Open Jiji listing
                       </a>

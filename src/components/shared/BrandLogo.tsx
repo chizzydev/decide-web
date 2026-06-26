@@ -22,18 +22,8 @@ const SIZES: Record<LogoSize, { container: string; image: number; text: string }
   lg: { container: 'h-12 w-12', image: 48, text: 'text-base' },
 }
 
-const LOCAL_BRAND_LOGO_SLUGS = new Set([
-  'apple',
-  'google',
-  'infinix',
-  'itel',
-  'oneplus',
-  'oppo',
-  'realme',
-  'samsung',
-  'tecno',
-  'xiaomi',
-])
+// Only add a slug here after the matching local SVG is a real, non-empty asset.
+const LOCAL_BRAND_LOGO_SLUGS = new Set<string>()
 
 const getLogoPath = (slug: string): string | null =>
   LOCAL_BRAND_LOGO_SLUGS.has(slug) ? `/images/brands/${slug}.svg` : null
