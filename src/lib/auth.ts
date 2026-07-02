@@ -130,6 +130,13 @@ export const authOptions: NextAuthOptions = {
             throw new Error(buildLoginRateLimitError(backendSession.message))
           }
 
+          if (
+            backendSession.status === 403 &&
+            backendSession.message?.toLowerCase().includes('verify your email')
+          ) {
+            throw new Error('EmailNotVerified')
+          }
+
           return null
         }
 

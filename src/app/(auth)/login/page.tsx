@@ -6,6 +6,7 @@ import React, { Suspense, useState } from 'react'
 import Link from 'next/link'
 import { signIn } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { API_BASE_URL } from '@/lib/apiBaseUrl'
 
 const normalizeCallbackUrl = (value: string | null) => {
   if (!value) return '/'
@@ -56,6 +57,7 @@ function LoginPageContent() {
   const callbackUrl = normalizeCallbackUrl(searchParams.get('callbackUrl'))
   const sessionExpired = searchParams.get('reason') === 'session-expired'
   const registered = searchParams.get('registered') === '1'
+  const verified = searchParams.get('verified') === '1'
   const initialEmail = searchParams.get('email') || ''
   const rateLimited = searchParams.get('error') === 'TooManyLoginAttempts'
   const retryAfterSeconds = Number.parseInt(searchParams.get('retryAfter') || '', 10)
@@ -65,6 +67,8 @@ function LoginPageContent() {
   const [error,    setError]    = useState<string | null>(
     rateLimited ? formatRetryMessage(retryAfterSeconds) : null
   )
+  const [notice, setNotice] = useState<string | null>(null)
+  const [resending, setResending] = useState(false)
   const [loading,  setLoading]  = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -107,6 +111,11 @@ function LoginPageContent() {
       return
     }
 
+    if (parsedError.code === 'EmailNotVerified') {
+      setError('Please verify your email before signing in. Check your inbox for the Decide verification link.')
+      return
+    }
+
     if (result?.error) {
       setError('Invalid email or password.')
       return
@@ -118,6 +127,38 @@ function LoginPageContent() {
 
   const handleGoogle = () =>
     signIn('google', { callbackUrl }, { prompt: 'select_account' })
+
+  const handleResendVerification = async () => {
+    const normalizedEmail = email.trim()
+    if (!normalizedEmail) {
+      setError('Enter your email first, then request a new verification link.')
+      return
+    }
+
+    setResending(true)
+    setNotice(null)
+    setError(null)
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/v1/auth/resend-verification`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: normalizedEmail }),
+      })
+      const json = await response.json()
+
+      if (!json.success) {
+        setError(json.message ?? 'Could not send a new verification link right now.')
+        return
+      }
+
+      setNotice('If this email belongs to an unverified Decide account, a fresh verification link has been sent.')
+    } catch {
+      setError('Could not send a new verification link right now. Please try again.')
+    } finally {
+      setResending(false)
+    }
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-bg px-4 py-12">
@@ -147,7 +188,19 @@ function LoginPageContent() {
 
           {registered ? (
             <p className="rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-800">
-              Account created. Sign in to continue.
+              Account created. Check your email and verify your account before signing in.
+            </p>
+          ) : null}
+
+          {verified ? (
+            <p className="rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-800">
+              Email verified. You can now sign in.
+            </p>
+          ) : null}
+
+          {notice ? (
+            <p className="rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-800">
+              {notice}
             </p>
           ) : null}
 
@@ -220,6 +273,16 @@ function LoginPageContent() {
                     </Link>{' '}
                     if you no longer remember it.
                   </p>
+                ) : null}
+                {error.includes('verify your email') ? (
+                  <button
+                    type="button"
+                    onClick={handleResendVerification}
+                    disabled={resending}
+                    className="mt-2 font-semibold text-rose-900 underline underline-offset-2 disabled:opacity-60"
+                  >
+                    {resending ? 'Sending...' : 'Resend verification email'}
+                  </button>
                 ) : null}
               </div>
             ) : null}
